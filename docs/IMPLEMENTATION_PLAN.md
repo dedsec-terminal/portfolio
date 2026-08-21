@@ -1,6 +1,7 @@
 # Implementation Plan: Swaraj Singh Personal Website
 
 ## Phase 1: Foundation & Setup
+
 - **Goal**: Initialize the Next.js project and configure the core design system.
 - **Tasks**:
   1. Initialize Next.js project with App Router, TypeScript, and Tailwind CSS.
@@ -10,6 +11,7 @@
   5. Establish the base directory structure.
 
 ## Phase 2: Core Layout & Homepage
+
 - **Goal**: Build the primary application shell and the hero section.
 - **Tasks**:
   1. Create the global layout (`src/app/layout.tsx`) including a minimalist navigation bar and footer.
@@ -18,6 +20,7 @@
   4. Refine the typography and spacing (generous whitespace).
 
 ## Phase 3: Content Architecture (MDX)
+
 - **Goal**: Setup the infrastructure for parsing and rendering Markdown/MDX.
 - **Tasks**:
   1. Install and configure MDX processing libraries (e.g., `next-mdx-remote` or `contentlayer`).
@@ -27,6 +30,7 @@
   5. Build the dynamic routing for both Professional and Personal content segments.
 
 ## Phase 4: Resume Architecture
+
 - **Goal**: Implement the structured JSON resume.
 - **Tasks**:
   1. Define the resume JSON schema.
@@ -35,6 +39,7 @@
   4. Implement `@media print` CSS rules to ensure the page formats perfectly for PDF generation.
 
 ## Phase 5: The Signal (Data & Display)
+
 - **Goal**: Build the core data structures and UI for The Signal feature (static JSON integration).
 - **Tasks**:
   1. Define the TypeScript interfaces for the Signal data model.
@@ -43,6 +48,7 @@
   4. Implement the `/signal/archive` page with date browsing and historical reconstruction.
 
 ## Phase 6: GitHub Action (The Signal Generator)
+
 - **Goal**: Automate the daily curation generation.
 - **Tasks**:
   1. Write a Node.js/Python script (`scripts/generate-signal.js`) to fetch or aggregate daily discoveries.
@@ -51,6 +57,7 @@
   4. Configure the action to commit the generated JSON file back to the repository.
 
 ## Phase 7: Future Integrations (Discord & Music)
+
 - **Goal**: Add Lanyard and Music features (To be implemented later).
 - **Tasks**:
   1. Integrate the Lanyard API for Discord presence.
@@ -58,6 +65,7 @@
   3. Connect the music player to Spotify/Lanyard data or local JSON fallback.
 
 ## Phase 8: Final Review & Deployment
+
 - **Goal**: Ensure quality, performance, and accessibility before going live.
 - **Tasks**:
   1. Perform an accessibility audit (keyboard navigation, screen readers, contrast).

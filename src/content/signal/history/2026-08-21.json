@@ -1,0 +1,12 @@
+{
+  "date": "2026-08-21",
+  "discoveries": [
+    {
+      "tier": "CURATED",
+      "title": "A Cool Tool",
+      "description": "Found this interesting command line tool.",
+      "url": "https://example.com/tool",
+      "category": "tool"
+    }
+  ]
+}

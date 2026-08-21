@@ -1,0 +1,27 @@
+{
+  "basics": {
+    "name": "Swaraj Singh",
+    "label": "Software Engineer",
+    "email": "hello@example.com",
+    "url": "https://example.com",
+    "summary": "Fictional software engineer.",
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "example",
+        "url": "https://github.com/example"
+      }
+    ]
+  },
+  "work": [
+    {
+      "company": "Example Inc",
+      "position": "Engineer",
+      "startDate": "2020-01",
+      "endDate": "2023-01",
+      "highlights": ["Built things.", "Fixed things."]
+    }
+  ],
+  "education": [],
+  "skills": []
+}
