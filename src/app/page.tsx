@@ -1,4 +1,3 @@
-import ShaderBackground from '@/components/background/ShaderBackground';
 import Hero from '@/components/features/Hero';
 import SignalShell from '@/components/features/SignalShell';
 import ProjectsGrid from '@/components/features/ProjectsGrid';
@@ -9,21 +8,18 @@ import ArtPreview from '@/components/features/ArtPreview';
 /*
   Page composition order (intentional):
 
-  1. Background   — R3F WebGL procedural atmosphere
-  2. Hero         — identity, full viewport, the opening statement
-  3. Signal       — signature element, placed high to establish identity
+  1. Hero         — identity, full viewport, the opening statement
+  2. Signal       — signature element, placed high to establish identity
                     before the professional content inventory
-  4. Projects     — professional work, prioritized over writeups
-  5. Writing      — blog posts, separate from writeups
-  6. Writeups     — compact; not the centerpiece
-  7. Personal     — music + art; ambient, personal layer
+  3. Projects     — professional work, prioritized over writeups
+  4. Writing      — blog posts, separate from writeups
+  5. Writeups     — compact; not the centerpiece
+  6. Personal     — music + art; ambient, personal layer
 */
 
 export default function HomePage() {
   return (
     <>
-      <ShaderBackground />
-
       <div className="relative z-10">
         <Hero />
 

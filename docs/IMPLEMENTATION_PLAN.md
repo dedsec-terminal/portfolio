@@ -16,7 +16,7 @@
 - **Tasks**:
   - [x] 1. Create global layout (`src/app/layout.tsx`) including minimalist navigation bar, footer, and App Router metadata/favicon integration.
   - [x] 2. Build the Homepage Hero component (Asymmetrical layout, real PFP anchor, identity tags, FA6 brand social links, compact music shell).
-  - [x] 3. Implement custom WebGL procedural atmosphere (`ShaderBackground`) using React Three Fiber, Three.js, and custom GLSL shaders with volumetric FBM noise, domain warping, editorial charcoal/slate/silver palette, and cursor parallax interaction.
+  - [ ] 3. Atmospheric WebGL background (Deferred until the rest of the portfolio is complete).
   - [x] 4. Integrate desktop top bar with favicon, "DedSec" brand mark, and email connector; configure mobile bottom navigation.
   - [x] 5. Implement responsive stacking and full viewport QA across 1440px, 1024px, 768px, and 375px.
   - [x] 6. Implement `@media (prefers-reduced-motion: reduce)` accessibility across animations and shader effects.
