@@ -16,10 +16,10 @@
 - **Tasks**:
   - [x] 1. Create global layout (`src/app/layout.tsx`) including minimalist navigation bar, footer, and App Router metadata/favicon integration.
   - [x] 2. Build the Homepage Hero component (Asymmetrical layout, real PFP anchor, identity tags, FA6 brand social links, compact music shell).
-  - [x] 3. Implement custom 2D canvas `StormAtmosphere` with volumetric FBM noise, charcoal palette, and cursor parallax interaction.
+  - [x] 3. Implement custom WebGL procedural atmosphere (`ShaderBackground`) using React Three Fiber, Three.js, and custom GLSL shaders with volumetric FBM noise, domain warping, editorial charcoal/slate/silver palette, and cursor parallax interaction.
   - [x] 4. Integrate desktop top bar with favicon, "DedSec" brand mark, and email connector; configure mobile bottom navigation.
   - [x] 5. Implement responsive stacking and full viewport QA across 1440px, 1024px, 768px, and 375px.
-  - [x] 6. Implement `@media (prefers-reduced-motion: reduce)` accessibility across animations and canvas effects.
+  - [x] 6. Implement `@media (prefers-reduced-motion: reduce)` accessibility across animations and shader effects.
   - [x] 7. Validate entire build pipeline (`typecheck`, `lint`, `test`, `build`).
 
 ## Phase 3: Content Architecture (MDX)

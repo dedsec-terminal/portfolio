@@ -1,7 +1,6 @@
 import Avatar from '@/components/ui/Avatar';
 import { FileText, Mail } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaDiscord, FaXTwitter } from 'react-icons/fa6';
-import StormAtmosphere from '@/components/features/StormAtmosphere';
 import MusicShell from '@/components/features/MusicShell';
 
 /*
@@ -31,10 +30,7 @@ export default function Hero() {
       aria-label="Introduction"
       className="relative min-h-[calc(100svh-3rem)] flex flex-col overflow-hidden"
     >
-      {/* ── Background: Storm Atmosphere ────────────────────────── */}
-      <StormAtmosphere />
-
-      {/* Content wrapper to stay above canvas */}
+      {/* Content wrapper */}
       <div className="relative z-10 flex-1 flex flex-col w-full">
         {/* Composition grid */}
       <div

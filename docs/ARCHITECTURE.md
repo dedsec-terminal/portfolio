@@ -42,8 +42,10 @@
 ## 4. Component Architecture
 
 - **Server Components (Default)**: Used for data fetching, reading MDX, reading Signal JSON files.
-- **Client Components**: Used sparingly for interactive elements (e.g., music player toggle, Discord presence fetching, mobile menu).
+- **Client Components**: Used for interactive elements (e.g., WebGL ShaderBackground, music player toggle, Discord presence fetching, mobile menu).
 - **Design System**: Muted, mature aesthetic. Near-black backgrounds, charcoal surfaces, muted gray typography, subtle green/blue accents, thin borders. No heavy gradients or excessive glow.
+- **Atmospheric Visual Subsystem**: GPU-accelerated procedural background built with React Three Fiber (R3F), Three.js, and custom GLSL shaders (`ShaderBackground.tsx`, `ShaderScene.tsx`, `atmosphere.vert.ts`, `atmosphere.frag.ts`). Features multi-octave Fractal Brownian Motion (FBM), 2-stage fluid domain warping, smooth cursor parallax, scroll inertia, and prefers-reduced-motion accessibility support.
+
 
 ## 5. Signal Architecture
 
