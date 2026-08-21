@@ -1,32 +1,41 @@
 'use client';
 
+/**
+ * ShaderBackground — Page-level R3F procedural atmosphere.
+ *
+ * Mounting strategy: Both mount detection and reduced-motion use
+ * `useSyncExternalStore` with proper server/client snapshots.
+ * This is the React-recommended pattern for SSR-safe client-only state,
+ * and passes the react-hooks/set-state-in-effect lint rule.
+ *
+ * Canvas: alpha=false (opaque), orthographic camera, z-0 fixed.
+ * Content layer: z-10 via page.tsx wrapper.
+ */
+
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { Canvas } from '@react-three/fiber';
 import ShaderScene from './ShaderScene';
 
-const emptySubscribe = () => () => {};
-
+// ── Mount detection (server → false, client → true) ───────────────────
+// useSyncExternalStore triggers a synchronous client re-render when
+// server and client snapshots differ. The empty subscribe is intentional:
+// this store never changes after hydration.
+const noop = () => () => {};
 function useIsMounted() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
+  return useSyncExternalStore(noop, () => true, () => false);
 }
 
+// ── Reduced-motion (server → false, client → matchMedia result) ───────
 function useReducedMotion() {
   return useSyncExternalStore(
-    (callback) => {
+    (cb) => {
       if (typeof window === 'undefined') return () => {};
-      const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-      query.addEventListener('change', callback);
-      return () => query.removeEventListener('change', callback);
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      mq.addEventListener('change', cb);
+      return () => mq.removeEventListener('change', cb);
     },
-    () => {
-      if (typeof window === 'undefined') return false;
-      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    },
-    () => false
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    () => false  // server snapshot
   );
 }
 
@@ -38,35 +47,39 @@ export default function ShaderBackground() {
   const scrollRef = useRef<number>(0);
 
   useEffect(() => {
-    // Window mouse tracking for smooth non-blocking cursor reaction
     const onMouseMove = (e: MouseEvent) => {
       const w = window.innerWidth || 1;
       const h = window.innerHeight || 1;
       mouseRef.current = {
         x: Math.max(0, Math.min(1, e.clientX / w)),
-        y: Math.max(0, Math.min(1, 1.0 - e.clientY / h)), // Inverted for WebGL UV space
+        y: Math.max(0, Math.min(1, 1.0 - e.clientY / h)),
       };
     };
 
-    // Window scroll tracking
-    const onScroll = () => {
-      scrollRef.current = window.scrollY;
-    };
+    const onScroll = () => { scrollRef.current = window.scrollY; };
 
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('scroll', onScroll, { passive: true });
-
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
 
+  /* SSR / pre-hydration: flat background div — no layout shift, no mismatch. */
   if (!mounted) {
     return (
       <div
         aria-hidden="true"
-        className="fixed inset-0 w-full h-full pointer-events-none z-0 bg-background"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none',
+          backgroundColor: '#09090b',
+        }}
       />
     );
   }
@@ -74,27 +87,33 @@ export default function ShaderBackground() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden"
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
+        inset: 0,
         width: '100vw',
         height: '100vh',
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden',
       }}
     >
       <Canvas
         gl={{
-          alpha: true,
-          antialias: false,
+          alpha: false,           // opaque; no CSS compositing needed
+          antialias: false,       // fullscreen quad — MSAA is wasted cost
           powerPreference: 'high-performance',
+          depth: false,
+          stencil: false,
         }}
-        dpr={[1, 2]}
-        camera={{ position: [0, 0, 1] }}
+        dpr={[1, Math.min(2, window.devicePixelRatio ?? 1)]}
+        orthographic
+        camera={{ position: [0, 0, 1], near: 0.1, far: 10, zoom: 1 }}
         style={{
+          position: 'absolute',
+          inset: 0,
           width: '100%',
           height: '100%',
-          pointerEvents: 'none',
+          display: 'block',
         }}
       >
         <ShaderScene
