@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import TopNav from '@/components/layout/TopNav';
 import MobileNav from '@/components/layout/MobileNav';
 import SiteFooter from '@/components/layout/SiteFooter';
@@ -53,6 +54,7 @@ export default function RootLayout({
         </main>
         <SiteFooter />
         <MobileNav />
+        <Analytics />
       </body>
     </html>
   );
