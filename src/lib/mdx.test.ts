@@ -14,9 +14,18 @@ describe('MDX Parser and Validator', () => {
     );
     const parsed = parseContent(dir, projectSchema);
     expect(parsed).toBeInstanceOf(Array);
+    // At least one sample fixture must be present
     expect(parsed.length).toBeGreaterThan(0);
-    expect(parsed[0].title).toBe('Fictional Project');
-    expect(parsed[0].slug).toBe('fictional-project');
+    // All parsed projects must have required fields
+    parsed.forEach((project) => {
+      expect(typeof project.title).toBe('string');
+      expect(typeof project.date).toBe('string');
+      expect(typeof project.description).toBe('string');
+      expect(Array.isArray(project.tags)).toBe(true);
+      expect(typeof project.slug).toBe('string');
+    });
+    // Sample fixture must use the __ prefix convention
+    expect(parsed[0].slug).toMatch(/^__/);
   });
 
   test('should parse and validate writeup markdown correctly', () => {
@@ -30,6 +39,13 @@ describe('MDX Parser and Validator', () => {
     const parsed = parseContent(dir, writeupSchema);
     expect(parsed).toBeInstanceOf(Array);
     expect(parsed.length).toBeGreaterThan(0);
-    expect(parsed[0].title).toBe('Sample Writeup');
+    // All parsed writeups must have required fields
+    parsed.forEach((writeup) => {
+      expect(typeof writeup.title).toBe('string');
+      expect(typeof writeup.date).toBe('string');
+      expect(Array.isArray(writeup.tags)).toBe(true);
+    });
+    // Sample fixtures must use the __ prefix convention
+    expect(parsed[0].slug).toMatch(/^__/);
   });
 });

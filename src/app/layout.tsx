@@ -1,25 +1,38 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Inter, Geist_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
+import TopNav from '@/components/layout/TopNav';
+import MobileNav from '@/components/layout/MobileNav';
+import SiteFooter from '@/components/layout/SiteFooter';
 import './globals.css';
 
+/*
+  Font pairing decision:
+  - Inter: clean, neutral, extremely legible for professional body text.
+    Used for UI, body, navigation.
+  - JetBrains Mono: technically credible without being cliché hacker-font.
+    Better character rendering for code/metadata than Geist Mono.
+    Used for metadata, tags, dates, monospace accents.
+*/
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-jetbrains-mono',
   subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: {
     template: '%s | Swaraj Singh',
-    default: 'Swaraj Singh | Personal Website',
+    default: 'Swaraj Singh',
   },
   description:
-    'Personal website, portfolio, and curated signal of Swaraj Singh.',
+    'Cybersecurity enthusiast. SOC, GRC, security research. Personal site and curated digital space.',
+  metadataBase: new URL('https://example.com'),
 };
 
 export default function RootLayout({
@@ -30,31 +43,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <header className="w-full max-w-3xl mx-auto px-6 py-8 flex justify-between items-center border-b border-surface/50">
-          <nav className="flex space-x-6 text-sm font-medium">
-            <Link href="/" className="hover:text-accent transition-colors">
-              Home
-            </Link>
-            <Link href="/projects" className="hover:text-accent transition-colors">
-              Projects
-            </Link>
-            <Link href="/writeups" className="hover:text-accent transition-colors">
-              Writeups
-            </Link>
-            <Link href="/signal" className="hover:text-accent transition-colors">
-              Signal
-            </Link>
-          </nav>
-        </header>
-        <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-12">
+        <TopNav />
+        {/* main has no horizontal constraint — pages control their own layout */}
+        <main id="main-content" className="flex-1">
           {children}
         </main>
-        <footer className="w-full max-w-3xl mx-auto px-6 py-8 border-t border-surface/50 text-muted text-sm text-center">
-          <p>© {new Date().getFullYear()} Swaraj Singh. All rights reserved.</p>
-        </footer>
+        <SiteFooter />
+        <MobileNav />
       </body>
     </html>
   );
