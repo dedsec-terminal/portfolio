@@ -32,6 +32,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   metadataBase: siteConfig.url ? new URL(siteConfig.url) : undefined,
+  alternates: siteConfig.url ? { canonical: '/' } : undefined,
   authors: [{ name: siteConfig.name, url: siteConfig.links.github }],
   creator: siteConfig.name,
   publisher: siteConfig.name,
