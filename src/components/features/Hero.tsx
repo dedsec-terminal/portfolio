@@ -2,6 +2,7 @@ import Avatar from '@/components/ui/Avatar';
 import { FileText, Mail } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaDiscord, FaXTwitter } from 'react-icons/fa6';
 import MusicShell from '@/components/features/MusicShell';
+import HeroShaderBackground from '@/components/features/HeroShaderBackground';
 import { siteConfig } from '@/lib/site';
 
 /*
@@ -34,6 +35,8 @@ export default function Hero() {
       aria-label="Introduction"
       className="relative min-h-[calc(100svh-3rem)] flex flex-col overflow-hidden"
     >
+      <HeroShaderBackground />
+
       {/* Content wrapper */}
       <div className="relative z-10 flex-1 flex flex-col w-full">
         {/* Composition grid */}
@@ -86,20 +89,20 @@ export default function Hero() {
               >
                 Swaraj Singh
               </h1>
-              <p className="mt-3 text-base text-muted font-light tracking-widest">
+              <p className="mt-3 text-base text-zinc-300 font-light tracking-widest">
                 cybersecurity enthusiast
               </p>
             </div>
 
             {/* Specialty tags */}
             <div
-              className="flex items-center gap-2 text-xs font-mono text-subtle tracking-widest uppercase"
+              className="flex items-center gap-2 text-xs font-mono text-zinc-300 tracking-widest uppercase"
               aria-label="Areas of focus"
             >
               {specialties.map((tag, i) => (
                 <span key={tag} className="flex items-center gap-2">
                   {i > 0 && (
-                    <span className="text-border/50" aria-hidden="true">
+                    <span className="text-white/30" aria-hidden="true">
                       ·
                     </span>
                   )}
@@ -109,7 +112,7 @@ export default function Hero() {
             </div>
 
             {/* Divider */}
-            <div className="w-6 h-px bg-border/60" aria-hidden="true" />
+            <div className="w-6 h-px bg-white/40" aria-hidden="true" />
 
             {/* Social links */}
             <nav aria-label="Social profiles">
@@ -124,8 +127,8 @@ export default function Hero() {
                         target="_blank"
                         className="
                           inline-flex items-center gap-1.5
-                          text-sm text-muted
-                          hover:text-foreground
+                          text-sm text-zinc-300
+                          hover:text-white
                           transition-colors duration-200
                         "
                       >
@@ -140,7 +143,7 @@ export default function Hero() {
                       <span
                         className="
                           inline-flex items-center gap-1.5
-                          text-sm text-muted
+                          text-sm text-zinc-300
                           transition-colors duration-200
                         "
                         title="Discord Username"
@@ -159,11 +162,11 @@ export default function Hero() {
             </nav>
 
             {/* Contact email */}
-            <p className="text-xs text-muted/80 font-light flex items-center gap-1.5 pt-0.5">
+            <p className="text-xs text-zinc-300/80 font-light flex items-center gap-1.5 pt-0.5">
               Feel free to contact me:{' '}
               <a
                 href={`mailto:${siteConfig.email}`}
-                className="inline-flex items-center gap-1 text-muted/80 hover:text-foreground transition-colors duration-200 underline underline-offset-4 decoration-border/40 hover:decoration-foreground/60"
+                className="inline-flex items-center gap-1 text-zinc-300/80 hover:text-white transition-colors duration-200 underline underline-offset-4 decoration-white/30 hover:decoration-white/70"
                 aria-label="Send email to Swaraj Singh"
               >
                 <Mail size={12} aria-hidden="true" className="opacity-70" />
@@ -176,8 +179,8 @@ export default function Hero() {
               href="/resume"
               className="
               inline-flex items-center gap-1.5
-              text-[11px] font-mono text-subtle/70
-              hover:text-foreground
+              text-[11px] font-mono text-zinc-300/80
+              hover:text-white
               transition-colors duration-200
               self-start tracking-[0.12em] uppercase
             "
@@ -199,7 +202,7 @@ export default function Hero() {
             className="scroll-affordance flex justify-center w-full"
           >
             <div
-              className="w-px bg-border/50"
+              className="w-px bg-white/40"
               style={{
                 height: '28px',
                 animation: 'scrollPulse 1400ms ease-in-out infinite alternate',

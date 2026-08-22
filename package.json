@@ -16,6 +16,8 @@
     "resume:pdf": "node scripts/generate-pdf.mjs"
   },
   "dependencies": {
+    "@paper-design/shaders": "0.0.80",
+    "@paper-design/shaders-react": "0.0.80",
     "@radix-ui/react-popover": "^1.1.23",
     "@radix-ui/react-slider": "^1.4.7",
     "@vercel/analytics": "^2.0.1",
