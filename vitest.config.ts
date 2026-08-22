@@ -4,5 +4,6 @@ export default defineConfig({
   plugins: [],
   test: {
     environment: 'node',
+    exclude: ['.tmp/**', 'node_modules/**'],
   },
 });

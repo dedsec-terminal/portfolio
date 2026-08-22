@@ -1,13 +1,13 @@
 "use client";
 
-import { Download, FileJson, FileText, Printer } from "lucide-react";
+import { Download, FileJson, FileText } from "lucide-react";
 import Link from "next/link";
 
 export function AgentEndpoints() {
   const linkCls = "inline-flex items-center gap-1.5 hover:text-foreground transition-colors";
   
   return (
-    <footer className="mt-6 flex flex-wrap justify-center gap-6 text-[8.5pt] text-muted-foreground print:hidden pb-12">
+    <footer data-resume-actions className="mt-6 flex flex-wrap justify-center gap-6 pb-12 text-[8.5pt] text-muted-foreground print:hidden">
       <Link href="/resume.json" className={linkCls} prefetch={false}>
         <FileJson size={14} />
         <span>JSON</span>
@@ -22,14 +22,6 @@ export function AgentEndpoints() {
         <Download size={14} />
         <span>PDF</span>
       </a>
-
-
-      
-      <div className="w-full text-center mt-2">
-        <Link href="/" className="hover:text-foreground underline underline-offset-4">
-          &larr; Back to Portfolio
-        </Link>
-      </div>
     </footer>
   );
 }

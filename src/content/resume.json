@@ -20,7 +20,7 @@
         {
           "title": "SOC Analyst",
           "organization": "Knowledge Mine Info Media",
-          "dateRange": "June 2026–August 2026",
+          "dateRange": "Jun-Aug 2026",
           "bullets": [
             "Conducted proactive threat hunts by correlating external OSINT indicators with internal firewall logs; investigated IAM anomalies and phishing campaigns and documented findings using MITRE ATT&CK for Tier 2 escalation.",
             "Supported enterprise GRC initiatives and NIST SP 800-53 compliance audits, prepared risk-management documentation, and ran automated VAPT scans to prioritize remediation.",
@@ -30,7 +30,7 @@
         {
           "title": "Product Development Intern",
           "organization": "SYNIRIS Technologies",
-          "dateRange": "June 2025–August 2025",
+          "dateRange": "Jun-Aug 2025",
           "bullets": [
             "Developed centralized role-based authentication workflows, reducing administrative onboarding and configuration time by 35%.",
             "Led PASTA threat-modeling sessions that surfaced 12+ potential attack vectors early in design and reduced post-deployment application-security defects by 40%."
@@ -39,7 +39,8 @@
         {
           "title": "Project Trainee Intern",
           "organization": "ARC SOLUTIONS",
-          "dateRange": "June 2024–August 2024",
+          "dateRange": "Jun-Aug 2024",
+          "summary": "Melbourne, Australia · Remote",
           "bullets": [
             "Built Sentinel-1 SAR data-processing workflows in Google Earth Engine for large-scale environmental mapping and produced technical implementation reports."
           ]
@@ -52,30 +53,37 @@
       "entries": [
         {
           "title": "Faultplane",
+          "link": { "url": "https://dedsec-terminal.github.io/Faultplane/", "label": "Live" },
+          "metadata": "Python · Groq API · GitHub Actions · NVD 2.0 · CISA KEV",
           "bullets": [
-            "Built an automated threat-intelligence platform that aggregates 10+ authoritative security sources, enriches vulnerabilities through NVD and CISA KEV, generates executive summaries, and publishes daily through GitHub Actions.",
-            "**Technologies:** Python, Groq API, GitHub Actions, NVD 2.0, CISA KEV"
+            "Built an automated threat-intelligence platform that aggregates 10+ authoritative security sources, enriches vulnerabilities through NVD and CISA KEV, generates executive summaries, and publishes daily through GitHub Actions."
           ]
         },
         {
           "title": "LedgerCast",
+          "link": { "url": "https://dedsec-terminal.github.io/LedgerCast/", "label": "Live" },
+          "metadata": "Python · ITGC / SOX · ISO 27001 · NIST CSF 2.0 · COBIT 2019",
           "bullets": [
             "Developed a packaged CLI and client-side dashboard for testing access management, change management, backup and recovery, and segregation-of-duties controls, with findings management and framework crosswalking.",
-            "**Technologies:** Python, ITGC / SOX, ISO 27001, NIST CSF 2.0, COBIT 2019"
+            "Added client-side CSV re-testing and DOCX audit-report generation for repeatable control reviews."
           ]
         },
         {
           "title": "PolicyForge",
+          "link": { "url": "https://dedsec-terminal.github.io/PolicyForge/", "label": "Live" },
+          "metadata": "Security Governance · ISO 27001 · NIST CSF 2.0 · DPDP Act 2023",
           "bullets": [
-            "Built an information-security governance suite with eight security policies, numbered safeguards, control-to-framework traceability, and exception/review registers mapped across major security and privacy frameworks.",
-            "**Technologies:** Security Governance, Policy Engineering, Control Traceability, ISO 27001, NIST CSF 2.0, DPDP Act 2023"
+            "Created a portfolio GRC programme for a fictional fintech with eight security policies, numbered safeguards, a control-traceability matrix, and exception and review-cadence registers mapped to major security and privacy frameworks.",
+            "Defined evidence expectations and review cycles while keeping the suite clearly illustrative."
           ]
         },
         {
           "title": "Agentic IaC Vulnerability Detection & Remediation",
+          "link": { "url": "https://github.com/dedsec-terminal/IaC-Vulnerability-Detection-Remediation", "label": "Project" },
+          "metadata": "Python · Terraform · Docker · Checkov · LLM Workflows · Streamlit",
           "bullets": [
             "Built an automated DevSecOps workflow that detects Infrastructure-as-Code security misconfigurations, generates remediated configurations, and validates proposed fixes with Checkov before presenting results.",
-            "**Technologies:** Python, Terraform, Docker, Checkov, LLM Workflows, Streamlit"
+            "Supports Terraform and Dockerfile inputs with severity classification and original-versus-remediated comparison."
           ]
         }
       ]
@@ -84,12 +92,8 @@
       "kind": "skills",
       "label": "Skills",
       "bullets": [
-        "**SOC & Detection:** Threat Hunting, Alert Triage, Log Analysis & Correlation, Incident Response, Phishing Investigation, Malware Triage, IAM Investigation, Vulnerability Management, MITRE ATT&CK, IoC Analysis",
-        "**Security Operations:** Microsoft Sentinel, SentinelOne, Splunk, ELK Stack, Wazuh, Zeek, Suricata, Sysmon, Wireshark, Nmap, Nessus",
-        "**GRC & Risk:** NIST SP 800-53, NIST CSF 2.0, ISO 27001, ISO 27701, COBIT 2019, DPDP Act 2023, ITGC / SOX Control Testing, Risk Assessment, Control Mapping, Audit Evidence, Security Governance, ServiceNow GRC / IRM",
-        "**Application & Cloud Security:** IAM, RBAC, PASTA Threat Modeling, VAPT, Burp Suite, Metasploit, Checkov, Azure Security, AWS Security, Active Directory, Docker, Terraform, CI/CD",
-        "**Forensics & Security Research:** Autopsy, Volatility, Ghidra, OSINT, CVE Analysis, NVD 2.0, CISA KEV, Threat Intelligence, Technical Security Research",
-        "**Programming & Infrastructure:** Python, Bash, PowerShell, SQL, JavaScript, C/C++, Git, GitHub Actions, Linux, Windows Server, TCP/IP"
+        "**SOC, Detection & GRC:** Threat Hunting, Alert Triage, Incident Response, MITRE ATT&CK, Microsoft Sentinel, SentinelOne, Splunk, NIST SP 800-53, NIST CSF 2.0, ISO 27001/27701, ITGC / SOX, ServiceNow GRC / IRM",
+        "**Security Engineering & Automation:** Python, Bash, PowerShell, Terraform, Docker, Checkov, GitHub Actions, IAM / RBAC, PASTA Threat Modeling, VAPT, OSINT, CVE Analysis, NVD 2.0, CISA KEV"
       ]
     },
     {
@@ -97,14 +101,12 @@
       "label": "Education & Credentials",
       "entries": [
         {
-          "title": "B.Tech in Computer Science & IT — Cyber Security, Symbiosis Skills and Professional University",
-          "dateRange": "2023–2027"
+          "title": "B.Tech in Computer Science & IT - Cyber Security",
+          "dateRange": "2023-2027",
+          "summary": "Symbiosis Skills and Professional University"
         },
-        { "title": "CREST CTF Competition — Top 10" },
-        { "title": "Certified SME Cyber Security Officer (CSCSO)" },
-        { "title": "ISO 27701 Lead Auditor — Mastermind Assurance" },
-        { "title": "Ethical Hacker — Cisco Networking Academy" },
-        { "title": "Microsoft Security Operations Analyst (SC-200) Expected November 2026" }
+        { "title": "CREST CTF - Top 10 · CSCSO · Cisco Ethical Hacker" },
+        { "title": "ISO 27701 Lead Auditor · SC-200 expected Nov 2026" }
       ]
     }
   ]

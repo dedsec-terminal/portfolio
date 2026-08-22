@@ -135,6 +135,9 @@ h1, h2, h3, h4, h5, h6 {
   .resume-no-print {
     display: none !important;
   }
+  [data-resume-actions] {
+    display: none !important;
+  }
   body, .resume-page {
     min-height: auto !important;
   }
@@ -146,6 +149,8 @@ h1, h2, h3, h4, h5, h6 {
   --t-baseline-paper: var(--color-neutral-900, #171717);
   --t-baseline-ink: var(--color-neutral-300, #d4d4d8);
   --t-baseline-heading: #f5f5f8;
+  --t-baseline-muted: var(--color-neutral-400, #a3a3a3);
+  --t-baseline-font: var(--font-inter);
 
   --t-baseline-skills-heading: #85c9a1;
   --t-baseline-skills-bullet: #7bb393;
@@ -162,8 +167,6 @@ h1, h2, h3, h4, h5, h6 {
   --t-baseline-education-heading: #e7a685;
   --t-baseline-education-bullet: #cd977b;
   --t-baseline-education-line: #603e2d;
-
-  --t-baseline-font: var(--font-inter);
 }
 
 @page {
@@ -176,8 +179,10 @@ h1, h2, h3, h4, h5, h6 {
     color-scheme: light;
     --t-baseline-backdrop: white;
     --t-baseline-paper: white;
-    --t-baseline-ink: #3e3e4a;
-    --t-baseline-heading: #191924;
+    --t-baseline-ink: oklch(0.16 0 0);
+    --t-baseline-heading: oklch(0.08 0 0);
+    --t-baseline-muted: oklch(0.36 0 0);
+    --t-baseline-font: var(--font-inter);
 
     --t-baseline-skills-heading: #00532e;
     --t-baseline-skills-bullet: #005732;
@@ -194,8 +199,6 @@ h1, h2, h3, h4, h5, h6 {
     --t-baseline-education-heading: #722a00;
     --t-baseline-education-bullet: #7a2b00;
     --t-baseline-education-line: #ffe1d2;
-
-    --t-baseline-font: Georgia, "Times New Roman", Times, serif;
   }
 }
 

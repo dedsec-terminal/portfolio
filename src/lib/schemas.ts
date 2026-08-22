@@ -90,6 +90,11 @@ const skillsSection = z.object({
 const projectEntry = z.object({
   title: z.string(),
   dateRange: z.string().optional(),
+  metadata: z.string().optional().describe("Compact inline technology context"),
+  link: z.object({
+    url: z.string().url(),
+    label: z.string(),
+  }).optional(),
   bullets: z.array(bullet),
   ...provenance,
 });
@@ -129,6 +134,7 @@ const experiencesSection = z.object({
 const educationEntry = z.object({
   title: z.string(),
   dateRange: z.string().optional(),
+  summary: z.string().optional().describe("Compact secondary school or credential context"),
   bullets: z.array(bullet).optional(),
   ...provenance,
 });

@@ -43,7 +43,6 @@ function countCharsBelow(article: HTMLElement, boundaryY: number): number {
 
 export function PageEdge() {
   const anchorRef = useRef<HTMLDivElement>(null);
-  const [overflowPx, setOverflowPx] = useState(0);
   const [overflowChars, setOverflowChars] = useState(0);
   const [isPageLayoutViewport, setIsPageLayoutViewport] = useState(false);
 
@@ -62,7 +61,6 @@ export function PageEdge() {
     const measure = () => {
       const rect = article.getBoundingClientRect();
       const overflow = Math.max(0, rect.height - PAGE_PX);
-      setOverflowPx(overflow);
       if (overflow > 0) {
         const boundaryY = rect.top + PAGE_PX;
         setOverflowChars(countCharsBelow(article, boundaryY));

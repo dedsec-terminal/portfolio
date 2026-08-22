@@ -1,10 +1,12 @@
 import puppeteer from 'puppeteer';
 import { spawn } from 'child_process';
 import http from 'http';
+import path from 'path';
 
-const PORT = 3100;
+const PORT = 3200 + Math.floor(Math.random() * 800);
 const URL = `http://localhost:${PORT}/resume`;
 const OUTPUT_PATH = 'public/resume.pdf';
+const nextCli = path.join(process.cwd(), 'node_modules', 'next', 'dist', 'bin', 'next');
 
 // Helper to wait for server
 const waitForServer = (url, timeout = 30000) => {
@@ -30,9 +32,9 @@ const waitForServer = (url, timeout = 30000) => {
 async function generatePdf() {
   console.log(`[1/5] Starting Next.js server on port ${PORT}...`);
   // Note: assumes `npm run build` was already run.
-  const serverProcess = spawn('npx', ['next', 'start', '-p', String(PORT)], {
-    stdio: 'ignore', // ignoring output to keep console clean
-    shell: true,
+  const serverProcess = spawn(process.execPath, [nextCli, 'start', '-p', String(PORT)], {
+    stdio: 'ignore',
+    windowsHide: true,
   });
 
   try {
