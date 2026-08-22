@@ -2,16 +2,16 @@ import Avatar from '@/components/ui/Avatar';
 import { FileText, Mail } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaDiscord, FaXTwitter } from 'react-icons/fa6';
 import MusicShell from '@/components/features/MusicShell';
+import { siteConfig } from '@/lib/site';
 
 /*
   Social links — using react-icons/fa6 for brand icons.
-  Replace hrefs with real profile URLs before publishing.
 */
 const socials = [
-  { label: 'GitHub',   href: '#github',   icon: FaGithub },
-  { label: 'LinkedIn', href: '#linkedin', icon: FaLinkedin },
-  { label: 'Discord',  href: '#discord',  icon: FaDiscord },
-  { label: 'X',        href: '#twitter',  icon: FaXTwitter },
+  { label: 'GitHub',   href: siteConfig.links.github,   icon: FaGithub },
+  { label: 'LinkedIn', href: siteConfig.links.linkedin, icon: FaLinkedin },
+  { label: siteConfig.links.discord, icon: FaDiscord },
+  { label: 'X',        href: siteConfig.links.x,        icon: FaXTwitter },
 ];
 
 const specialties = ['SOC', 'GRC', 'Security Research'];
@@ -101,25 +101,43 @@ export default function Hero() {
               <ul className="flex flex-wrap gap-x-5 gap-y-2 list-none m-0 p-0">
                 {socials.map(({ label, href, icon: Icon }) => (
                   <li key={label}>
-                    <a
-                      href={href}
-                      aria-label={`${label} profile`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      className="
-                        inline-flex items-center gap-1.5
-                        text-sm text-muted
-                        hover:text-foreground
-                        transition-colors duration-200
-                      "
-                    >
-                      <Icon
-                        size={13}
-                        aria-hidden="true"
-                        className="opacity-70"
-                      />
-                      {label}
-                    </a>
+                    {href ? (
+                      <a
+                        href={href}
+                        aria-label={`${label} profile`}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        className="
+                          inline-flex items-center gap-1.5
+                          text-sm text-muted
+                          hover:text-foreground
+                          transition-colors duration-200
+                        "
+                      >
+                        <Icon
+                          size={13}
+                          aria-hidden="true"
+                          className="opacity-70"
+                        />
+                        {label}
+                      </a>
+                    ) : (
+                      <span
+                        className="
+                          inline-flex items-center gap-1.5
+                          text-sm text-muted
+                          transition-colors duration-200
+                        "
+                        title="Discord Username"
+                      >
+                        <Icon
+                          size={13}
+                          aria-hidden="true"
+                          className="opacity-70"
+                        />
+                        {label}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -129,7 +147,7 @@ export default function Hero() {
           <p className="text-xs text-muted/80 font-light flex items-center gap-1.5 pt-0.5">
             Feel free to contact me:{' '}
             <a
-              href="mailto:swarajsingh211@gmail.com"
+              href={`mailto:${siteConfig.email}`}
               className="inline-flex items-center gap-1 text-muted/80 hover:text-foreground transition-colors duration-200 underline underline-offset-4 decoration-border/40 hover:decoration-foreground/60"
               aria-label="Send email to Swaraj Singh"
             >
