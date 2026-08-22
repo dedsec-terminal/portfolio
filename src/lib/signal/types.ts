@@ -10,7 +10,7 @@ export interface SignalItem {
   tier: SignalTier;
   image?: string;
   timestamp?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SignalSourceAdapter {

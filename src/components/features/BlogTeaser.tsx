@@ -1,29 +1,7 @@
-import path from 'path';
-import { parseContent } from '@/lib/mdx';
-import { blogSchema } from '@/lib/schemas';
-
-type BlogPost = {
-  title: string;
-  date: string;
-  description: string;
-  tags: string[];
-  slug: string;
-  content: string;
-};
-
-function getBlogPosts(): BlogPost[] {
-  try {
-    const dir = path.join(process.cwd(), 'src/content/professional/blog');
-    return parseContent(dir, blogSchema)
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .slice(0, 3);
-  } catch {
-    return [];
-  }
-}
+import { getContent } from '@/lib/content';
 
 export default function BlogTeaser() {
-  const posts = getBlogPosts();
+  const posts = getContent('blog').slice(0, 3);
 
   return (
     <section aria-label="Writing" className="py-16 md:py-20 border-t border-border/30">

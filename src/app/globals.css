@@ -1,46 +1,47 @@
 @import 'tailwindcss';
 
 @theme inline {
-  --color-background:     var(--background);
-  --color-surface:        var(--surface);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
-  --color-border:         var(--border);
-  --color-foreground:     var(--foreground);
-  --color-muted:          var(--muted);
-  --color-subtle:         var(--subtle);
-  --color-accent:         var(--accent);
-  --color-accent-dim:     var(--accent-dim);
-  --color-status:         var(--status);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-status: var(--status);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-mono:
+    var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
   /* Backgrounds */
-  --background:     #09090b;
-  --surface:        #18181b;
+  --background: #09090b;
+  --surface: #18181b;
   --surface-raised: #27272a;
 
   /* Borders */
-  --border:         #3f3f46;
+  --border: #3f3f46;
 
   /* Text */
-  --foreground:     #f4f4f5;
-  --muted:          #71717a;
-  --subtle:         #52525b;
+  --foreground: #f4f4f5;
+  --muted: #71717a;
+  --subtle: #52525b;
 
   /* Accent — steel blue */
-  --accent:         #3b82f6;
-  --accent-dim:     #1d4ed8;
+  --accent: #3b82f6;
+  --accent-dim: #1d4ed8;
 
   /* Status — subtle green */
-  --status:         #22c55e;
+  --status: #22c55e;
 
   /* Animation timings — overridden by reduced-motion */
-  --duration-slow:  1200ms;
-  --duration-base:  600ms;
-  --duration-fast:  200ms;
+  --duration-slow: 1200ms;
+  --duration-base: 600ms;
+  --duration-fast: 200ms;
 }
 
 /* ─── Reduced motion ─────────────────────────────────────── */
@@ -117,10 +118,102 @@ body {
 }
 
 /* ─── Typography scale ───────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.2;
+}
+
+/* ─── Content articles ───────────────────────────────────── */
+.article-prose {
+  max-width: 70ch;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.85;
+}
+
+.article-prose--dense {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.article-prose > * + * {
+  margin-top: 1.4rem;
+}
+.article-prose h2,
+.article-prose h3,
+.article-prose h4 {
+  color: var(--foreground);
+  margin-top: 2.6rem;
+}
+.article-prose h2 {
+  font-size: 1.55rem;
+}
+.article-prose h3 {
+  font-size: 1.25rem;
+}
+.article-prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article-prose ul,
+.article-prose ol {
+  padding-left: 1.4rem;
+}
+.article-prose ul {
+  list-style: disc;
+}
+.article-prose ol {
+  list-style: decimal;
+}
+.article-prose li + li {
+  margin-top: 0.4rem;
+}
+.article-prose blockquote {
+  border-left: 2px solid var(--border);
+  color: var(--subtle);
+  padding-left: 1rem;
+}
+.article-prose code {
+  border-radius: 0.25rem;
+  background: var(--surface);
+  color: var(--foreground);
+  padding: 0.15rem 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+.article-prose pre {
+  overflow-x: auto;
+  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+  background: var(--surface);
+  padding: 1rem;
+}
+.article-prose pre code {
+  background: transparent;
+  padding: 0;
+}
+.article-prose img {
+  height: auto;
+  max-width: 100%;
+  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+}
+.article-prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+.article-prose th,
+.article-prose td {
+  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
 }
 
 /* ─── Resume Print ───────────────────────────────────────── */
@@ -138,12 +231,13 @@ h1, h2, h3, h4, h5, h6 {
   [data-resume-actions] {
     display: none !important;
   }
-  body, .resume-page {
+  body,
+  .resume-page {
     min-height: auto !important;
   }
 }
 
-[data-resume-theme="baseline"] {
+[data-resume-theme='baseline'] {
   color-scheme: dark;
   --t-baseline-backdrop: var(--color-stone-950, #0c0a09);
   --t-baseline-paper: var(--color-neutral-900, #171717);
@@ -175,7 +269,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media print {
-  [data-resume-theme="baseline"] {
+  [data-resume-theme='baseline'] {
     color-scheme: light;
     --t-baseline-backdrop: white;
     --t-baseline-paper: white;
@@ -201,4 +295,3 @@ h1, h2, h3, h4, h5, h6 {
     --t-baseline-education-line: #ffe1d2;
   }
 }
-

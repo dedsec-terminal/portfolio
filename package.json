@@ -10,6 +10,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
+    "content:check": "tsx scripts/check-content.ts",
     "signal:generate": "tsx scripts/generate-signal.ts",
     "signal:test": "vitest run",
     "resume:pdf": "node scripts/generate-pdf.mjs"

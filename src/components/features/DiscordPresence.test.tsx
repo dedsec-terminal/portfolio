@@ -66,13 +66,12 @@ describe('DiscordPresence', () => {
     active_on_discord_web: false,
     active_on_discord_desktop: true,
     active_on_discord_mobile: false,
-    listening_to_spotify: false,
-    spotify: null,
   };
 
   it('renders offline state correctly', () => {
     vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence, discord_status: 'offline'
+      ...basePresence,
+      discord_status: 'offline',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
     expect(screen.getByText('Swaraj Singh')).toBeDefined();
@@ -82,7 +81,8 @@ describe('DiscordPresence', () => {
 
   it('renders online state correctly', () => {
     vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence, discord_status: 'online'
+      ...basePresence,
+      discord_status: 'online',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
     expect(screen.getByText('Swaraj Singh')).toBeDefined();
@@ -91,7 +91,8 @@ describe('DiscordPresence', () => {
 
   it('renders idle state correctly', () => {
     vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence, discord_status: 'idle'
+      ...basePresence,
+      discord_status: 'idle',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
     expect(screen.getByText('Swaraj Singh')).toBeDefined();
@@ -99,7 +100,8 @@ describe('DiscordPresence', () => {
 
   it('renders dnd state correctly', () => {
     vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence, discord_status: 'dnd'
+      ...basePresence,
+      discord_status: 'dnd',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
     expect(screen.getByText('Swaraj Singh')).toBeDefined();
@@ -109,7 +111,13 @@ describe('DiscordPresence', () => {
     vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
       ...basePresence,
       activities: [
-        { type: 4, name: 'Custom Status', state: 'Coding', id: 'custom', created_at: 1 },
+        {
+          type: 4,
+          name: 'Custom Status',
+          state: 'Coding',
+          id: 'custom',
+          created_at: 1,
+        },
       ],
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
@@ -119,37 +127,10 @@ describe('DiscordPresence', () => {
   it('renders game activity when present', () => {
     vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
       ...basePresence,
-      activities: [
-        { type: 0, name: 'VS Code', id: 'game', created_at: 1 },
-      ],
+      activities: [{ type: 0, name: 'VS Code', id: 'game', created_at: 1 }],
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
     expect(screen.getByText('VS Code')).toBeDefined();
     expect(screen.getByText(/Playing/)).toBeDefined();
-  });
-
-  it('renders Spotify metadata when present', () => {
-    vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence,
-      spotify: {
-        track_id: '123',
-        timestamps: { start: 1, end: 2 },
-        album: 'Album Name',
-        album_art_url: 'url',
-        artist: 'Artist Name',
-        song: 'Song Name',
-      },
-    } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
-    render(<DiscordPresence />);
-    expect(screen.getByText('Song Name')).toBeDefined();
-    expect(screen.getByText('by Artist Name')).toBeDefined();
-  });
-
-  it('does not crash if Spotify is absent', () => {
-    vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence, spotify: null
-    } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
-    const { container } = render(<DiscordPresence />);
-    expect(container).toBeDefined();
   });
 });

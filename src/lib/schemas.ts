@@ -1,41 +1,78 @@
 import { z } from 'zod';
 
-export const projectSchema = z.object({
-  title: z.string(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
-  description: z.string(),
-  tags: z.array(z.string()),
-  url: z.string().url().optional(),
-  github: z.string().url().optional(),
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export const contentDate = z
+  .string()
+  .regex(datePattern, 'Date must be YYYY-MM-DD')
+  .refine((value) => {
+    const parsed = new Date(`${value}T00:00:00.000Z`);
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+  }, 'Date must be a real calendar date');
+
+export const contentSlug = z
+  .string()
+  .regex(slugPattern, 'Slug must be lowercase URL-safe kebab-case');
+
+const contentTag = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .regex(slugPattern, 'Tags must be lowercase kebab-case');
+
+export const baseContentSchema = z.object({
+  title: z.string().trim().min(1, 'Title is required'),
+  slug: contentSlug.optional(),
+  date: contentDate,
+  description: z.string().trim().min(1, 'Description is required'),
+  tags: z.array(contentTag).default([]),
+  published: z.boolean().default(false),
+  updatedAt: contentDate.optional(),
 });
 
-export const writeupSchema = z.object({
-  title: z.string(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
-  description: z.string(),
-  tags: z.array(z.string()),
-  event: z.string().optional(),
+export const projectSchema = baseContentSchema.extend({
+  technologies: z.array(contentTag).default([]),
+  codeUrl: z.string().url().optional(),
+  liveUrl: z.string().url().optional(),
+  featured: z.boolean().default(false),
+  status: z.string().trim().min(1).optional(),
+  coverImage: z.string().startsWith('/content/', 'Cover image must be a /content/ public URL').optional(),
 });
 
-export const blogSchema = z.object({
-  title: z.string(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
-  description: z.string(),
-  tags: z.array(z.string()),
+export const writeupSchema = baseContentSchema.extend({
+  platform: z.string().trim().min(1).optional(),
+  challenge: z.string().trim().min(1).optional(),
+  category: z.enum(['web', 'pwn', 'crypto', 'reverse', 'forensics', 'misc', 'network', 'cloud']).optional(),
+  difficulty: z.string().trim().min(1).optional(),
 });
 
-export const journalSchema = z.object({
-  title: z.string(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
-  mood: z.string().optional(),
+export const blogSchema = baseContentSchema.extend({
+  coverImage: z.string().startsWith('/content/', 'Cover image must be a /content/ public URL').optional(),
 });
 
-export const artSchema = z.object({
-  title: z.string(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
-  description: z.string(),
-  image: z.string(),
+export const journalSchema = baseContentSchema.extend({
+  mood: z.string().trim().min(1).optional(),
 });
+
+export const artMediaSchema = z.object({
+  src: z.string().startsWith('/content/art/', 'Media source must be a /content/art/ public URL'),
+  alt: z.string().trim().min(1, 'Media alt text is required'),
+  caption: z.string().trim().min(1).optional(),
+  type: z.literal('image').default('image'),
+});
+
+export const artSchema = baseContentSchema.extend({
+  description: z.string().trim().optional(),
+  media: z.array(artMediaSchema).min(1, 'At least one media item is required'),
+  source: z.string().trim().min(1).optional(),
+});
+
+export type ProjectFrontmatter = z.infer<typeof projectSchema>;
+export type WriteupFrontmatter = z.infer<typeof writeupSchema>;
+export type BlogFrontmatter = z.infer<typeof blogSchema>;
+export type JournalFrontmatter = z.infer<typeof journalSchema>;
+export type ArtFrontmatter = z.infer<typeof artSchema>;
 
 export const signalDiscoverySchema = z.object({
   tier: z.enum(['PERSONAL', 'CURATED', 'CHAOTIC']),

@@ -5,7 +5,7 @@
 - **Framework**: Next.js (App Router preferred for modern React features, Server Components, and static generation).
 - **Language**: TypeScript for end-to-end type safety.
 - **Styling**: Tailwind CSS for utility-first, maintainable styling.
-- **Content Parsing**: MDX for rich markdown rendering.
+- **Content Parsing**: Gray-matter validates repository Markdown/MDX with Zod; `next-mdx-remote` renders the article body in Server Components.
 - **Rendering Strategy**: Static Site Generation (SSG) via Next.js for maximum performance and security. Dynamic segments (like Signal history) will also be statically generated at build time using `generateStaticParams`.
 
 ## 2. Directory Structure
@@ -24,7 +24,12 @@
 │   │   ├── ui/            # Base UI components (buttons, cards)
 │   │   ├── layout/        # Layout components (navbar, footer)
 │   │   └── features/      # Feature-specific components (Signal display)
-│   ├── content/           # MDX and Markdown files (Professional & Personal)
+│   ├── content/           # Canonical Markdown/MDX collections
+│   │   ├── writeups/      # CTF and security challenge writeups
+│   │   ├── blog/          # Professional technical writing
+│   │   ├── journal/       # Personal writing, isolated from homepage feeds
+│   │   ├── art/           # Visual archive entries
+│   │   └── projects/      # Portfolio project catalogue
 │   ├── lib/               # Utility functions (MDX parsers, date formatters)
 │   ├── styles/            # Global CSS and Tailwind directives
 │   └── types/             # TypeScript interface definitions
@@ -34,10 +39,11 @@
 
 ## 3. Content Architecture
 
-- **Professional Content**: MDX files located in `src/content/professional/` (e.g., projects, writeups, blog, about).
-- **Personal Content**: MDX files located in `src/content/personal/` (e.g., art, journal, music insights).
-- **Frontmatter**: Standard YAML frontmatter for metadata (title, date, tags, description).
-- **Processing**: A custom `content-layer` or MDX processing pipeline in `src/lib/mdx.ts` to read, parse, and supply content to Next.js pages.
+- **Canonical collections**: `src/content/{writeups,blog,journal,art,projects}/`. Markdown (`.md`) is the normal authoring format; MDX (`.mdx`) remains available when a post needs JSX.
+- **Validation**: `src/lib/content.ts` loads each collection at build time, applies collection-specific Zod schemas from `src/lib/schemas.ts`, rejects invalid dates, duplicate per-collection slugs, and missing referenced public media.
+- **Visibility**: `published: false` is excluded from production routes and listings. The homepage reads only Blog, Writeups, Projects, and its existing subtle Art preview; Journal is never aggregated into it.
+- **Media**: Article and art assets live under `public/content/<collection>/<slug>/` and use public URLs in Markdown/frontmatter. `docs/CONTENT_WORKFLOW.md` is the author-facing source of truth.
+- **Static routes**: collection detail routes use `generateStaticParams` with `dynamicParams = false`, so repository content is generated during a Vercel-compatible build and unknown slugs return 404.
 
 ## 4. Component Architecture
 

@@ -105,7 +105,7 @@ export class SignalGenerator {
 
     // 4. Layout (Deterministic coordinate calculation)
     // We want coordinates to look like a constellation. Just some pseudo-random spreads.
-    const nodes: SignalNode[] = selected.map((item, index) => {
+    const nodes: SignalNode[] = selected.map((item) => {
       // radius from center
       const radius = 20 + prng.next() * 80;
       // angle

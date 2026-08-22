@@ -22,8 +22,8 @@ export default function SignalPage() {
     } else {
       error = 'No current signal generated yet.';
     }
-  } catch (err: any) {
-    error = err.message;
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Unable to load Signal.';
   }
 
   if (error || !signalData) {
@@ -32,7 +32,9 @@ export default function SignalPage() {
         <h1 className="text-4xl font-bold font-sans tracking-tight text-brand-neutral-100 mb-8">
           The Signal
         </h1>
-        <p className="text-brand-neutral-400">{error || 'Unable to load Signal.'}</p>
+        <p className="text-brand-neutral-400">
+          {error || 'Unable to load Signal.'}
+        </p>
       </div>
     );
   }

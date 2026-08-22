@@ -22,9 +22,13 @@ export default function MusicShell() {
           >
             {track?.artwork ? (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={track.artwork} alt="" className="w-full h-full object-cover opacity-60" />
+              <img
+                src={track.artwork}
+                alt=""
+                className="w-full h-full object-cover opacity-60"
+              />
             ) : null}
-            
+
             {/* Visualizer overlay */}
             <div className="absolute inset-0 flex items-end justify-center gap-0.5 pb-1.5 h-full z-10">
               {[3, 5, 7, 4, 6].map((height, i) => (
@@ -34,7 +38,7 @@ export default function MusicShell() {
                   style={{
                     height: `${height * 1.5}px`,
                     transformOrigin: 'bottom',
-                    animation: isPlaying 
+                    animation: isPlaying
                       ? `waveBar ${600 + i * 100}ms ease-in-out ${i * 80}ms infinite alternate`
                       : 'none',
                     transform: isPlaying ? 'scaleY(0.3)' : 'scaleY(0.5)',
@@ -45,21 +49,18 @@ export default function MusicShell() {
             </div>
           </div>
 
-          {/* Track info */}
+          {/* Track title */}
           <div className="min-w-0">
-            <p className="text-[11px] text-muted leading-none mb-0.5 truncate font-mono uppercase tracking-widest">
-              Local Archive
-            </p>
-            <p className="text-xs text-foreground/80 leading-none truncate font-medium mt-1">
-              {track ? track.title : '—'}
+            <p className="text-xs text-foreground/80 leading-none truncate font-medium">
+              {track?.title ?? 'Music player'}
             </p>
           </div>
         </button>
       </Popover.Trigger>
 
       <Popover.Portal>
-        <Popover.Content 
-          className="z-50 bg-background/95 backdrop-blur-xl border border-border/40 rounded-md shadow-2xl animate-in fade-in zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95" 
+        <Popover.Content
+          className="z-50 bg-background/95 backdrop-blur-xl border border-border/40 rounded-md shadow-2xl animate-in fade-in zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95"
           sideOffset={8}
           align="start"
         >

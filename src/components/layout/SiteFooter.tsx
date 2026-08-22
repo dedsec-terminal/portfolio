@@ -17,9 +17,12 @@ export default function SiteFooter() {
         <nav aria-label="Footer navigation">
           <ul className="flex items-center gap-5 list-none m-0 p-0">
             {[
-              { href: '/work',   label: 'Work' },
+              { href: '/projects', label: 'Projects' },
+              { href: '/blog', label: 'Blog' },
+              { href: '/writeups', label: 'Writeups' },
+              { href: '/journal', label: 'Journal' },
+              { href: '/art', label: 'Art' },
               { href: '/signal', label: 'Signal' },
-              { href: '/about',  label: 'About' },
             ].map(({ href, label }) => (
               <li key={href}>
                 <a

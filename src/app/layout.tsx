@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { siteConfig } from '@/lib/site';
 import './globals.css';
 
 /*
@@ -29,9 +30,32 @@ export const metadata: Metadata = {
     template: '%s | Swaraj Singh',
     default: 'Swaraj Singh',
   },
-  description:
-    'Cybersecurity enthusiast. SOC, GRC, security research. Personal site and curated digital space.',
-  metadataBase: new URL('https://example.com'), // Replace with actual domain when ready
+  description: siteConfig.description,
+  metadataBase: siteConfig.url ? new URL(siteConfig.url) : undefined,
+  authors: [{ name: siteConfig.name, url: siteConfig.links.github }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  openGraph: {
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    type: 'website',
+    url: siteConfig.url,
+    images: [
+      {
+        url: '/images/avatar/pfp.jpg',
+        width: 1200,
+        height: 800,
+        alt: siteConfig.name,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: ['/images/avatar/pfp.jpg'],
+  },
 };
 
 export default function RootLayout({

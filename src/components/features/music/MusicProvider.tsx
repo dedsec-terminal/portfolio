@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import catalogueData from '../../../content/music/catalogue.json';
 
 export interface NormalizedTrack {
@@ -50,6 +57,9 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, [isPlaying]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const loadAndPlayTrackRef = useRef<(index: number, attempt?: number) => void>(
+    () => {}
+  );
 
   // Initialize the first track if catalogue is not empty
   useEffect(() => {
@@ -68,59 +78,69 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     }
   }, [setCurrentIndex]);
 
-  const loadAndPlayTrack = useCallback((index: number, attempt = 0) => {
-    if (catalogueData.tracks.length === 0) return;
-    if (attempt >= catalogueData.tracks.length) {
-      console.warn("All tracks unavailable. Stopping playback.");
-      setIsPlaying(false);
-      return;
-    }
+  const loadAndPlayTrack = useCallback(
+    (index: number, attempt = 0) => {
+      if (catalogueData.tracks.length === 0) return;
+      if (attempt >= catalogueData.tracks.length) {
+        console.warn('All tracks unavailable. Stopping playback.');
+        setIsPlaying(false);
+        return;
+      }
 
-    const safeIndex = index % catalogueData.tracks.length;
-    const item = catalogueData.tracks[safeIndex];
+      const safeIndex = index % catalogueData.tracks.length;
+      const item = catalogueData.tracks[safeIndex];
 
-    setCurrentIndex(safeIndex);
-    setTrack({
-      id: item.id,
-      title: item.title,
-      artist: item.artist,
-      album: item.album,
-      artwork: item.artwork,
-      audioSource: item.audioSource,
-    });
-    setIsReady(true);
-
-    if (audioRef.current && item.audioSource) {
-      audioRef.current.src = item.audioSource;
-      
-      // We only attempt to play if it was already playing, OR if it's explicitly starting
-      // But actually loadAndPlayTrack is used when we explicitly want to play.
-      audioRef.current.play().catch((err) => {
-        console.error("Playback failed for", item.title, err);
-        // Skip to next track on failure
-        loadAndPlayTrack(safeIndex + 1, attempt + 1);
+      setCurrentIndex(safeIndex);
+      setTrack({
+        id: item.id,
+        title: item.title,
+        artist: item.artist,
+        album: item.album,
+        artwork: item.artwork,
+        audioSource: item.audioSource,
       });
-    }
-  }, [setCurrentIndex]);
+      setIsReady(true);
 
-  const loadTrackOnly = useCallback((index: number) => {
-    if (catalogueData.tracks.length === 0) return;
-    const safeIndex = index % catalogueData.tracks.length;
-    const item = catalogueData.tracks[safeIndex];
+      if (audioRef.current && item.audioSource) {
+        audioRef.current.src = item.audioSource;
 
-    setCurrentIndex(safeIndex);
-    setTrack({
-      id: item.id,
-      title: item.title,
-      artist: item.artist,
-      album: item.album,
-      artwork: item.artwork,
-      audioSource: item.audioSource,
-    });
-    if (audioRef.current && item.audioSource) {
-      audioRef.current.src = item.audioSource;
-    }
-  }, [setCurrentIndex]);
+        // We only attempt to play if it was already playing, OR if it's explicitly starting
+        // But actually loadAndPlayTrack is used when we explicitly want to play.
+        audioRef.current.play().catch((err) => {
+          console.error('Playback failed for', item.title, err);
+          // Skip to next track on failure
+          loadAndPlayTrackRef.current(safeIndex + 1, attempt + 1);
+        });
+      }
+    },
+    [setCurrentIndex]
+  );
+
+  useEffect(() => {
+    loadAndPlayTrackRef.current = loadAndPlayTrack;
+  }, [loadAndPlayTrack]);
+
+  const loadTrackOnly = useCallback(
+    (index: number) => {
+      if (catalogueData.tracks.length === 0) return;
+      const safeIndex = index % catalogueData.tracks.length;
+      const item = catalogueData.tracks[safeIndex];
+
+      setCurrentIndex(safeIndex);
+      setTrack({
+        id: item.id,
+        title: item.title,
+        artist: item.artist,
+        album: item.album,
+        artwork: item.artwork,
+        audioSource: item.audioSource,
+      });
+      if (audioRef.current && item.audioSource) {
+        audioRef.current.src = item.audioSource;
+      }
+    },
+    [setCurrentIndex]
+  );
 
   useEffect(() => {
     const audio = new Audio();
@@ -132,17 +152,19 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     const handleEnded = () => {
       // Loop the catalogue automatically when a track naturally ends
       if (catalogueData.tracks.length > 0) {
-        const nextIdx = (currentIndexRef.current + 1) % catalogueData.tracks.length;
+        const nextIdx =
+          (currentIndexRef.current + 1) % catalogueData.tracks.length;
         loadAndPlayTrack(nextIdx);
       }
     };
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
     const handleError = () => {
-      console.error("Audio playback error encountered.");
+      console.error('Audio playback error encountered.');
       // Skip to next track on failure if it was currently trying to play
       if (isPlayingRef.current || audioRef.current?.autoplay) {
-        const nextIdx = (currentIndexRef.current + 1) % catalogueData.tracks.length;
+        const nextIdx =
+          (currentIndexRef.current + 1) % catalogueData.tracks.length;
         loadAndPlayTrack(nextIdx, 1);
       } else {
         setIsPlaying(false);
@@ -175,9 +197,12 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         audioRef.current.src = track.audioSource;
       }
       audioRef.current.play().catch((err) => {
-        console.error("Playback failed on toggle:", err);
+        console.error('Playback failed on toggle:', err);
         // If the current track fails on toggle, skip to the next valid one
-        loadAndPlayTrack((currentIndexRef.current + 1) % catalogueData.tracks.length, 1);
+        loadAndPlayTrack(
+          (currentIndexRef.current + 1) % catalogueData.tracks.length,
+          1
+        );
       });
     } else {
       audioRef.current.pause();
@@ -196,7 +221,9 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
 
   const previous = useCallback(() => {
     if (catalogueData.tracks.length === 0) return;
-    const prevIdx = (currentIndexRef.current - 1 + catalogueData.tracks.length) % catalogueData.tracks.length;
+    const prevIdx =
+      (currentIndexRef.current - 1 + catalogueData.tracks.length) %
+      catalogueData.tracks.length;
     if (isPlayingRef.current) {
       loadAndPlayTrack(prevIdx);
     } else {
@@ -211,10 +238,13 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const playTrack = useCallback((index: number) => {
-    // Used by manual queue selection
-    loadAndPlayTrack(index);
-  }, [loadAndPlayTrack]);
+  const playTrack = useCallback(
+    (index: number) => {
+      // Used by manual queue selection
+      loadAndPlayTrack(index);
+    },
+    [loadAndPlayTrack]
+  );
 
   const contextValue: MusicContextType = {
     track,

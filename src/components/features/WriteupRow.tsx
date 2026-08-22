@@ -1,30 +1,8 @@
-import path from 'path';
-import { parseContent } from '@/lib/mdx';
-import { writeupSchema } from '@/lib/schemas';
-
-type Writeup = {
-  title: string;
-  date: string;
-  description: string;
-  tags: string[];
-  event?: string;
-  slug: string;
-  content: string;
-};
-
-function getWriteups(): Writeup[] {
-  try {
-    const dir = path.join(process.cwd(), 'src/content/professional/writeups');
-    return parseContent(dir, writeupSchema)
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .slice(0, 5);
-  } catch {
-    return [];
-  }
-}
+import Link from 'next/link';
+import { getContent } from '@/lib/content';
 
 export default function WriteupRow() {
-  const writeups = getWriteups();
+  const writeups = getContent('writeups').slice(0, 5);
 
   return (
     <section aria-label="Writeups" className="py-16 md:py-20 border-t border-border/30">
@@ -56,9 +34,9 @@ export default function WriteupRow() {
                 </time>
 
                 {/* Title */}
-                <span className="text-sm text-muted group-hover:text-foreground transition-colors duration-200 leading-relaxed flex-1">
+                <Link href={`/writeups/${writeup.slug}`} className="text-sm text-muted group-hover:text-foreground transition-colors duration-200 leading-relaxed flex-1">
                   {writeup.title}
-                </span>
+                </Link>
 
                 {/* Tags */}
                 <div className="hidden md:flex items-center gap-3 shrink-0">

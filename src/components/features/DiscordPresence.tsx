@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useLanyard } from "use-lanyard";
-import { siteConfig } from "../../lib/site";
-import { FaDiscord, FaSpotify } from "react-icons/fa6";
-import Image from "next/image";
+import { useLanyard } from 'use-lanyard';
+import { siteConfig } from '../../lib/site';
+import { FaDiscord } from 'react-icons/fa6';
+import Image from 'next/image';
 
 // Activity types in Discord:
 // 0: Playing
@@ -14,10 +14,10 @@ import Image from "next/image";
 // 5: Competing
 
 const STATUS_COLORS: Record<string, string> = {
-  online: "bg-green-500/80",
-  idle: "bg-amber-500/80",
-  dnd: "bg-red-500/80",
-  offline: "bg-gray-500/80",
+  online: 'bg-green-500/80',
+  idle: 'bg-amber-500/80',
+  dnd: 'bg-red-500/80',
+  offline: 'bg-gray-500/80',
 };
 
 export default function DiscordPresence() {
@@ -49,14 +49,14 @@ function PresenceSubscriber({ discordId }: { discordId: string }) {
     );
   }
 
-  const { discord_user, discord_status, activities, spotify } = presence;
+  const { discord_user, discord_status, activities } = presence;
   const statusColor = STATUS_COLORS[discord_status] || STATUS_COLORS.offline;
 
-  // Custom/Game Activity
-  // Priority: Custom status (type 4) or Game/Rich Presence (type 0)
-  // Ignore Spotify (type 2 with name "Spotify") in activities list to handle it explicitly
+  // Priority: custom status (type 4), then game/rich-presence activity (type 0).
+  // Listening and streaming activity are intentionally not rendered here.
   const customActivity = activities.find(
-    (a: { type: number; name?: string; state?: string }) => a.type === 4 || (a.type !== 2 && a.type !== 1)
+    (a: { type: number; name?: string; state?: string }) =>
+      a.type === 4 || (a.type !== 2 && a.type !== 1)
   );
 
   return (
@@ -91,13 +91,13 @@ function PresenceSubscriber({ discordId }: { discordId: string }) {
             {discord_user.global_name || discord_user.username}
           </span>
           <span className="text-[10px] text-muted/70 truncate uppercase tracking-wider">
-            {discord_status === "offline" ? "Offline" : "Active"}
+            {discord_status === 'offline' ? 'Offline' : 'Active'}
           </span>
         </div>
       </div>
 
-      {/* Activity / Spotify display (only if not offline) */}
-      {discord_status !== "offline" && (
+      {/* Activity display (only if not offline) */}
+      {discord_status !== 'offline' && (
         <div className="flex flex-col gap-1.5">
           {/* Custom / Game Activity */}
           {customActivity && (
@@ -107,22 +107,12 @@ function PresenceSubscriber({ discordId }: { discordId: string }) {
               )}
               {customActivity.type === 0 && (
                 <span className="truncate">
-                  Playing <span className="font-medium text-foreground/80">{customActivity.name}</span>
+                  Playing{' '}
+                  <span className="font-medium text-foreground/80">
+                    {customActivity.name}
+                  </span>
                 </span>
               )}
-            </div>
-          )}
-
-          {/* Spotify */}
-          {spotify && (
-            <div className="flex items-center gap-2 bg-background/40 rounded px-2 py-1.5 mt-0.5">
-              <FaSpotify size={12} className="text-green-500/80 flex-shrink-0" />
-              <div className="flex flex-col min-w-0 text-[10px] leading-[1.2]">
-                <span className="truncate font-medium text-foreground/80">
-                  {spotify.song}
-                </span>
-                <span className="truncate text-muted/70">by {spotify.artist}</span>
-              </div>
             </div>
           )}
         </div>

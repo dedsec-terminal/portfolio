@@ -1,31 +1,8 @@
-import path from 'path';
-import { parseContent } from '@/lib/mdx';
-import { projectSchema } from '@/lib/schemas';
-
-type Project = {
-  title: string;
-  date: string;
-  description: string;
-  tags: string[];
-  url?: string;
-  github?: string;
-  slug: string;
-  content: string;
-};
-
-function getProjects(): Project[] {
-  try {
-    const dir = path.join(process.cwd(), 'src/content/professional/projects');
-    return parseContent(dir, projectSchema)
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .slice(0, 4);
-  } catch {
-    return [];
-  }
-}
+import Link from 'next/link';
+import { getContent } from '@/lib/content';
 
 export default function ProjectsGrid() {
-  const projects = getProjects();
+  const projects = getContent('projects').slice(0, 4);
 
   return (
     <section aria-label="Projects" className="py-20 md:py-28 border-t border-border/30">
@@ -50,18 +27,16 @@ export default function ProjectsGrid() {
               >
                 {/* Title */}
                 <h3 className="text-sm font-medium text-foreground leading-snug">
-                  {project.url || project.github ? (
+                  {project.liveUrl || project.codeUrl ? (
                     <a
-                      href={project.url ?? project.github}
+                      href={project.liveUrl ?? project.codeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-accent transition-colors duration-200"
                     >
                       {project.title}
                     </a>
-                  ) : (
-                    project.title
-                  )}
+                  ) : <Link href={`/projects/${project.slug}`} className="hover:text-accent transition-colors duration-200">{project.title}</Link>}
                 </h3>
 
                 {/* Description */}

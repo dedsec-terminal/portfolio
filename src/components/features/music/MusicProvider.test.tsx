@@ -10,9 +10,9 @@ vi.mock('../../../content/music/catalogue.json', () => ({
     tracks: [
       { id: '1', title: 'Track A', artist: 'Artist A', audioSource: 'a.mp3' },
       { id: '2', title: 'Track B', artist: 'Artist B', audioSource: 'b.mp3' },
-      { id: '3', title: 'Track C', artist: 'Artist C', audioSource: 'c.flac' }
-    ]
-  }
+      { id: '3', title: 'Track C', artist: 'Artist C', audioSource: 'c.flac' },
+    ],
+  },
 }));
 
 // Mock Audio
@@ -22,23 +22,23 @@ class MockAudio {
   duration: number = 100;
   paused: boolean = true;
   autoplay: boolean = false;
-  
-  listeners: Record<string, Function[]> = {};
 
-  addEventListener(event: string, cb: Function) {
+  listeners: Record<string, Array<(...args: unknown[]) => void>> = {};
+
+  addEventListener(event: string, cb: (...args: unknown[]) => void) {
     if (!this.listeners[event]) this.listeners[event] = [];
     this.listeners[event].push(cb);
   }
 
-  removeEventListener(event: string, cb: Function) {
+  removeEventListener(event: string, cb: (...args: unknown[]) => void) {
     if (this.listeners[event]) {
-      this.listeners[event] = this.listeners[event].filter(l => l !== cb);
+      this.listeners[event] = this.listeners[event].filter((l) => l !== cb);
     }
   }
 
-  dispatchEvent(event: string, ...args: any[]) {
+  dispatchEvent(event: string, ...args: unknown[]) {
     if (this.listeners[event]) {
-      this.listeners[event].forEach(cb => cb(...args));
+      this.listeners[event].forEach((cb) => cb(...args));
     }
   }
 
@@ -59,7 +59,7 @@ describe('MusicProvider', () => {
 
   beforeEach(() => {
     mockAudioInstance = new MockAudio();
-    vi.stubGlobal('Audio', function() {
+    vi.stubGlobal('Audio', function () {
       return mockAudioInstance;
     });
   });
@@ -77,10 +77,18 @@ describe('MusicProvider', () => {
         <div data-testid="title">{player.track?.title}</div>
         <div data-testid="is-playing">{String(player.isPlaying)}</div>
         <div data-testid="current-index">{player.currentIndex}</div>
-        <button data-testid="play" onClick={player.togglePlay}>Play</button>
-        <button data-testid="next" onClick={player.next}>Next</button>
-        <button data-testid="prev" onClick={player.previous}>Prev</button>
-        <button data-testid="select" onClick={() => player.playTrack(1)}>Select Track B</button>
+        <button data-testid="play" onClick={player.togglePlay}>
+          Play
+        </button>
+        <button data-testid="next" onClick={player.next}>
+          Next
+        </button>
+        <button data-testid="prev" onClick={player.previous}>
+          Prev
+        </button>
+        <button data-testid="select" onClick={() => player.playTrack(1)}>
+          Select Track B
+        </button>
       </div>
     );
   };
@@ -107,7 +115,7 @@ describe('MusicProvider', () => {
     await act(async () => {
       screen.getByTestId('play').click();
     });
-    
+
     expect(screen.getByTestId('is-playing').textContent).toBe('true');
     expect(mockAudioInstance.paused).toBe(false);
 
@@ -144,7 +152,7 @@ describe('MusicProvider', () => {
     await act(async () => {
       screen.getByTestId('play').click();
     });
-    
+
     await act(async () => {
       screen.getByTestId('next').click();
     });
@@ -252,5 +260,4 @@ describe('MusicProvider', () => {
     expect(screen.getByTestId('title').textContent).toBe('Track B');
     // We mocked a sync play resolution, so isPlaying is likely true immediately
   });
-
 });

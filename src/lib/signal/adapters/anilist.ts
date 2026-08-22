@@ -1,5 +1,15 @@
 import { SignalSourceAdapter, SignalItem } from '../types';
 
+type AniListMedia = {
+  id: number;
+  title: { romaji?: string; english?: string };
+  description?: string;
+  siteUrl?: string;
+  coverImage?: { large?: string };
+};
+
+type AniListResponse = { data?: { Page?: { media?: AniListMedia[] } } };
+
 export class AnilistAdapter implements SignalSourceAdapter {
   id = 'anilist';
   tier = 'Curated' as const;
@@ -30,21 +40,22 @@ export class AnilistAdapter implements SignalSourceAdapter {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query }),
       });
 
       if (!response.ok) {
         throw new Error(`AniList API failed: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      const media = data?.data?.Page?.media || [];
+      const data = (await response.json()) as AniListResponse;
+      const media = data.data?.Page?.media ?? [];
 
-      return media.map((item: any) => ({
+      return media.map((item) => ({
         id: `anilist-${item.id}`,
-        title: item.title.english || item.title.romaji,
+        title:
+          item.title.english ?? item.title.romaji ?? 'Untitled AniList entry',
         description: (item.description || '').replace(/<[^>]*>?/gm, ''), // strip html
         url: item.siteUrl,
         source: 'AniList',
