@@ -1,0 +1,70 @@
+{
+  "date": "2026-08-22",
+  "seed": "2026-08-22-v1.0.0",
+  "generatorVersion": "v1.0.0",
+  "nodes": [
+    {
+      "id": "openlibrary-/works/OL17732W",
+      "title": "Bible",
+      "description": "By Bible",
+      "url": "https://openlibrary.org/works/OL17732W",
+      "source": "Open Library",
+      "category": "Book",
+      "tier": "Curated",
+      "image": "https://covers.openlibrary.org/b/id/12707846-L.jpg",
+      "x": -23.478972084373492,
+      "y": -31.342294995009595,
+      "r": 4.69473678432405
+    },
+    {
+      "id": "website-1",
+      "title": "[SAMPLE] Brutalist Websites",
+      "description": "A collection of websites that showcase brutalist web design.",
+      "url": "https://brutalistwebsites.com/",
+      "source": "Personal",
+      "category": "Website",
+      "tier": "Personal",
+      "x": 36.01648205284987,
+      "y": 37.4358217450074,
+      "r": 3.933220338076353
+    },
+    {
+      "id": "wiki-tfa-60821363",
+      "title": "Edmontosaurus mummy SMF R 4036",
+      "description": "The Edmontosaurus mummy SMF R 4036, nicknamed the Senckenberg mummy or Edmond, is an exceptionally well-preserved dinosaur fossil in the collection of the Senckenberg Museum (SMF) in Frankfurt am Main, Germany. It was found in 1910 in Wyoming, United States, in rocks of the Lance Formation that date to the late Maastrichtian, close to the Cretaceous–Paleogene extinction event around 66 million years ago. The mummy is ascribed to the species Edmontosaurus annectens, a member of the Hadrosauridae. It comprises a nearly complete skeleton that was found wrapped in skin impressions, a rare case of preservation for which the term dinosaur mummy has been used. The fingers of the right hand are wrapped in a mitten-like envelope of skin impressions, initially interpreted as a paddle unsuited for terrestrial locomotion, thereby reinforcing the now outdated hypothesis that hadrosaurs were aquatic. The impression of a horny beak is also preserved with this specimen. Plant remains found in the body cavity were interpreted as stomach contents, indicating a diet of terrestrial plants. It is now believed that this plant material was washed into the body cavity of the carcass.",
+      "url": "https://en.wikipedia.org/wiki/Edmontosaurus_mummy_SMF_R_4036",
+      "source": "Wikipedia",
+      "category": "Article",
+      "tier": "Discovery",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Senckenberg_mummy_top.jpg/960px-Senckenberg_mummy_top.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "x": -2.5351780735534635,
+      "y": -23.005406034894126,
+      "r": 3.121508023701608
+    },
+    {
+      "id": "anilist-20605",
+      "title": "Tokyo Ghoul",
+      "description": "The suspense horror/dark fantasy story is set in Tokyo, which is haunted by mysterious \"ghouls\" who are devouring humans. People are gripped by the fear of these ghouls whose identities are masked in mystery. An ordinary college student named Kaneki encounters Rize, a girl who is an avid reader like him, at the café he frequents. Little does he realize that his fate will change overnight.\n\n(Source: Anime News Network)",
+      "url": "https://anilist.co/anime/20605",
+      "source": "AniList",
+      "category": "Anime",
+      "tier": "Curated",
+      "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b20605-k665mVkSug8D.jpg",
+      "x": -41.28997106148986,
+      "y": 33.87622938103826,
+      "r": 3.727981213480234
+    },
+    {
+      "id": "wildcard-1",
+      "title": "The Internet Archive",
+      "description": "A non-profit library of millions of free books, movies, software, music, websites, and more.",
+      "url": "https://archive.org/",
+      "source": "Wildcard",
+      "category": "Archive",
+      "tier": "Discovery",
+      "x": -28.612232181149412,
+      "y": -92.58129904794839,
+      "r": 5.269578089937568
+    }
+  ]
+}

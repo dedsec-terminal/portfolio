@@ -1,0 +1,11 @@
+[
+  {
+    "id": "book-1",
+    "title": "[SAMPLE] Neuromancer",
+    "description": "William Gibson's pioneering cyberpunk novel.",
+    "url": "https://openlibrary.org/works/OL156947W/Neuromancer",
+    "source": "Personal",
+    "category": "Reading",
+    "tier": "Personal"
+  }
+]
