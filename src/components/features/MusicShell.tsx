@@ -1,72 +1,77 @@
 'use client';
 
 import React from 'react';
-import * as Popover from '@radix-ui/react-popover';
+import { Pause, Play, SkipForward } from 'lucide-react';
 import { useMusicPlayer } from '@/components/features/music/MusicProvider';
-import ExpandedPlayer from '@/components/features/music/ExpandedPlayer';
 
 export default function MusicShell() {
-  const { track, isPlaying } = useMusicPlayer();
+  const { track, isPlaying, togglePlay, next } = useMusicPlayer();
 
   return (
-    <Popover.Root>
-      <Popover.Trigger asChild>
+    <div
+      className="flex w-full max-w-xs items-center gap-2 border border-border/30 bg-surface/40 px-2 py-2 text-left"
+      aria-label="Music player"
+    >
+      <div
+        className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden border border-border/30 bg-surface-raised"
+        aria-hidden="true"
+      >
+        {track?.artwork ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={track.artwork}
+            alt=""
+            className="h-full w-full object-cover opacity-60"
+          />
+        ) : null}
+
+        <div className="absolute inset-0 z-10 flex h-full items-end justify-center gap-0.5 pb-1.5">
+          {[3, 5, 7, 4, 6].map((height, index) => (
+            <span
+              key={index}
+              className="w-[2px] rounded-full bg-foreground/80"
+              style={{
+                height: `${height * 1.5}px`,
+                transformOrigin: 'bottom',
+                animation: isPlaying
+                  ? `waveBar ${600 + index * 100}ms ease-in-out ${index * 80}ms infinite alternate`
+                  : 'none',
+                transform: isPlaying ? 'scaleY(0.3)' : 'scaleY(0.5)',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <p
+        className="min-w-0 flex-1 truncate text-xs font-medium leading-none text-foreground/80"
+        title={track?.title ?? 'Music player'}
+      >
+        {track?.title ?? 'Music player'}
+      </p>
+
+      <div className="flex shrink-0 items-center gap-1 border-l border-border/30 pl-2">
         <button
-          className="flex items-center gap-3 px-4 py-3 border border-border/30 rounded-sm max-w-xs hover:bg-surface-raised transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-foreground/50 text-left"
-          aria-label="Open music player"
+          type="button"
+          onClick={togglePlay}
+          aria-label={isPlaying ? 'Pause music' : 'Play music'}
+          className="flex size-7 items-center justify-center text-muted transition-colors hover:text-foreground"
         >
-          {/* Album art / visualizer */}
-          <div
-            className="w-8 h-8 shrink-0 bg-surface-raised border border-border/30 rounded-sm flex items-center justify-center overflow-hidden relative"
-            aria-hidden="true"
-          >
-            {track?.artwork ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={track.artwork}
-                alt=""
-                className="w-full h-full object-cover opacity-60"
-              />
-            ) : null}
-
-            {/* Visualizer overlay */}
-            <div className="absolute inset-0 flex items-end justify-center gap-0.5 pb-1.5 h-full z-10">
-              {[3, 5, 7, 4, 6].map((height, i) => (
-                <div
-                  key={i}
-                  className="w-[2px] bg-foreground/80 rounded-full"
-                  style={{
-                    height: `${height * 1.5}px`,
-                    transformOrigin: 'bottom',
-                    animation: isPlaying
-                      ? `waveBar ${600 + i * 100}ms ease-in-out ${i * 80}ms infinite alternate`
-                      : 'none',
-                    transform: isPlaying ? 'scaleY(0.3)' : 'scaleY(0.5)',
-                  }}
-                  aria-hidden="true"
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Track title */}
-          <div className="min-w-0">
-            <p className="text-xs text-foreground/80 leading-none truncate font-medium">
-              {track?.title ?? 'Music player'}
-            </p>
-          </div>
+          {isPlaying ? (
+            <Pause size={14} fill="currentColor" aria-hidden="true" />
+          ) : (
+            <Play size={14} fill="currentColor" className="ml-0.5" aria-hidden="true" />
+          )}
         </button>
-      </Popover.Trigger>
-
-      <Popover.Portal>
-        <Popover.Content
-          className="z-50 bg-background/95 backdrop-blur-xl border border-border/40 rounded-md shadow-2xl animate-in fade-in zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95"
-          sideOffset={8}
-          align="start"
+        <button
+          type="button"
+          onClick={next}
+          aria-label="Next track"
+          className="flex size-7 items-center justify-center text-muted transition-colors hover:text-foreground"
         >
-          <ExpandedPlayer />
-        </Popover.Content>
-      </Popover.Portal>
+          <SkipForward size={14} fill="currentColor" aria-hidden="true" />
+        </button>
+      </div>
 
       <style>{`
         @keyframes waveBar {
@@ -77,6 +82,6 @@ export default function MusicShell() {
           [style*="waveBar"] { animation: none !important; transform: scaleY(0.6) !important; }
         }
       `}</style>
-    </Popover.Root>
+    </div>
   );
 }
