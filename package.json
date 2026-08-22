@@ -51,5 +51,10 @@
     "tsx": "^4.23.12",
     "typescript": "^5",
     "vitest": "^4.1.11"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "puppeteer@25.8.0": true,
+    "unrs-resolver@1.12.2": true
   }
 }
