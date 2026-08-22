@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import DiscordPresence from '@/components/features/DiscordPresence';
 
 const navLinks = [
   { href: '/projects', label: 'Projects' },
@@ -21,28 +22,34 @@ export default function TopNav() {
       <header
         className="fixed top-0 inset-x-0 z-40 h-12 flex items-center border-b border-border/40"
         style={{
-          backgroundColor: 'color-mix(in srgb, var(--background) 85%, transparent)',
+          backgroundColor:
+            'color-mix(in srgb, var(--background) 85%, transparent)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
         }}
       >
         <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-          {/* Site mark */}
-          <Link
-            href="/"
-            aria-label="DedSec — home"
-            className="flex items-center gap-2.5 text-foreground/80 hover:text-foreground transition-colors duration-200 group"
-          >
-            <Image 
-              src="/favicon.ico" 
-              alt="" 
-              width={18} 
-              height={18} 
-              className="opacity-90 grayscale group-hover:grayscale-0 transition-all duration-300"
-              aria-hidden="true"
-            />
-            <span className="font-mono text-sm tracking-widest font-medium">DedSec</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            {/* Site mark */}
+            <Link
+              href="/"
+              aria-label="DedSec — home"
+              className="flex items-center gap-2.5 text-foreground/80 hover:text-foreground transition-colors duration-200 group"
+            >
+              <Image
+                src="/favicon.ico"
+                alt=""
+                width={18}
+                height={18}
+                className="opacity-90 grayscale group-hover:grayscale-0 transition-all duration-300"
+                aria-hidden="true"
+              />
+              <span className="font-mono text-sm tracking-widest font-medium">
+                DedSec
+              </span>
+            </Link>
+            <DiscordPresence />
+          </div>
 
           {/* Primary navigation */}
           <nav aria-label="Primary navigation">

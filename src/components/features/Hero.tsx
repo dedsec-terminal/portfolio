@@ -2,17 +2,20 @@ import Avatar from '@/components/ui/Avatar';
 import { FileText, Mail } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaDiscord, FaXTwitter } from 'react-icons/fa6';
 import MusicShell from '@/components/features/MusicShell';
-import DiscordPresence from '@/components/features/DiscordPresence';
 import { siteConfig } from '@/lib/site';
 
 /*
   Social links — using react-icons/fa6 for brand icons.
 */
 const socials = [
-  { label: 'GitHub',   href: siteConfig.links.github,   icon: FaGithub },
+  { label: 'GitHub', href: siteConfig.links.github, icon: FaGithub },
   { label: 'LinkedIn', href: siteConfig.links.linkedin, icon: FaLinkedin },
-  { label: siteConfig.links.discord, href: `https://discordapp.com/users/${siteConfig.discordId}`, icon: FaDiscord },
-  { label: 'X',        href: siteConfig.links.x,        icon: FaXTwitter },
+  {
+    label: siteConfig.links.discord,
+    href: `https://discordapp.com/users/${siteConfig.discordId}`,
+    icon: FaDiscord,
+  },
+  { label: 'X', href: siteConfig.links.x, icon: FaXTwitter },
 ];
 
 const specialties = ['SOC', 'GRC', 'Security Research'];
@@ -34,8 +37,8 @@ export default function Hero() {
       {/* Content wrapper */}
       <div className="relative z-10 flex-1 flex flex-col w-full">
         {/* Composition grid */}
-      <div
-        className="
+        <div
+          className="
           flex-1
           grid grid-cols-1 md:grid-cols-[2fr_3fr]
           items-center
@@ -44,58 +47,69 @@ export default function Hero() {
           gap-12 md:gap-0
           py-16 md:py-0
         "
-      >
-        {/* ── Left: Avatar ────────────────────────────────────── */}
-        <div
-          className="flex justify-start items-center"
-          style={{ alignSelf: 'center', paddingTop: 'clamp(0px, 6vh, 64px)' }}
         >
-          {/* Avatar is smaller on mobile to leave breathing room */}
-          <div className="sm:hidden">
-            <Avatar src="/images/avatar/pfp.jpg" alt="Swaraj Singh" size={160} className="rounded-sm" />
+          {/* ── Left: Avatar ────────────────────────────────────── */}
+          <div
+            className="flex justify-start items-center"
+            style={{ alignSelf: 'center', paddingTop: 'clamp(0px, 6vh, 64px)' }}
+          >
+            {/* Avatar is smaller on mobile to leave breathing room */}
+            <div className="sm:hidden">
+              <Avatar
+                src="/images/avatar/pfp.jpg"
+                alt="Swaraj Singh"
+                size={160}
+                className="rounded-sm"
+              />
+            </div>
+            <div className="hidden sm:block">
+              <Avatar
+                src="/images/avatar/pfp.jpg"
+                alt="Swaraj Singh"
+                size={280}
+                className="rounded-sm"
+              />
+            </div>
           </div>
-          <div className="hidden sm:block">
-            <Avatar src="/images/avatar/pfp.jpg" alt="Swaraj Singh" size={280} className="rounded-sm" />
-          </div>
-        </div>
 
-        {/* ── Right: Identity ──────────────────────────────────── */}
-        <div className="flex flex-col gap-5 md:gap-6 md:pl-10">
-
-          {/* Name + descriptor */}
-          <div>
-            <h1
-              className="
+          {/* ── Right: Identity ──────────────────────────────────── */}
+          <div className="flex flex-col gap-5 md:gap-6 md:pl-10">
+            {/* Name + descriptor */}
+            <div>
+              <h1
+                className="
                 text-[2.5rem] leading-none font-medium text-foreground
                 sm:text-5xl
                 lg:text-[3.75rem]
               "
-              style={{ letterSpacing: '-0.03em' }}
+                style={{ letterSpacing: '-0.03em' }}
+              >
+                Swaraj Singh
+              </h1>
+              <p className="mt-3 text-base text-muted font-light tracking-widest">
+                cybersecurity enthusiast
+              </p>
+            </div>
+
+            {/* Specialty tags */}
+            <div
+              className="flex items-center gap-2 text-xs font-mono text-subtle tracking-widest uppercase"
+              aria-label="Areas of focus"
             >
-              Swaraj Singh
-            </h1>
-            <p className="mt-3 text-base text-muted font-light tracking-widest">
-              cybersecurity enthusiast
-            </p>
-          </div>
+              {specialties.map((tag, i) => (
+                <span key={tag} className="flex items-center gap-2">
+                  {i > 0 && (
+                    <span className="text-border/50" aria-hidden="true">
+                      ·
+                    </span>
+                  )}
+                  {tag}
+                </span>
+              ))}
+            </div>
 
-          {/* Specialty tags */}
-          <div
-            className="flex items-center gap-2 text-xs font-mono text-subtle tracking-widest uppercase"
-            aria-label="Areas of focus"
-          >
-            {specialties.map((tag, i) => (
-              <span key={tag} className="flex items-center gap-2">
-                {i > 0 && (
-                  <span className="text-border/50" aria-hidden="true">·</span>
-                )}
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Divider */}
-          <div className="w-6 h-px bg-border/60" aria-hidden="true" />
+            {/* Divider */}
+            <div className="w-6 h-px bg-border/60" aria-hidden="true" />
 
             {/* Social links */}
             <nav aria-label="Social profiles">
@@ -144,64 +158,55 @@ export default function Hero() {
               </ul>
             </nav>
 
-          {/* Contact email */}
-          <p className="text-xs text-muted/80 font-light flex items-center gap-1.5 pt-0.5">
-            Feel free to contact me:{' '}
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="inline-flex items-center gap-1 text-muted/80 hover:text-foreground transition-colors duration-200 underline underline-offset-4 decoration-border/40 hover:decoration-foreground/60"
-              aria-label="Send email to Swaraj Singh"
-            >
-              <Mail size={12} aria-hidden="true" className="opacity-70" />
-              Mail
-            </a>
-          </p>
+            {/* Contact email */}
+            <p className="text-xs text-muted/80 font-light flex items-center gap-1.5 pt-0.5">
+              Feel free to contact me:{' '}
+              <a
+                href={`mailto:${siteConfig.email}`}
+                className="inline-flex items-center gap-1 text-muted/80 hover:text-foreground transition-colors duration-200 underline underline-offset-4 decoration-border/40 hover:decoration-foreground/60"
+                aria-label="Send email to Swaraj Singh"
+              >
+                <Mail size={12} aria-hidden="true" className="opacity-70" />
+                Mail
+              </a>
+            </p>
 
-          {/* Resume — understated text link */}
-          <a
-            href="/resume"
-            className="
+            {/* Resume — understated text link */}
+            <a
+              href="/resume"
+              className="
               inline-flex items-center gap-1.5
               text-[11px] font-mono text-subtle/70
-              hover:text-subtle
+              hover:text-foreground
               transition-colors duration-200
               self-start tracking-[0.12em] uppercase
             "
-          >
-            <FileText size={10} strokeWidth={1.5} aria-hidden="true" />
-            View Resume
-          </a>
+            >
+              <FileText size={10} strokeWidth={1.5} aria-hidden="true" />
+              View Resume
+            </a>
 
-          {/* Discord Live Presence */}
-          <div className="pt-4">
-            <DiscordPresence />
+            <div className="pt-1">
+              <MusicShell />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ── Music and Scroll affordance ───────────────────────── */}
-      <div className="relative z-10 flex flex-col items-start justify-end pb-8 gap-6 w-full max-w-7xl mx-auto px-6 sm:px-8 md:px-12">
-        <div className="w-full flex justify-start md:grid md:grid-cols-[2fr_3fr] md:gap-0">
-          <div className="hidden md:block"></div>
-          <div className="md:pl-10">
-            <MusicShell />
-          </div>
-        </div>
-        
-        <div
-          aria-hidden="true"
-          className="scroll-affordance flex justify-center w-full mt-4"
-        >
+        {/* Scroll affordance */}
+        <div className="relative z-10 flex justify-center w-full pb-8 px-6 sm:px-8 md:px-12">
           <div
-            className="w-px bg-border/50"
-            style={{
-              height: '28px',
-              animation: 'scrollPulse 1400ms ease-in-out infinite alternate',
-            }}
-          />
+            aria-hidden="true"
+            className="scroll-affordance flex justify-center w-full"
+          >
+            <div
+              className="w-px bg-border/50"
+              style={{
+                height: '28px',
+                animation: 'scrollPulse 1400ms ease-in-out infinite alternate',
+              }}
+            />
+          </div>
         </div>
-      </div>
-      
       </div>
 
       <style>{`

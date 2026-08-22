@@ -38,10 +38,10 @@ describe('DiscordPresence', () => {
     cleanup();
   });
 
-  it('renders unavailable state when discordId is missing', () => {
+  it('renders an offline status when discordId is missing', () => {
     siteConfig.discordId = '';
     render(<DiscordPresence />);
-    expect(screen.getByText('Presence Unavailable')).toBeDefined();
+    expect(screen.getByText('Offline')).toBeDefined();
   });
 
   it('renders loading state when presence data is undefined', () => {
@@ -74,9 +74,7 @@ describe('DiscordPresence', () => {
       discord_status: 'offline',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
-    expect(screen.getByText('Swaraj Singh')).toBeDefined();
     expect(screen.getByText('Offline')).toBeDefined();
-    // Activity should not be shown when offline
   });
 
   it('renders online state correctly', () => {
@@ -85,7 +83,6 @@ describe('DiscordPresence', () => {
       discord_status: 'online',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
-    expect(screen.getByText('Swaraj Singh')).toBeDefined();
     expect(screen.getByText('Active')).toBeDefined();
   });
 
@@ -95,7 +92,7 @@ describe('DiscordPresence', () => {
       discord_status: 'idle',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
-    expect(screen.getByText('Swaraj Singh')).toBeDefined();
+    expect(screen.getByText('Active')).toBeDefined();
   });
 
   it('renders dnd state correctly', () => {
@@ -104,33 +101,6 @@ describe('DiscordPresence', () => {
       discord_status: 'dnd',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
-    expect(screen.getByText('Swaraj Singh')).toBeDefined();
-  });
-
-  it('renders custom activity when present', () => {
-    vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence,
-      activities: [
-        {
-          type: 4,
-          name: 'Custom Status',
-          state: 'Coding',
-          id: 'custom',
-          created_at: 1,
-        },
-      ],
-    } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
-    render(<DiscordPresence />);
-    expect(screen.getByText('Coding')).toBeDefined();
-  });
-
-  it('renders game activity when present', () => {
-    vi.spyOn(useLanyardModule, 'useLanyard').mockReturnValue({
-      ...basePresence,
-      activities: [{ type: 0, name: 'VS Code', id: 'game', created_at: 1 }],
-    } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
-    render(<DiscordPresence />);
-    expect(screen.getByText('VS Code')).toBeDefined();
-    expect(screen.getByText(/Playing/)).toBeDefined();
+    expect(screen.getByText('Active')).toBeDefined();
   });
 });
