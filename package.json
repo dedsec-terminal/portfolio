@@ -14,6 +14,8 @@
     "signal:test": "vitest run"
   },
   "dependencies": {
+    "@radix-ui/react-popover": "^1.1.23",
+    "@radix-ui/react-slider": "^1.4.7",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "gray-matter": "^4.0.3",

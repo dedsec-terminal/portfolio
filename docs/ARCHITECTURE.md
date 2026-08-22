@@ -91,8 +91,8 @@
 ## 9. Music Integration
 
 - **Phase 1**: Static links or simple embeds of favorite albums/tracks within personal content.
-- **Phase 2 (Future)**: A compact, expandable music player component.
-- **Data Source**: Spotify API integration via Lanyard (for real-time listening) and a fallback local JSON catalogue (`src/content/music.json`) for curated favorites.
+- **Phase 2 (Final)**: A compact, expandable music player component.
+- **Data Source**: A local JSON catalogue (`src/content/music/catalogue.json`) playing local audio files. No external music APIs or external authentication are used, ensuring a fast, private, and persistent playback experience.
 
 ## 10. Resume Architecture
 

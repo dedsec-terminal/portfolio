@@ -37,6 +37,8 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://example.com'),
 };
 
+import { MusicProvider } from '@/components/features/music/MusicProvider';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,15 +50,17 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <TopNav />
-        {/* main has no horizontal constraint — pages control their own layout */}
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
-        <MobileNav />
-        <Analytics />
-        <SpeedInsights />
+        <MusicProvider>
+          <TopNav />
+          {/* main has no horizontal constraint — pages control their own layout */}
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <SiteFooter />
+          <MobileNav />
+          <Analytics />
+          <SpeedInsights />
+        </MusicProvider>
       </body>
     </html>
   );

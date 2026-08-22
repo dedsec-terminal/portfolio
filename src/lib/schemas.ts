@@ -77,3 +77,16 @@ export const resumeSchema = z.object({
   education: z.array(z.any()),
   skills: z.array(z.any()),
 });
+
+export const musicTrackSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  artist: z.string(),
+  album: z.string().optional(),
+  artwork: z.string().optional(),
+  audioSource: z.string(),
+});
+
+export const musicCatalogueSchema = z.object({
+  tracks: z.array(musicTrackSchema),
+});
