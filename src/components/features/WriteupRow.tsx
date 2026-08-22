@@ -5,15 +5,20 @@ export default function WriteupRow() {
   const writeups = getContent('writeups').slice(0, 5);
 
   return (
-    <section aria-label="Writeups" className="py-16 md:py-20 border-t border-border/30">
+    <section
+      aria-label="Writeups"
+      className="glass-surface mx-3 my-4 rounded-2xl py-16 md:mx-6 md:py-20"
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-
         {/* Section header */}
         <div className="mb-8 flex items-baseline gap-3">
           <span className="font-mono text-xs text-subtle tracking-[0.2em] uppercase">
             Writeups
           </span>
-          <div className="flex-1 h-px bg-border/30 max-w-12" aria-hidden="true" />
+          <div
+            className="flex-1 h-px bg-border/30 max-w-12"
+            aria-hidden="true"
+          />
         </div>
 
         {writeups.length === 0 ? (
@@ -34,7 +39,10 @@ export default function WriteupRow() {
                 </time>
 
                 {/* Title */}
-                <Link href={`/writeups/${writeup.slug}`} className="text-sm text-muted group-hover:text-foreground transition-colors duration-200 leading-relaxed flex-1">
+                <Link
+                  href={`/writeups/${writeup.slug}`}
+                  className="text-sm text-muted group-hover:text-foreground transition-colors duration-200 leading-relaxed flex-1"
+                >
                   {writeup.title}
                 </Link>
 

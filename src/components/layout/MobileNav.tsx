@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Briefcase, Radio, User } from 'lucide-react';
+import { primaryNavigation } from '@/lib/navigation';
 
-const navItems = [
-  { href: '/',          label: 'Home',     icon: Home },
-  { href: '/projects',  label: 'Projects', icon: Briefcase },
-  { href: '/signal',    label: 'Signal',   icon: Radio },
-  { href: '/about',     label: 'About',    icon: User },
-];
+const icons = {
+  '/': Home,
+  '/projects': Briefcase,
+  '/signal': Radio,
+  '/about': User,
+} as const;
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -19,14 +20,17 @@ export default function MobileNav() {
       aria-label="Mobile navigation"
       className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border/40"
       style={{
-        backgroundColor: 'color-mix(in srgb, var(--background) 92%, transparent)',
+        backgroundColor:
+          'color-mix(in srgb, var(--background) 92%, transparent)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
       }}
     >
       <ul className="flex items-stretch list-none m-0 p-0">
-        {navItems.map(({ href, label, icon: Icon }) => {
-          const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+        {primaryNavigation.map(({ href, label }) => {
+          const Icon = icons[href];
+          const isActive =
+            href === '/' ? pathname === '/' : pathname.startsWith(href);
           return (
             <li key={href} className="flex-1">
               <Link
@@ -34,9 +38,7 @@ export default function MobileNav() {
                 aria-current={isActive ? 'page' : undefined}
                 className={[
                   'flex flex-col items-center justify-center gap-1 py-3 w-full text-[10px] tracking-wide transition-colors duration-200',
-                  isActive
-                    ? 'text-accent'
-                    : 'text-muted hover:text-foreground',
+                  isActive ? 'text-accent' : 'text-muted hover:text-foreground',
                 ].join(' ')}
               >
                 <Icon

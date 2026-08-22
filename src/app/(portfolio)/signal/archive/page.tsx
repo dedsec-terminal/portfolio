@@ -20,7 +20,7 @@ export default function SignalArchivePage() {
   }
 
   return (
-    <div className="min-h-screen pt-32 px-6 lg:px-12 flex flex-col items-center">
+    <div className="glass-surface m-3 flex min-h-screen flex-col items-center rounded-2xl px-6 pt-32 lg:m-6 lg:px-12">
       <h1 className="text-4xl font-bold font-sans tracking-tight text-brand-neutral-100 mb-8">
         Signal Archive
       </h1>

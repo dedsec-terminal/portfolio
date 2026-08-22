@@ -1,12 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import DiscordPresence from '@/components/features/DiscordPresence';
-
-const navLinks = [
-  { href: '/projects', label: 'Projects' },
-  { href: '/signal', label: 'Signal' },
-  { href: '/about', label: 'About' },
-];
+import { primaryNavigation } from '@/lib/navigation';
 
 export default function TopNav() {
   return (
@@ -28,7 +23,7 @@ export default function TopNav() {
           WebkitBackdropFilter: 'blur(12px)',
         }}
       >
-        <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
             {/* Site mark */}
             <Link
@@ -48,17 +43,19 @@ export default function TopNav() {
                 DedSec
               </span>
             </Link>
-            <DiscordPresence />
+            <span className="hidden sm:inline-flex">
+              <DiscordPresence />
+            </span>
           </div>
 
           {/* Primary navigation */}
           <nav aria-label="Primary navigation">
-            <ul className="flex items-center gap-7 list-none m-0 p-0">
-              {navLinks.map(({ href, label }) => (
+            <ul className="m-0 flex list-none items-center gap-3 p-0 sm:gap-5 md:gap-7">
+              {primaryNavigation.map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-sm text-muted hover:text-foreground transition-colors duration-200 tracking-wide"
+                    className="text-[11px] tracking-wide text-muted transition-colors duration-200 hover:text-foreground sm:text-xs md:text-sm"
                   >
                     {label}
                   </Link>

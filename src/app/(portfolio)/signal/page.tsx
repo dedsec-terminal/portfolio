@@ -28,7 +28,7 @@ export default function SignalPage() {
 
   if (error || !signalData) {
     return (
-      <div className="min-h-screen pt-32 px-6 lg:px-12 flex flex-col items-center">
+      <div className="glass-surface m-3 flex min-h-[calc(100svh-4.5rem)] flex-col items-center rounded-2xl px-6 pt-32 lg:m-6 lg:px-12">
         <h1 className="text-4xl font-bold font-sans tracking-tight text-brand-neutral-100 mb-8">
           The Signal
         </h1>
@@ -40,8 +40,10 @@ export default function SignalPage() {
   }
 
   return (
-    <main className="w-full h-full bg-brand-neutral-950">
-      <SignalExperience data={signalData} />
+    <main className="h-full w-full p-3 md:p-5">
+      <div className="glass-surface overflow-hidden rounded-2xl">
+        <SignalExperience data={signalData} />
+      </div>
     </main>
   );
 }

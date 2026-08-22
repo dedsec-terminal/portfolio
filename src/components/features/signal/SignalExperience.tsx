@@ -10,17 +10,22 @@ interface SignalExperienceProps {
 }
 
 export default function SignalExperience({ data }: SignalExperienceProps) {
-  const [selectedNode, setSelectedNode] = useState<SignalDayType['nodes'][number] | null>(null);
+  const [selectedNode, setSelectedNode] = useState<
+    SignalDayType['nodes'][number] | null
+  >(null);
 
   return (
-    <section className="relative h-screen min-h-[600px] w-full overflow-hidden bg-transparent">
+    <section className="relative h-[calc(100svh-4.5rem)] min-h-[600px] w-full overflow-hidden bg-black/20 md:h-[calc(100svh-5.5rem)]">
       <SignalGraph
         data={data}
         className="h-full w-full"
         onNodeSelect={setSelectedNode}
       />
 
-      <SignalDetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />
+      <SignalDetailPanel
+        node={selectedNode}
+        onClose={() => setSelectedNode(null)}
+      />
 
       <div className="pointer-events-none absolute left-6 top-24 z-10 md:left-12">
         <h1 className="mb-1 font-sans text-3xl font-bold tracking-tight text-brand-neutral-100">

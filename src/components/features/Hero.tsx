@@ -2,7 +2,6 @@ import Avatar from '@/components/ui/Avatar';
 import { FileText, Mail } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaDiscord, FaXTwitter } from 'react-icons/fa6';
 import MusicShell from '@/components/features/MusicShell';
-import HeroShaderBackground from '@/components/features/HeroShaderBackground';
 import { siteConfig } from '@/lib/site';
 
 /*
@@ -33,9 +32,17 @@ export default function Hero() {
     */
     <section
       aria-label="Introduction"
+      data-shader-zone="hero"
       className="relative min-h-[calc(100svh-3rem)] flex flex-col overflow-hidden"
     >
-      <HeroShaderBackground />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            'linear-gradient(90deg, rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.7))',
+        }}
+      />
 
       {/* Content wrapper */}
       <div className="relative z-10 flex-1 flex flex-col w-full">

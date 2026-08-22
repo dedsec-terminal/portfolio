@@ -24,7 +24,7 @@ export default function HomePage() {
 
         <section
           aria-label="Art and media"
-          className="py-16 md:py-20 border-t border-border/30"
+          className="glass-surface mx-3 my-4 rounded-2xl py-16 md:mx-6 md:py-20"
         >
           <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-12">
             <ArtPreview />

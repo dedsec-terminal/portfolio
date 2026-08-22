@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ShaderMount } from '@paper-design/shaders-react';
 import {
   ShaderFitOptions,
@@ -9,10 +9,11 @@ import {
   type PaperShaderElement,
 } from '@paper-design/shaders';
 
-const CLOUD_IMAGE = '/images/hero/cloud.jpg';
+const CLOUD_IMAGE = '/images/background/clouds.webp';
 const PULSE_DURATION_MS = 1400;
 const INTERACTIVE_SELECTOR =
-  'a, button, input, select, textarea, [role="button"]';
+  'a, button, input, select, textarea, [role="button"], [data-shader-ignore]';
+const SITE_INTERACTION_STRENGTH = 0.52;
 
 const cloudFragmentShader = waterFragmentShader
   .replace(
@@ -55,7 +56,7 @@ uniform float u_pulseStrength;`
   imageUV += interactionOffset;`
   );
 
-const initialUniforms = {
+const baseUniforms = {
   u_image: CLOUD_IMAGE,
   u_colorBack: [0, 0, 0, 1],
   u_colorHighlight: [0.945, 0.929, 0.902, 1],
@@ -67,7 +68,7 @@ const initialUniforms = {
   u_size: 1.4,
   u_fit: ShaderFitOptions.cover,
   u_rotation: 0,
-  u_scale: 1.12,
+  u_scale: 1.08,
   u_offsetX: 0,
   u_offsetY: 0,
   u_originX: 0.5,
@@ -86,9 +87,37 @@ type InteractionState = {
   targetPointerStrength: number;
   pulseStartedAt: number | null;
   pulseOrigin: [number, number];
+  pulseScale: number;
   rafId: number | null;
   lastFrameAt: number;
 };
+
+type RenderProfile = {
+  maxPixelCount: number;
+  offsetX: number;
+  offsetY: number;
+  scale: number;
+};
+
+const desktopProfile: RenderProfile = {
+  maxPixelCount: 2_073_600,
+  offsetX: 0,
+  offsetY: -0.025,
+  scale: 1.08,
+};
+
+function getRenderProfile(): RenderProfile {
+  if (window.innerHeight > window.innerWidth) {
+    return {
+      maxPixelCount: 1_048_576,
+      offsetX: -0.055,
+      offsetY: 0,
+      scale: 1.04,
+    };
+  }
+
+  return desktopProfile;
+}
 
 function supportsWebGL2() {
   try {
@@ -102,12 +131,35 @@ function supportsWebGL2() {
 }
 
 function isInteractiveTarget(target: EventTarget | null) {
-  return (
-    target instanceof Element && target.closest(INTERACTIVE_SELECTOR) !== null
-  );
+  if (!(target instanceof Element)) return false;
+  if (
+    target instanceof HTMLCanvasElement &&
+    document.body.style.cursor === 'pointer'
+  ) {
+    return true;
+  }
+
+  return target.closest(INTERACTIVE_SELECTOR) !== null;
 }
 
-export default function HeroShaderBackground() {
+function interactionStrengthAt(clientX: number, clientY: number) {
+  const hero = document.querySelector<HTMLElement>('[data-shader-zone="hero"]');
+  const bounds = hero?.getBoundingClientRect();
+
+  if (
+    bounds &&
+    clientX >= bounds.left &&
+    clientX <= bounds.right &&
+    clientY >= bounds.top &&
+    clientY <= bounds.bottom
+  ) {
+    return 1;
+  }
+
+  return SITE_INTERACTION_STRENGTH;
+}
+
+export default function SiteShaderBackground() {
   const backdropRef = useRef<HTMLDivElement>(null);
   const shaderRef = useRef<PaperShaderElement>(null);
   const interactionRef = useRef<InteractionState>({
@@ -115,11 +167,24 @@ export default function HeroShaderBackground() {
     targetPointerStrength: 0,
     pulseStartedAt: null,
     pulseOrigin: [0.5, 0.5],
+    pulseScale: SITE_INTERACTION_STRENGTH,
     rafId: null,
     lastFrameAt: 0,
   });
   const [shaderEnabled, setShaderEnabled] = useState(false);
   const [shaderReady, setShaderReady] = useState(false);
+  const [renderProfile, setRenderProfile] =
+    useState<RenderProfile>(desktopProfile);
+
+  const shaderUniforms = useMemo(
+    () => ({
+      ...baseUniforms,
+      u_scale: renderProfile.scale,
+      u_offsetX: renderProfile.offsetX,
+      u_offsetY: renderProfile.offsetY,
+    }),
+    [renderProfile]
+  );
 
   const updateShaderUniforms = useCallback(
     (uniforms: Record<string, number | number[]>) => {
@@ -136,10 +201,17 @@ export default function HeroShaderBackground() {
       setShaderEnabled(!reducedMotion.matches && supportsWebGL2());
     };
 
-    syncCapability();
-    reducedMotion.addEventListener('change', syncCapability);
+    const syncRenderProfile = () => setRenderProfile(getRenderProfile());
 
-    return () => reducedMotion.removeEventListener('change', syncCapability);
+    syncCapability();
+    syncRenderProfile();
+    reducedMotion.addEventListener('change', syncCapability);
+    window.addEventListener('resize', syncRenderProfile, { passive: true });
+
+    return () => {
+      reducedMotion.removeEventListener('change', syncCapability);
+      window.removeEventListener('resize', syncRenderProfile);
+    };
   }, []);
 
   useEffect(() => {
@@ -198,7 +270,7 @@ export default function HeroShaderBackground() {
           1,
           (now - interaction.pulseStartedAt) / PULSE_DURATION_MS
         );
-        pulseStrength = 1 - pulseProgress;
+        pulseStrength = (1 - pulseProgress) * interaction.pulseScale;
         if (pulseProgress >= 1) interaction.pulseStartedAt = null;
       }
 
@@ -253,7 +325,9 @@ export default function HeroShaderBackground() {
       const point = getPoint(event);
       const shouldInteract =
         point !== null && !isInteractiveTarget(event.target);
-      interaction.targetPointerStrength = shouldInteract ? 1 : 0;
+      interaction.targetPointerStrength = shouldInteract
+        ? interactionStrengthAt(event.clientX, event.clientY)
+        : 0;
 
       if (point) updateShaderUniforms({ u_pointer: point });
       requestInteractionFrame();
@@ -265,10 +339,14 @@ export default function HeroShaderBackground() {
 
       interaction.pulseOrigin = point;
       interaction.pulseStartedAt = performance.now();
+      interaction.pulseScale = interactionStrengthAt(
+        event.clientX,
+        event.clientY
+      );
       updateShaderUniforms({
         u_pulseOrigin: point,
         u_pulseProgress: 0,
-        u_pulseStrength: 1,
+        u_pulseStrength: interaction.pulseScale,
       });
       requestInteractionFrame();
     };
@@ -293,29 +371,29 @@ export default function HeroShaderBackground() {
     <div
       ref={backdropRef}
       aria-hidden="true"
-      data-testid="hero-shader-background"
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-black"
+      data-testid="site-shader-background"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-black"
     >
       <Image
-        data-testid="hero-cloud-fallback"
+        data-testid="site-cloud-fallback"
         src={CLOUD_IMAGE}
         alt=""
         fill
         sizes="100vw"
         preload
-        className="object-cover object-center"
+        className="object-cover object-[56%_48%] md:object-[50%_44%]"
       />
 
       {shaderEnabled ? (
         <ShaderMount
           ref={shaderRef}
-          data-testid="hero-cloud-shader"
+          data-testid="site-cloud-shader"
           fragmentShader={cloudFragmentShader}
-          uniforms={initialUniforms}
+          uniforms={shaderUniforms}
           mipmaps={['u_image']}
           speed={0.14}
           minPixelRatio={1}
-          maxPixelCount={2_073_600}
+          maxPixelCount={renderProfile.maxPixelCount}
           webGlContextAttributes={{
             alpha: false,
             antialias: false,
@@ -327,13 +405,7 @@ export default function HeroShaderBackground() {
         />
       ) : null}
 
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(90deg, rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.7))',
-        }}
-      />
+      <div className="absolute inset-0 bg-black/25" />
     </div>
   );
 }
