@@ -2,6 +2,7 @@ import Avatar from '@/components/ui/Avatar';
 import { FileText, Mail } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaDiscord, FaXTwitter } from 'react-icons/fa6';
 import MusicShell from '@/components/features/MusicShell';
+import DiscordPresence from '@/components/features/DiscordPresence';
 import { siteConfig } from '@/lib/site';
 
 /*
@@ -10,7 +11,7 @@ import { siteConfig } from '@/lib/site';
 const socials = [
   { label: 'GitHub',   href: siteConfig.links.github,   icon: FaGithub },
   { label: 'LinkedIn', href: siteConfig.links.linkedin, icon: FaLinkedin },
-  { label: siteConfig.links.discord, icon: FaDiscord },
+  { label: siteConfig.links.discord, href: `https://discordapp.com/users/${siteConfig.discordId}`, icon: FaDiscord },
   { label: 'X',        href: siteConfig.links.x,        icon: FaXTwitter },
 ];
 
@@ -170,6 +171,11 @@ export default function Hero() {
             <FileText size={10} strokeWidth={1.5} aria-hidden="true" />
             View Resume
           </a>
+
+          {/* Discord Live Presence */}
+          <div className="pt-4">
+            <DiscordPresence />
+          </div>
         </div>
       </div>
 
