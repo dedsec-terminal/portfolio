@@ -50,33 +50,116 @@ export const signalSchema = z.object({
   discoveries: z.array(signalDiscoverySchema),
 });
 
-export const resumeSchema = z.object({
-  basics: z.object({
-    name: z.string(),
-    label: z.string(),
-    email: z.string().email(),
-    url: z.string().url(),
-    summary: z.string(),
-    profiles: z.array(
+const provenance = {
+  source: z.string().optional().describe("Provenance; not rendered"),
+  derivedFrom: z.string().optional().describe("Provenance; not rendered"),
+};
+
+const bullet = z
+  .string()
+  .describe("Supports `**bold**` runs; no other inline formatting");
+
+const contact = z.object({
+  email: z.string(),
+  links: z
+    .array(
       z.object({
-        network: z.string(),
-        username: z.string(),
-        url: z.string().url(),
-      })
-    ),
-  }),
-  work: z.array(
-    z.object({
-      company: z.string(),
-      position: z.string(),
-      startDate: z.string(),
-      endDate: z.string(),
-      highlights: z.array(z.string()),
-    })
-  ),
-  education: z.array(z.any()),
-  skills: z.array(z.any()),
+        url: z.string(),
+        label: z.string(),
+      }),
+    )
+    .optional(),
 });
+
+const header = z.object({
+  name: z.string(),
+  subtitle: z
+    .array(z.string())
+    .describe("One logical line per item; the template joins with line breaks"),
+  monomark: z.string().optional().describe("Short mark rendered as a logo"),
+  contact,
+});
+
+const skillsSection = z.object({
+  kind: z.literal("skills").describe("A labeled flat list of bullets"),
+  label: z.string(),
+  bullets: z.array(bullet),
+  ...provenance,
+});
+
+const projectEntry = z.object({
+  title: z.string(),
+  dateRange: z.string().optional(),
+  bullets: z.array(bullet),
+  ...provenance,
+});
+
+const projectsSection = z.object({
+  kind: z
+    .literal("projects")
+    .describe("Titled entries with optional date ranges"),
+  label: z.string(),
+  entries: z.array(projectEntry),
+  ...provenance,
+});
+
+const experienceEntry = z.object({
+  title: z.string(),
+  organization: z
+    .string()
+    .optional()
+    .describe(
+      "When set, renders `{title} at {organization}`; when absent, title stands alone",
+    ),
+  dateRange: z.string().optional(),
+  summary: z.string().optional(),
+  bullets: z.array(bullet),
+  ...provenance,
+});
+
+const experiencesSection = z.object({
+  kind: z
+    .literal("experiences")
+    .describe("Roles with organization, summary, and bullets"),
+  label: z.string(),
+  entries: z.array(experienceEntry),
+  ...provenance,
+});
+
+const educationEntry = z.object({
+  title: z.string(),
+  dateRange: z.string().optional(),
+  bullets: z.array(bullet).optional(),
+  ...provenance,
+});
+
+const educationSection = z.object({
+  kind: z
+    .literal("education")
+    .describe("Like projects, but bullets are optional per entry"),
+  label: z.string(),
+  entries: z.array(educationEntry),
+  ...provenance,
+});
+
+export const sectionSchema = z.discriminatedUnion("kind", [
+  skillsSection,
+  projectsSection,
+  experiencesSection,
+  educationSection,
+]);
+
+export const resumeSchema = z.object({
+  header,
+  sections: z.array(sectionSchema),
+});
+
+export type Resume = z.infer<typeof resumeSchema>;
+export type Section = z.infer<typeof sectionSchema>;
+export type SkillsSection = z.infer<typeof skillsSection>;
+export type ProjectsSection = z.infer<typeof projectsSection>;
+export type ExperiencesSection = z.infer<typeof experiencesSection>;
+export type EducationSection = z.infer<typeof educationSection>;
 
 export const musicTrackSchema = z.object({
   id: z.string(),

@@ -122,3 +122,80 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
+
+/* ─── Resume Print ───────────────────────────────────────── */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+  .resume-page {
+    background-color: white !important;
+  }
+  .resume-no-print {
+    display: none !important;
+  }
+  body, .resume-page {
+    min-height: auto !important;
+  }
+}
+
+[data-resume-theme="baseline"] {
+  color-scheme: dark;
+  --t-baseline-backdrop: var(--color-stone-950, #0c0a09);
+  --t-baseline-paper: var(--color-neutral-900, #171717);
+  --t-baseline-ink: var(--color-neutral-300, #d4d4d8);
+  --t-baseline-heading: #f5f5f8;
+
+  --t-baseline-skills-heading: #85c9a1;
+  --t-baseline-skills-bullet: #7bb393;
+  --t-baseline-skills-line: #2c513c;
+
+  --t-baseline-projects-heading: #baadec;
+  --t-baseline-projects-bullet: #a79cd0;
+  --t-baseline-projects-line: #494263;
+
+  --t-baseline-experiences-heading: #96b9f1;
+  --t-baseline-experiences-bullet: #89a6d5;
+  --t-baseline-experiences-line: #364865;
+
+  --t-baseline-education-heading: #e7a685;
+  --t-baseline-education-bullet: #cd977b;
+  --t-baseline-education-line: #603e2d;
+
+  --t-baseline-font: var(--font-inter);
+}
+
+@page {
+  size: letter;
+  margin: 0;
+}
+
+@media print {
+  [data-resume-theme="baseline"] {
+    color-scheme: light;
+    --t-baseline-backdrop: white;
+    --t-baseline-paper: white;
+    --t-baseline-ink: #3e3e4a;
+    --t-baseline-heading: #191924;
+
+    --t-baseline-skills-heading: #00532e;
+    --t-baseline-skills-bullet: #005732;
+    --t-baseline-skills-line: #d2f1dd;
+
+    --t-baseline-projects-heading: #4a3082;
+    --t-baseline-projects-bullet: #5418a5;
+    --t-baseline-projects-line: #e9e3ff;
+
+    --t-baseline-experiences-heading: #123f88;
+    --t-baseline-experiences-bullet: #003da3;
+    --t-baseline-experiences-line: #dae9ff;
+
+    --t-baseline-education-heading: #722a00;
+    --t-baseline-education-bullet: #7a2b00;
+    --t-baseline-education-line: #ffe1d2;
+
+    --t-baseline-font: Georgia, "Times New Roman", Times, serif;
+  }
+}
+

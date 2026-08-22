@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "signal:generate": "tsx scripts/generate-signal.ts",
-    "signal:test": "vitest run"
+    "signal:test": "vitest run",
+    "resume:pdf": "node scripts/generate-pdf.mjs"
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.23",
@@ -42,6 +43,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "prettier": "^3.9.6",
+    "puppeteer": "^25.8.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",
     "typescript": "^5",

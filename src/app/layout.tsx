@@ -2,9 +2,6 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import TopNav from '@/components/layout/TopNav';
-import MobileNav from '@/components/layout/MobileNav';
-import SiteFooter from '@/components/layout/SiteFooter';
 import './globals.css';
 
 /*
@@ -34,10 +31,8 @@ export const metadata: Metadata = {
   },
   description:
     'Cybersecurity enthusiast. SOC, GRC, security research. Personal site and curated digital space.',
-  metadataBase: new URL('https://example.com'),
+  metadataBase: new URL('https://example.com'), // Replace with actual domain when ready
 };
-
-import { MusicProvider } from '@/components/features/music/MusicProvider';
 
 export default function RootLayout({
   children,
@@ -50,19 +45,10 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <MusicProvider>
-          <TopNav />
-          {/* main has no horizontal constraint — pages control their own layout */}
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <SiteFooter />
-          <MobileNav />
-          <Analytics />
-          <SpeedInsights />
-        </MusicProvider>
+        {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
 }
-

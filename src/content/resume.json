@@ -1,27 +1,111 @@
 {
-  "basics": {
+  "header": {
     "name": "Swaraj Singh",
-    "label": "Software Engineer",
-    "email": "swarajsingh211@gmail.com",
-    "url": "https://example.com",
-    "summary": "Fictional software engineer.",
-    "profiles": [
-      {
-        "network": "GitHub",
-        "username": "example",
-        "url": "https://github.com/example"
-      }
-    ]
-  },
-  "work": [
-    {
-      "company": "Example Inc",
-      "position": "Engineer",
-      "startDate": "2020-01",
-      "endDate": "2023-01",
-      "highlights": ["Built things.", "Fixed things."]
+    "subtitle": [],
+    "contact": {
+      "email": "swarajsingh211@gmail.com",
+      "links": [
+        { "url": "tel:+919372434984", "label": "+91 93724 34984" },
+        { "url": "https://portfolio-c0w337p61-dedsec-terminal-3707s-projects.vercel.app/", "label": "Portfolio" },
+        { "url": "https://github.com/dedsec-terminal", "label": "GitHub" },
+        { "url": "https://www.linkedin.com/in/swarajsingh211in/", "label": "LinkedIn" }
+      ]
     }
-  ],
-  "education": [],
-  "skills": []
+  },
+  "sections": [
+    {
+      "kind": "experiences",
+      "label": "Experience",
+      "entries": [
+        {
+          "title": "SOC Analyst",
+          "organization": "Knowledge Mine Info Media",
+          "dateRange": "June 2026–August 2026",
+          "bullets": [
+            "Conducted proactive threat hunts by correlating external OSINT indicators with internal firewall logs; investigated IAM anomalies and phishing campaigns and documented findings using MITRE ATT&CK for Tier 2 escalation.",
+            "Supported enterprise GRC initiatives and NIST SP 800-53 compliance audits, prepared risk-management documentation, and ran automated VAPT scans to prioritize remediation.",
+            "Executed malware tabletop simulations and incident-response playbooks for host isolation, helping formalize end-to-end security-event workflows."
+          ]
+        },
+        {
+          "title": "Product Development Intern",
+          "organization": "SYNIRIS Technologies",
+          "dateRange": "June 2025–August 2025",
+          "bullets": [
+            "Developed centralized role-based authentication workflows, reducing administrative onboarding and configuration time by 35%.",
+            "Led PASTA threat-modeling sessions that surfaced 12+ potential attack vectors early in design and reduced post-deployment application-security defects by 40%."
+          ]
+        },
+        {
+          "title": "Project Trainee Intern",
+          "organization": "ARC SOLUTIONS",
+          "dateRange": "June 2024–August 2024",
+          "bullets": [
+            "Built Sentinel-1 SAR data-processing workflows in Google Earth Engine for large-scale environmental mapping and produced technical implementation reports."
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "projects",
+      "label": "Projects",
+      "entries": [
+        {
+          "title": "Faultplane",
+          "bullets": [
+            "Built an automated threat-intelligence platform that aggregates 10+ authoritative security sources, enriches vulnerabilities through NVD and CISA KEV, generates executive summaries, and publishes daily through GitHub Actions.",
+            "**Technologies:** Python, Groq API, GitHub Actions, NVD 2.0, CISA KEV"
+          ]
+        },
+        {
+          "title": "LedgerCast",
+          "bullets": [
+            "Developed a packaged CLI and client-side dashboard for testing access management, change management, backup and recovery, and segregation-of-duties controls, with findings management and framework crosswalking.",
+            "**Technologies:** Python, ITGC / SOX, ISO 27001, NIST CSF 2.0, COBIT 2019"
+          ]
+        },
+        {
+          "title": "PolicyForge",
+          "bullets": [
+            "Built an information-security governance suite with eight security policies, numbered safeguards, control-to-framework traceability, and exception/review registers mapped across major security and privacy frameworks.",
+            "**Technologies:** Security Governance, Policy Engineering, Control Traceability, ISO 27001, NIST CSF 2.0, DPDP Act 2023"
+          ]
+        },
+        {
+          "title": "Agentic IaC Vulnerability Detection & Remediation",
+          "bullets": [
+            "Built an automated DevSecOps workflow that detects Infrastructure-as-Code security misconfigurations, generates remediated configurations, and validates proposed fixes with Checkov before presenting results.",
+            "**Technologies:** Python, Terraform, Docker, Checkov, LLM Workflows, Streamlit"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "skills",
+      "label": "Skills",
+      "bullets": [
+        "**SOC & Detection:** Threat Hunting, Alert Triage, Log Analysis & Correlation, Incident Response, Phishing Investigation, Malware Triage, IAM Investigation, Vulnerability Management, MITRE ATT&CK, IoC Analysis",
+        "**Security Operations:** Microsoft Sentinel, SentinelOne, Splunk, ELK Stack, Wazuh, Zeek, Suricata, Sysmon, Wireshark, Nmap, Nessus",
+        "**GRC & Risk:** NIST SP 800-53, NIST CSF 2.0, ISO 27001, ISO 27701, COBIT 2019, DPDP Act 2023, ITGC / SOX Control Testing, Risk Assessment, Control Mapping, Audit Evidence, Security Governance, ServiceNow GRC / IRM",
+        "**Application & Cloud Security:** IAM, RBAC, PASTA Threat Modeling, VAPT, Burp Suite, Metasploit, Checkov, Azure Security, AWS Security, Active Directory, Docker, Terraform, CI/CD",
+        "**Forensics & Security Research:** Autopsy, Volatility, Ghidra, OSINT, CVE Analysis, NVD 2.0, CISA KEV, Threat Intelligence, Technical Security Research",
+        "**Programming & Infrastructure:** Python, Bash, PowerShell, SQL, JavaScript, C/C++, Git, GitHub Actions, Linux, Windows Server, TCP/IP"
+      ]
+    },
+    {
+      "kind": "education",
+      "label": "Education & Credentials",
+      "entries": [
+        {
+          "title": "B.Tech in Computer Science & IT — Cyber Security, Symbiosis Skills and Professional University",
+          "dateRange": "2023–2027"
+        },
+        { "title": "CREST CTF Competition — Top 10" },
+        { "title": "Certified SME Cyber Security Officer (CSCSO)" },
+        { "title": "ISO 27701 Lead Auditor — Mastermind Assurance" },
+        { "title": "Ethical Hacker — Cisco Networking Academy" },
+        { "title": "Microsoft Security Operations Analyst (SC-200) Expected November 2026" }
+      ]
+    }
+  ]
 }
