@@ -1,4 +1,4 @@
-import { SignalDayType } from '@/lib/signal/schemas';
+import type { SignalDayType } from '@/lib/signal/schemas';
 import { ExternalLink, X } from 'lucide-react';
 
 type SignalNode = SignalDayType['nodes'][0];
@@ -11,57 +11,64 @@ interface SignalDetailPanelProps {
 export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelProps) {
   if (!node) return null;
 
+  const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
+
   return (
-    <div className="absolute inset-x-0 bottom-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-12 md:left-auto md:w-80 lg:w-96 p-4 z-50 animate-in fade-in slide-in-from-bottom-4 md:slide-in-from-right-8 duration-300 pointer-events-none">
-      
-      <div className="relative pointer-events-auto flex flex-col max-h-[85vh] md:max-h-[75vh] bg-brand-neutral-900/90 backdrop-blur-md border border-brand-neutral-800 rounded-xl p-6 shadow-2xl">
-        
-        {/* Close Button */}
-        <button 
+    <div className="absolute inset-0 z-50 flex items-end bg-background/92 p-4 backdrop-blur-sm md:items-center md:justify-center md:p-10">
+      <article className="relative max-h-[88svh] w-full max-w-5xl overflow-y-auto border-2 border-foreground/80 bg-background">
+        <button
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 text-brand-neutral-400 hover:text-brand-neutral-100 transition-colors shrink-0 z-10"
+          className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center border border-foreground/60 bg-background text-foreground transition-colors hover:bg-foreground hover:text-background"
           aria-label="Close details"
         >
-          <X className="w-5 h-5" />
+          <X className="size-5" />
         </button>
 
-        {/* Header / Metadata */}
-        <div className="shrink-0 pr-8">
-          <div className="flex items-center gap-3 mb-4 text-xs font-mono tracking-wider text-brand-neutral-400 uppercase">
-            <span className="bg-brand-neutral-800 px-2 py-1 rounded-md">{node.category}</span>
-            <span className="text-brand-accent/70">{node.tier}</span>
-          </div>
-          <h2 className="text-xl font-medium text-brand-neutral-100 mb-4 leading-snug">
-            {node.title}
-          </h2>
-        </div>
-
-        {/* Scrollable Content Area */}
-        <div className="overflow-y-auto min-h-0 mb-4 pr-2 custom-scrollbar">
-          <p className="text-sm text-brand-neutral-300 leading-relaxed">
-            {node.description}
-          </p>
-        </div>
-
-        {/* Source Link / Action Area */}
-        <div className="shrink-0 pt-3 border-t border-brand-neutral-800/50">
-          {node.url ? (
-            <a
-              href={node.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-brand-accent hover:text-brand-accent/80 transition-colors group"
-            >
-              Visit {node.source}
-              <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
+        <div className="grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+          {node.image ? (
+            <div className="relative min-h-72 border-b-2 border-foreground/80 md:min-h-[560px] md:border-b-0 md:border-r-2" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="absolute inset-0 h-full w-full object-cover" src={node.image} alt="" />
+            </div>
           ) : (
-            <span className="text-sm text-brand-neutral-500 italic">
-              Source: {node.source}
-            </span>
+            <div className="hidden border-r-2 border-foreground/80 md:flex md:min-h-[560px] md:items-center md:justify-center">
+              <span className="select-none font-mono text-[10rem] leading-none text-foreground/5">↗</span>
+            </div>
           )}
+
+          <div className="flex min-h-80 flex-col justify-between p-6 pr-20 md:p-10 md:pr-20">
+            <div>
+              <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">
+                Found today
+              </p>
+              <h2 className="text-3xl font-semibold leading-[0.95] tracking-[-0.045em] text-foreground md:text-5xl">
+                {title}
+              </h2>
+              <p className="mt-8 max-w-[48ch] whitespace-pre-line text-sm leading-7 text-muted md:text-base">
+                {node.description}
+              </p>
+            </div>
+
+            <div className="mt-10 border-t border-border pt-5">
+              {node.url ? (
+                <a
+                  href={node.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-foreground hover:text-accent"
+                >
+                  Open source <ExternalLink className="size-4" />
+                </a>
+              ) : (
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">
+                  No external source
+                </span>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      </article>
     </div>
   );
 }

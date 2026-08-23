@@ -1,6 +1,5 @@
 import { SignalItem, SignalNode, SignalDay } from './types';
 
-// Deterministic hash function (cyrb53)
 const cyrb53 = (str: string, seed = 0): number => {
   let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
   for (let i = 0, ch; i < str.length; i++) {
@@ -13,7 +12,6 @@ const cyrb53 = (str: string, seed = 0): number => {
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 
-// Seeded PRNG (mulberry32)
 class PRNG {
   private seed: number;
   constructor(seed: number) {
@@ -28,7 +26,7 @@ class PRNG {
 }
 
 export interface GeneratorConfig {
-  date: string; // YYYY-MM-DD
+  date: string;
   generatorVersion: string;
   targetCount: number;
   historicalIds: string[];
@@ -40,78 +38,32 @@ export class SignalGenerator {
     const seed = cyrb53(seedString);
     const prng = new PRNG(seed);
 
-    // 1. Remove exact duplicates by ID from candidates pool
     const uniqueCandidates = new Map<string, SignalItem>();
     for (const item of candidates) {
-      if (!uniqueCandidates.has(item.id)) {
-        uniqueCandidates.set(item.id, item);
-      }
+      if (!uniqueCandidates.has(item.id)) uniqueCandidates.set(item.id, item);
     }
     const allUnique = Array.from(uniqueCandidates.values());
 
-    // 2. Cooldown filtering
-    let available = allUnique.filter(c => !config.historicalIds.includes(c.id));
-    
-    // If we filtered out too many, relax cooldown by falling back to all unique candidates
-    if (available.length < config.targetCount) {
-      available = allUnique;
-    }
+    let available = allUnique.filter((candidate) => !config.historicalIds.includes(candidate.id));
+    if (available.length < config.targetCount) available = allUnique;
 
-    // Sort deterministically to ensure stable baseline before random selection
     available.sort((a, b) => a.id.localeCompare(b.id));
 
-    // 3. Selection
+    // The Signal is intentionally not balanced by category. The daily issue is a
+    // chance collision of interesting things; the cooldown is the only editorial
+    // constraint beyond deterministic selection.
     const selected: SignalItem[] = [];
-    const usedCategories = new Set<string>();
-
-    // We want approximately config.targetCount items.
     while (selected.length < config.targetCount && available.length > 0) {
-      // Pick random index
-      const idx = Math.floor(prng.next() * available.length);
-      const candidate = available[idx];
-      
-      // Try to avoid category repetition if we still have choices
-      const hasOtherCategories = available.some(c => !usedCategories.has(c.category));
-      if (usedCategories.has(candidate.category) && hasOtherCategories) {
-        // Skip for now, try another one in the next iteration. 
-        // To avoid infinite loops, we just remove it temporarily from this try and reshuffle,
-        // but an easier way is just swapping with the last and popping, then trying again.
-        // Actually, simpler: just remove it from available pool, but we might want it later if we run out.
-        // For absolute simplicity in determinism: we just re-roll. If we re-roll, we might hit it again.
-        // Let's just find the first available candidate that doesn't share a category, starting from idx.
-        let found = false;
-        for (let i = 0; i < available.length; i++) {
-          const shiftIdx = (idx + i) % available.length;
-          if (!usedCategories.has(available[shiftIdx].category)) {
-            selected.push(available[shiftIdx]);
-            usedCategories.add(available[shiftIdx].category);
-            available.splice(shiftIdx, 1);
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          // fallback, just take the originally picked one
-          selected.push(candidate);
-          usedCategories.add(candidate.category);
-          available.splice(idx, 1);
-        }
-      } else {
-        selected.push(candidate);
-        usedCategories.add(candidate.category);
-        available.splice(idx, 1);
-      }
+      const index = Math.floor(prng.next() * available.length);
+      selected.push(available[index]);
+      available.splice(index, 1);
     }
 
-    // 4. Layout (Deterministic coordinate calculation)
-    // We want coordinates to look like a constellation. Just some pseudo-random spreads.
+    // Keep legacy coordinates in the artifact so all archived v1 days continue to
+    // satisfy the existing schema. The current UI derives its composition from seed.
     const nodes: SignalNode[] = selected.map((item) => {
-      // radius from center
       const radius = 20 + prng.next() * 80;
-      // angle
       const angle = prng.next() * Math.PI * 2;
-      
-      // Node size r
       const r = 2 + prng.next() * 4;
 
       return {
