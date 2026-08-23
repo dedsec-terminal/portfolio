@@ -60,7 +60,13 @@ export default function ProjectsGrid() {
                     dateTime={project.date}
                     className="font-mono text-[10px] text-subtle tracking-wider shrink-0"
                   >
-                    {project.date.slice(0, 7)}
+                    {(() => {
+                      const parts = project.date.split('-');
+                      if (parts.length === 3) {
+                        return `${parts[2]}-${parts[1]}-${parts[0].slice(2)}`;
+                      }
+                      return project.date;
+                    })()}
                   </time>
                 </div>
               </li>

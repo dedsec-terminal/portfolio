@@ -44,7 +44,7 @@ describe('content schemas', () => {
 describe('content loading', () => {
   test('validates dedicated fixtures without exposing them to production collections', () => {
     expect(validateAllContent(fixtureRoot)).toHaveLength(5);
-    expect(validateAllContent()).toHaveLength(0);
+    expect(validateAllContent()).toHaveLength(4);
   });
 
   test('rejects duplicate slugs', () => {

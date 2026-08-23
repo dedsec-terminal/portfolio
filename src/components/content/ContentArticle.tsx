@@ -26,6 +26,7 @@ export default async function ContentArticle({
   related: ContentItem[];
 }) {
   const type = item.type as ContentType;
+  const projectCodeUrl = item.type === 'projects' ? item.codeUrl : undefined;
   const writeupMeta =
     item.type === 'writeups'
       ? [item.platform, item.challenge, item.category, item.difficulty]
@@ -52,13 +53,32 @@ export default async function ContentArticle({
           {item.description}
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <time
-            dateTime={item.date}
-            className="font-mono text-[10px] tracking-wider text-subtle"
-          >
-            {item.date}
-            {item.updatedAt ? ` · updated ${item.updatedAt}` : ''}
-          </time>
+          <div className="flex items-center gap-3">
+            {projectCodeUrl ? (
+              <a
+                href={projectCodeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[10px] tracking-wider text-subtle hover:text-accent"
+                aria-label="View source code on GitHub"
+              >
+                GitHub ↗
+              </a>
+            ) : null}
+            <time
+              dateTime={item.date}
+              className="font-mono text-[10px] tracking-wider text-subtle"
+            >
+              {(() => {
+                const parts = item.date.split('-');
+                if (parts.length === 3) {
+                  return `${parts[2]}-${parts[1]}-${parts[0].slice(2)}`;
+                }
+                return item.date;
+              })()}
+              {item.updatedAt ? ` · updated ${item.updatedAt}` : ''}
+            </time>
+          </div>
           <Tags tags={item.tags} />
         </div>
         {writeupMeta ? (
