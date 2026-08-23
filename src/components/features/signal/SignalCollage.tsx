@@ -30,14 +30,14 @@ const treatmentClass: Record<SignalTreatment, string> = {
 };
 
 const titleClass: Record<SignalTreatment, string> = {
-  poster: 'text-2xl font-semibold leading-[0.95] tracking-[-0.04em] md:text-4xl',
+  poster: 'text-xl font-semibold leading-[0.95] tracking-[-0.04em] md:text-2xl',
   headline:
-    'text-3xl font-semibold uppercase leading-[0.86] tracking-[-0.055em] md:text-6xl lg:text-7xl',
-  note: 'text-xl font-medium leading-tight tracking-[-0.025em] md:text-3xl',
+    'text-2xl font-semibold uppercase leading-[0.86] tracking-[-0.055em] md:text-3xl',
+  note: 'text-lg font-medium leading-tight tracking-[-0.025em] md:text-xl',
   strip:
-    'text-xl font-medium uppercase leading-none tracking-[-0.03em] md:text-4xl',
+    'text-lg font-medium uppercase leading-none tracking-[-0.03em] md:text-2xl',
   fragment:
-    'text-lg font-medium uppercase leading-tight tracking-[0.08em] md:text-2xl',
+    'text-base font-medium uppercase leading-tight tracking-[0.08em] md:text-xl',
 };
 
 const mobileAlignClass: Record<SignalVisualPlacement['mobileAlign'], string> = {
@@ -69,16 +69,16 @@ function SignalObject({
   onSelect?: (node: SignalNode) => void;
 }) {
   const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
-  const sharedClass = `group relative flex w-[var(--signal-mobile-width)] min-w-0 flex-col overflow-hidden p-0 transition-colors duration-200 md:w-auto ${mobileAlignClass[placement.mobileAlign]} ${treatmentClass[placement.treatment]}`;
+  const sharedClass = `group relative flex w-[var(--signal-mobile-width)] min-w-0 flex-col overflow-hidden p-0 transition-colors duration-200 md:h-full md:w-auto ${mobileAlignClass[placement.mobileAlign]} ${treatmentClass[placement.treatment]}`;
 
   const body = (
     <>
-      {node.image ? (
+      {node.image && placement.treatment === 'poster' ? (
         <div
           className={`relative overflow-hidden ${
             placement.treatment === 'poster'
-              ? 'min-h-52 flex-1 md:min-h-64'
-              : 'h-32 md:h-44'
+              ? 'min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none'
+              : 'h-28 md:h-[38%]'
           }`}
           aria-hidden="true"
         >
@@ -93,16 +93,11 @@ function SignalObject({
         </div>
       ) : null}
 
-      <div className="relative flex min-h-24 flex-col justify-between gap-5 p-4 md:p-5">
-        <span className="font-mono text-[10px] tracking-[0.24em] opacity-50">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-end p-3 md:p-2">
+        <span className="absolute left-3 top-3 font-mono text-[10px] leading-none tracking-[0.24em] opacity-50 md:left-2 md:top-2">
           {String(index + 1).padStart(2, '0')}
         </span>
-        <h2 className={titleClass[placement.treatment]}>{title}</h2>
-        {!compact && placement.treatment === 'note' ? (
-          <p className="line-clamp-3 max-w-[42ch] text-xs leading-relaxed opacity-60 md:text-sm">
-            {node.description}
-          </p>
-        ) : null}
+        <h2 className={`line-clamp-2 ${titleClass[placement.treatment]}`}>{title}</h2>
         <span className="absolute bottom-3 right-4 font-mono text-sm opacity-35 transition group-hover:opacity-100">
           ↗
         </span>
@@ -112,9 +107,9 @@ function SignalObject({
 
   if (compact) {
     return (
-      <a href="/signal" className={sharedClass} style={objectStyle(placement)}>
+      <div className={sharedClass} style={objectStyle(placement)}>
         {body}
-      </a>
+      </div>
     );
   }
 
@@ -142,8 +137,8 @@ export default function SignalCollage({
     <div
       className={`flex min-w-0 flex-col gap-10 ${
         compact
-          ? 'min-h-[520px] py-8 md:grid md:min-h-[620px] md:grid-cols-12 md:grid-rows-12 md:gap-3'
-          : 'min-h-[760px] py-12 md:grid md:min-h-[980px] md:grid-cols-12 md:grid-rows-12 md:gap-4 md:py-16'
+          ? 'grid h-full min-h-0 grid-cols-12 grid-rows-12 gap-2 py-3 md:gap-3'
+          : 'min-h-[760px] py-10 md:grid md:h-full md:min-h-0 md:grid-cols-12 md:grid-rows-12 md:gap-3 md:py-3'
       }`}
       data-composition={plan.name}
     >

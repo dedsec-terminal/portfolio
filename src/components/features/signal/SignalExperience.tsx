@@ -15,13 +15,13 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
   >(null);
 
   return (
-    <section className="relative min-h-[calc(100svh-4.5rem)] w-full overflow-hidden bg-background md:min-h-[calc(100svh-5.5rem)]">
-      <header className="flex items-end justify-between gap-6 border-b-2 border-foreground/80 px-5 pb-5 pt-20 md:px-10 md:pb-7 md:pt-24">
+    <section className="relative min-h-[calc(100svh-3rem)] w-full bg-background/65 backdrop-blur-sm md:flex md:h-[calc(100svh-3rem)] md:min-h-0 md:flex-col md:overflow-hidden">
+      <header className="flex shrink-0 items-end justify-between gap-6 border-b-2 border-foreground/80 bg-background/20 px-5 pb-4 pt-8 md:px-10 md:pb-4 md:pt-6">
         <div>
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.3em] text-subtle">
             Five things, placed together
           </p>
-          <h1 className="text-4xl font-semibold uppercase leading-none tracking-[-0.055em] text-foreground md:text-7xl">
+          <h1 className="text-4xl font-semibold uppercase leading-none tracking-[-0.055em] text-foreground md:text-5xl">
             The Signal
           </h1>
         </div>
@@ -33,11 +33,11 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
         </div>
       </header>
 
-      <div className="px-5 md:px-10">
+      <div className="px-5 md:min-h-0 md:flex-1 md:px-10">
         <SignalCollage data={data} onSelect={setSelectedNode} />
       </div>
 
-      <footer className="flex flex-wrap items-center justify-between gap-4 border-t-2 border-foreground/80 px-5 py-5 font-mono text-[10px] uppercase tracking-[0.18em] text-subtle md:px-10">
+      <footer className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-t-2 border-foreground/80 bg-background/20 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.18em] text-subtle md:px-10">
         <span>{data.nodes.length} things / today</span>
         <span>Changes daily</span>
       </footer>

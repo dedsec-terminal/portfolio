@@ -55,7 +55,7 @@ export default function SignalArchivePage() {
                 <p>{day.date}</p>
                 <p className="mt-2 text-[10px] text-subtle">{day.nodes.length} things</p>
               </div>
-              <div className="max-h-[560px] overflow-hidden border border-border px-3 md:max-h-[620px] md:px-5">
+              <div className="h-[340px] overflow-hidden border border-border px-3 md:h-[380px] md:px-5">
                 <SignalCollage data={day} compact />
               </div>
             </section>
