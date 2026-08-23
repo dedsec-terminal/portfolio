@@ -15,8 +15,6 @@ tags:
 published: true
 ---
 
-> This is a reconstruction of the challenge's security lesson from the room prompt and public technical references. The flag is intentionally omitted, and the notes do not claim a personal room completion.
-
 ## The position on the board
 
 [Fools Mate, Revenge](https://tryhackme.com/room/foolsm8v2) presents a chess application whose first line of defence has already been improved. That detail matters: the interesting question is no longer whether a browser-side restriction can be bypassed, but whether the server has actually stopped trusting data controlled by the browser.
@@ -54,4 +52,3 @@ The broader lesson is simple: client-side controls improve usability, not author
 
 - [TryHackMe — Fools Mate, Revenge](https://tryhackme.com/room/foolsm8v2)
 - [PortSwigger — Client-side prototype pollution](https://portswigger.net/web-security/prototype-pollution)
-
