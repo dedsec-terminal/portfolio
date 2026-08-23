@@ -31,8 +31,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   test execution, and trivial edits.
 - Use `gemini-3.1-pro-high` for architecture, ambiguous UI behavior, failed
   validation diagnosis, substantial implementation, and final diff review.
-- Before a Pro implementation, confirm authentication, credits, trusted
-  workspace, model availability, and one sandboxed plan-mode read test.
+- Before a Pro implementation, confirm `agy` is available and its model list
+  includes `gemini-3.1-pro-high`. Do not spend a separate model call on a
+  read-test, credit check, or workspace-trust probe.
 
 ### Delegate brief
 
@@ -56,12 +57,14 @@ Delivery: diff summary | commit and push master
   affected.
 - Allow one implementation pass and one evidence-based Antigravity correction.
   Tooling, authentication, sandbox, and missing-output failures do not consume
-  that correction; stop rather than retrying blindly.
+  that correction; do not retry them blindly.
 - After the correction, Codex may make only a typing, formatting, or lint fix
   affecting fewer than five lines. Rerun the failed and affected checks. Stop
   for anything else.
 - On Windows, use single-line Antigravity prompts. If headless output is
-  missing, request an interactive fallback. For browser audio, follow gesture
+  missing, inspect the diff; continue only when the intended change is present
+  and independently verifiable, otherwise report the failed task. Do not make
+  an interactive fallback a prerequisite. For browser audio, follow gesture
   rules: start only after first interaction, never by silent autoplay.
 - Report only the task result, changed files, checks, and blockers—never repeat
   the workflow.
