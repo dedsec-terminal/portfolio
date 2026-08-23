@@ -3,26 +3,32 @@ import { getContent } from '@/lib/content';
 
 export default function WriteupRow() {
   const writeups = getContent('writeups').slice(0, 5);
+  const isEmpty = writeups.length === 0;
 
   return (
     <section
       aria-label="Writeups"
-      className="glass-surface mx-3 my-4 rounded-2xl py-16 md:mx-6 md:py-20"
+      className={`glass-surface mx-3 my-4 rounded-2xl ${isEmpty ? 'py-10 md:py-12' : 'py-16 md:py-20'}`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Section header */}
-        <div className="mb-8 flex items-baseline gap-3">
-          <span className="font-mono text-xs text-subtle tracking-[0.2em] uppercase">
-            Writeups
-          </span>
+        <header className="mb-8 flex items-baseline gap-3">
+          <h2 className="font-mono text-xs text-subtle tracking-[0.2em] uppercase">
+            <Link href="/writeups" className="hover:text-foreground transition-colors duration-200">
+              Writeups
+            </Link>
+          </h2>
           <div
             className="flex-1 h-px bg-border/30 max-w-12"
             aria-hidden="true"
           />
-        </div>
+          <Link href="/writeups" className="text-xs text-subtle hover:text-foreground transition-colors duration-200" aria-label="View all writeups">
+            View all
+          </Link>
+        </header>
 
-        {writeups.length === 0 ? (
-          <p className="text-sm text-subtle">No writeups yet.</p>
+        {isEmpty ? (
+          <p className="text-sm text-subtle">Coming soon.</p>
         ) : (
           <ul className="flex flex-col list-none m-0 p-0">
             {writeups.map((writeup) => (

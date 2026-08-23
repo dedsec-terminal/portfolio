@@ -22,14 +22,7 @@ export default function HomePage() {
 
         <JournalTeaser />
 
-        <section
-          aria-label="Art and media"
-          className="glass-surface mx-3 my-4 rounded-2xl py-16 md:mx-6 md:py-20"
-        >
-          <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-12">
-            <ArtPreview />
-          </div>
-        </section>
+        <ArtPreview />
 
         {/* Bottom padding for mobile nav */}
         <div className="h-16 md:hidden" aria-hidden="true" />

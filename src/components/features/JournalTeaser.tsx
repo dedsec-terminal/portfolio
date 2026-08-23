@@ -3,25 +3,31 @@ import { getContent } from '@/lib/content';
 
 export default function JournalTeaser() {
   const entries = getContent('journal').slice(0, 3);
+  const isEmpty = entries.length === 0;
 
   return (
     <section
       aria-label="Journal"
-      className="glass-surface mx-3 my-4 rounded-2xl py-16 md:mx-6 md:py-20"
+      className={`glass-surface mx-3 my-4 rounded-2xl ${isEmpty ? 'py-10 md:py-12' : 'py-16 md:py-20'}`}
     >
       <div className="mx-auto max-w-7xl px-6 md:px-12">
-        <div className="mb-8 flex items-baseline gap-3">
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
-            Journal
-          </span>
+        <header className="mb-8 flex items-baseline gap-3">
+          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
+            <Link href="/journal" className="hover:text-foreground transition-colors duration-200">
+              Journal
+            </Link>
+          </h2>
           <div
             className="h-px max-w-12 flex-1 bg-border/30"
             aria-hidden="true"
           />
-        </div>
+          <Link href="/journal" className="text-xs text-subtle hover:text-foreground transition-colors duration-200" aria-label="View all journal entries">
+            View all
+          </Link>
+        </header>
 
-        {entries.length === 0 ? (
-          <p className="text-sm text-subtle">No journal entries yet.</p>
+        {isEmpty ? (
+          <p className="text-sm text-subtle">Coming soon.</p>
         ) : (
           <ul className="m-0 flex list-none flex-col gap-6 p-0">
             {entries.map((entry) => (

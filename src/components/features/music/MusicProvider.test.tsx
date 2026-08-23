@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import React from 'react';
 import { render, screen, act, cleanup } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 import { MusicProvider, useMusicPlayer } from './MusicProvider';
 
 // Mock catalogue data
@@ -56,9 +56,11 @@ class MockAudio {
 
 describe('MusicProvider', () => {
   let mockAudioInstance: MockAudio;
+  let playSpy: MockInstance;
 
   beforeEach(() => {
     mockAudioInstance = new MockAudio();
+    playSpy = vi.spyOn(mockAudioInstance, 'play');
     vi.stubGlobal('Audio', function () {
       return mockAudioInstance;
     });
@@ -93,7 +95,7 @@ describe('MusicProvider', () => {
     );
   };
 
-  it('1/15. initial render NEVER invokes playback, starts stopped', () => {
+  it('initial render NEVER invokes playback, starts stopped', () => {
     render(
       <MusicProvider>
         <TestComponent />
@@ -103,9 +105,31 @@ describe('MusicProvider', () => {
     expect(screen.getByTestId('is-playing').textContent).toBe('false');
     expect(screen.getByTestId('current-index').textContent).toBe('0');
     expect(mockAudioInstance.paused).toBe(true);
+    expect(playSpy).toHaveBeenCalledTimes(0);
   });
 
-  it('3/4. explicit Play and Pause', async () => {
+  it('ordinary interaction test with anchor proves links trigger autoplay', async () => {
+    render(
+      <MusicProvider>
+        <TestComponent />
+      </MusicProvider>
+    );
+
+    expect(playSpy).toHaveBeenCalledTimes(0);
+
+    await act(async () => {
+      const a = document.createElement('a');
+      a.href = '#';
+      document.body.appendChild(a);
+      a.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.removeChild(a);
+    });
+
+    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(mockAudioInstance.paused).toBe(false);
+  });
+
+  it('first direct Play activation calls play exactly once and remains playing', async () => {
     render(
       <MusicProvider>
         <TestComponent />
@@ -116,15 +140,35 @@ describe('MusicProvider', () => {
       screen.getByTestId('play').click();
     });
 
+    expect(playSpy).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('is-playing').textContent).toBe('true');
     expect(mockAudioInstance.paused).toBe(false);
 
+    // explicit Play and Pause toggle
     await act(async () => {
       screen.getByTestId('play').click();
     });
-
     expect(screen.getByTestId('is-playing').textContent).toBe('false');
     expect(mockAudioInstance.paused).toBe(true);
+  });
+
+  it('unmount removes global listeners so later interactions do not call play', async () => {
+    const { unmount } = render(
+      <MusicProvider>
+        <TestComponent />
+      </MusicProvider>
+    );
+
+    unmount();
+
+    await act(async () => {
+      const div = document.createElement('div');
+      document.body.appendChild(div);
+      div.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.removeChild(div);
+    });
+
+    expect(playSpy).toHaveBeenCalledTimes(0);
   });
 
   it('5/6/7/8. Next while paused -> next track remains paused', async () => {
