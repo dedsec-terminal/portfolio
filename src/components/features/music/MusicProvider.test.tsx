@@ -152,6 +152,58 @@ describe('MusicProvider', () => {
     expect(mockAudioInstance.paused).toBe(true);
   });
 
+  it('does not restart after a user pauses and later navigates', async () => {
+    render(
+      <MusicProvider>
+        <TestComponent />
+      </MusicProvider>
+    );
+
+    await act(async () => {
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.removeChild(link);
+    });
+
+    await act(async () => {
+      screen.getByTestId('play').click();
+    });
+
+    await act(async () => {
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.removeChild(link);
+    });
+
+    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(mockAudioInstance.paused).toBe(true);
+  });
+
+  it('does not arm navigation autoplay after manual playback is paused', async () => {
+    render(
+      <MusicProvider>
+        <TestComponent />
+      </MusicProvider>
+    );
+
+    await act(async () => {
+      screen.getByTestId('play').click();
+      screen.getByTestId('play').click();
+    });
+
+    await act(async () => {
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.removeChild(link);
+    });
+
+    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(mockAudioInstance.paused).toBe(true);
+  });
+
   it('unmount removes global listeners so later interactions do not call play', async () => {
     const { unmount } = render(
       <MusicProvider>

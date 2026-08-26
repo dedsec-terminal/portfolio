@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import SignalCollage from '@/components/features/signal/SignalCollage';
+import SignalArchiveExperience from '@/components/features/signal/SignalArchiveExperience';
 import { signalDaySchema, type SignalDayType } from '@/lib/signal/schemas';
 
 export default function SignalArchivePage() {
@@ -48,19 +48,7 @@ export default function SignalArchivePage() {
           <p className="py-12 text-muted">No archived signals found.</p>
         ) : null}
 
-        <div className="divide-y-2 divide-foreground/70">
-          {days.map((day) => (
-            <section key={day.date} className="grid gap-6 py-10 md:grid-cols-[150px_minmax(0,1fr)] md:py-14">
-              <div className="font-mono text-xs uppercase tracking-[0.18em] text-muted">
-                <p>{day.date}</p>
-                <p className="mt-2 text-[10px] text-subtle">{day.nodes.length} things</p>
-              </div>
-              <div className="h-[340px] overflow-hidden border border-border px-3 md:h-[380px] md:px-5">
-                <SignalCollage data={day} compact />
-              </div>
-            </section>
-          ))}
-        </div>
+        <SignalArchiveExperience days={days} />
       </div>
     </main>
   );

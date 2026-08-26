@@ -43,8 +43,12 @@ describe('content schemas', () => {
 
 describe('content loading', () => {
   test('validates dedicated fixtures without exposing them to production collections', () => {
-    expect(validateAllContent(fixtureRoot)).toHaveLength(5);
-    expect(validateAllContent()).toHaveLength(4);
+    const fixtures = validateAllContent(fixtureRoot);
+    const production = validateAllContent();
+
+    expect(fixtures).toHaveLength(5);
+    expect(production).not.toHaveLength(0);
+    expect(production.some((item) => item.filePath.startsWith(fixtureRoot))).toBe(false);
   });
 
   test('rejects duplicate slugs', () => {

@@ -18,15 +18,15 @@ interface SignalCollageProps {
 
 const treatmentClass: Record<SignalTreatment, string> = {
   poster:
-    'border-2 border-foreground/80 bg-background text-left hover:bg-foreground hover:text-background',
+    'border-2 border-foreground/80 bg-background/80 text-left backdrop-blur-md hover:bg-background',
   headline:
-    'border-y-2 border-foreground/80 bg-transparent text-left hover:border-accent hover:text-accent',
+    'border-y-2 border-foreground/80 bg-background/65 text-left backdrop-blur-md hover:border-accent hover:text-accent',
   note:
-    'border border-border bg-surface/70 text-left hover:border-foreground',
+    'border border-border bg-background/70 text-left backdrop-blur-md hover:border-foreground',
   strip:
-    'border-l-4 border-foreground/80 bg-transparent text-left hover:border-accent',
+    'border-l-4 border-foreground/80 bg-background/65 text-left backdrop-blur-md hover:border-accent',
   fragment:
-    'border border-dashed border-border bg-transparent text-left hover:border-foreground',
+    'border border-dashed border-border bg-background/65 text-left backdrop-blur-md hover:border-foreground',
 };
 
 const titleClass: Record<SignalTreatment, string> = {
@@ -59,13 +59,11 @@ function SignalObject({
   node,
   placement,
   index,
-  compact,
   onSelect,
 }: {
   node: SignalNode;
   placement: SignalVisualPlacement;
   index: number;
-  compact: boolean;
   onSelect?: (node: SignalNode) => void;
 }) {
   const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
@@ -105,7 +103,7 @@ function SignalObject({
     </>
   );
 
-  if (compact) {
+  if (!onSelect) {
     return (
       <div className={sharedClass} style={objectStyle(placement)}>
         {body}
@@ -148,7 +146,6 @@ export default function SignalCollage({
           node={node}
           placement={plan.placements[index]}
           index={index}
-          compact={compact}
           onSelect={onSelect}
         />
       ))}

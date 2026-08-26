@@ -45,6 +45,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [currentIndexState, setCurrentIndexState] = useState(-1);
   const currentIndexRef = useRef(-1);
+  const hasAutoPlayedRef = useRef(false);
 
   const setCurrentIndex = useCallback((index: number) => {
     currentIndexRef.current = index;
@@ -190,8 +191,14 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, [loadAndPlayTrack]);
 
   useEffect(() => {
+    if (hasAutoPlayedRef.current) return;
+
     const handleInteraction = (e: Event) => {
-      if (isPlayingRef.current || (audioRef.current && !audioRef.current.paused)) {
+      if (
+        hasAutoPlayedRef.current ||
+        isPlayingRef.current ||
+        (audioRef.current && !audioRef.current.paused)
+      ) {
         cleanupListeners();
         return;
       }
@@ -211,16 +218,17 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      hasAutoPlayedRef.current = true;
+      cleanupListeners();
+
       if (!audioRef.current.src && track?.audioSource) {
         audioRef.current.src = track.audioSource;
       }
 
       const playPromise = audioRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.then(() => {
-          cleanupListeners();
-        }).catch(() => {
-          // Play prevented, we keep listening
+        playPromise.catch(() => {
+          setIsPlaying(false);
         });
       }
     };
@@ -239,6 +247,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const togglePlay = useCallback(() => {
     if (!audioRef.current || catalogueData.tracks.length === 0) return;
     if (audioRef.current.paused) {
+      hasAutoPlayedRef.current = true;
       // Ensure source is set if it was never loaded
       if (!audioRef.current.src && track?.audioSource) {
         audioRef.current.src = track.audioSource;
@@ -288,6 +297,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const playTrack = useCallback(
     (index: number) => {
       // Used by manual queue selection
+      hasAutoPlayedRef.current = true;
       loadAndPlayTrack(index);
     },
     [loadAndPlayTrack]

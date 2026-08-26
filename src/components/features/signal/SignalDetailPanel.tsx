@@ -14,7 +14,7 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
   const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
 
   return (
-    <div className="absolute inset-0 z-50 flex items-end bg-background/92 p-4 backdrop-blur-sm md:items-center md:justify-center md:p-10">
+    <div className="fixed inset-0 z-50 flex items-end bg-background/92 p-4 backdrop-blur-sm md:items-center md:justify-center md:p-10">
       <article className="relative max-h-[88svh] w-full max-w-5xl overflow-y-auto border-2 border-foreground/80 bg-background">
         <button
           type="button"
