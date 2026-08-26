@@ -1,33 +1,63 @@
 {
   "date": "2026-08-26",
-  "seed": "2026-08-26-v1.0.0",
-  "generatorVersion": "v1.0.0",
+  "seed": "2026-08-26-v1.1.0",
+  "generatorVersion": "v1.1.0",
   "nodes": [
     {
-      "id": "hn-49449507",
-      "title": "GLM-5.3-Flash",
-      "description": "Hacker News top story by Philpax",
-      "url": "https://z.ai/blog/glm-5.3-flash",
+      "id": "anilist-101922",
+      "title": "Demon Slayer: Kimetsu no Yaiba",
+      "description": "It is the Taisho Period in Japan. Tanjiro, a kindhearted boy who sells charcoal for a living, finds his family slaughtered by a demon. To make matters worse, his younger sister Nezuko, the sole survivor, has been transformed into a demon herself. Though devastated by this grim reality, Tanjiro resolves to become a “demon slayer” so that he can turn his sister back into a human, and kill the demon that massacred his family.\n\n(Source: Crunchyroll)",
+      "url": "https://anilist.co/anime/101922",
+      "source": "AniList",
+      "category": "Anime",
+      "tier": "Curated",
+      "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101922-WBsBl0ClmgYL.jpg",
+      "curiosity": "Tanjiro sells charcoal, discovers family slain, sister turned demon.",
+      "x": 47.95383884195781,
+      "y": 3.050137478227401,
+      "r": 4.96690837200731
+    },
+    {
+      "id": "hn-49448321",
+      "title": "AWS Acquires DuckLabs",
+      "description": "Hacker News top story by onderkalaci",
+      "url": "https://ducklabs.com/news/2026/08/26/ducklabs-to-join-aws",
       "source": "Hacker News",
       "category": "Tech",
       "tier": "Discovery",
-      "timestamp": "2026-08-26T14:08:50.000Z",
-      "x": 21.860348381030125,
-      "y": -0.9929363727846712,
-      "r": 5.609178085811436
+      "curiosity": "AWS acquires DuckLabs, a hacker community platform.",
+      "topicKey": "aws acquires ducklabs",
+      "timestamp": "2026-08-26T12:59:26.000Z",
+      "x": -15.319556381830358,
+      "y": 68.36426733145238,
+      "r": 4.0179719012230635
     },
     {
-      "id": "openlibrary-/works/OL5735363W",
-      "title": "The Hunger Games",
-      "description": "By Suzanne Collins",
-      "url": "https://openlibrary.org/works/OL5735363W",
+      "id": "openlibrary-/works/OL17930368W",
+      "title": "Atomic Habits",
+      "description": "By James Clear",
+      "url": "https://openlibrary.org/works/OL17930368W",
       "source": "Open Library",
       "category": "Book",
       "tier": "Curated",
-      "image": "https://covers.openlibrary.org/b/id/12646537-L.jpg",
-      "x": 62.14919662584412,
-      "y": -48.7447755650526,
-      "r": 5.076866393908858
+      "image": "https://covers.openlibrary.org/b/id/12539702-L.jpg",
+      "curiosity": "Atomic Habits by James Clear teaches building small habits.",
+      "x": -20.79243102028544,
+      "y": -18.079674980314635,
+      "r": 5.193074998445809
+    },
+    {
+      "id": "wildcard-2",
+      "title": "Project Gutenberg",
+      "description": "A library of over 60,000 free eBooks.",
+      "url": "https://www.gutenberg.org/",
+      "source": "Wildcard",
+      "category": "Archive",
+      "tier": "Discovery",
+      "curiosity": "Project Gutenberg offers 60,000+ free eBooks worldwide.",
+      "x": -46.316065723545236,
+      "y": -7.945593707377838,
+      "r": 4.4710723189637065
     },
     {
       "id": "wiki-tfa-2221775",
@@ -38,35 +68,10 @@
       "category": "Article",
       "tier": "Discovery",
       "image": "https://upload.wikimedia.org/wikipedia/en/5/56/Realadventuresofjonnyquesttitlecard.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-      "x": 27.54744088797933,
-      "y": -35.22538195749011,
-      "r": 3.025192465633154
-    },
-    {
-      "id": "anilist-113415",
-      "title": "JUJUTSU KAISEN",
-      "description": "A boy fights... for \"the right death.\"\n\nHardship, regret, shame: the negative feelings that humans feel become Curses that lurk in our everyday lives. The Curses run rampant throughout the world, capable of leading people to terrible misfortune and even death. What's more, the Curses can only be exorcised by another Curse.\n\nItadori Yuji is a boy with tremendous physical strength, though he lives a completely ordinary high school life. One day, to save a friend who has been attacked by Curses, he eats the finger of the Double-Faced Specter, taking the Curse into his own soul. From then on, he shares one body with the Double-Faced Specter. Guided by the most powerful of sorcerers, Gojou Satoru, Itadori is admitted to the Tokyo Metropolitan Technical High School of Sorcery, an organization that fights the Curses... and thus begins the heroic tale of a boy who became a Curse to exorcise a Curse, a life from which he could never turn back.\n\n(Source: Crunchyroll)\n\nNote: The first episode received an early web premiere on September 19th, 2020. The regular TV broadcast started on October 3rd, 2020.",
-      "url": "https://anilist.co/anime/113415",
-      "source": "AniList",
-      "category": "Anime",
-      "tier": "Curated",
-      "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx113415-LHBAeoZDIsnF.jpg",
-      "x": 19.82584559399938,
-      "y": -20.08130077942222,
-      "r": 3.3857871470972896
-    },
-    {
-      "id": "hn-49450353",
-      "title": "GLM-5.3-Flash Intelligence, Performance and Price Analysis",
-      "description": "Hacker News top story by theanonymousone",
-      "url": "https://artificialanalysis.ai/models/glm-5-3-flash",
-      "source": "Hacker News",
-      "category": "Tech",
-      "tier": "Discovery",
-      "timestamp": "2026-08-26T14:58:54.000Z",
-      "x": 2.761620450736174,
-      "y": 22.298452680906372,
-      "r": 4.151201085187495
+      "curiosity": "Real Adventures of Jonny Quest aired 1996-1997, exploring exotic mysteries.",
+      "x": 4.479468739460852,
+      "y": -44.62773594976571,
+      "r": 5.088582002557814
     }
   ]
 }
