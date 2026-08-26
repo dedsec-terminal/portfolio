@@ -2,6 +2,7 @@ import { SignalSourceAdapter, SignalItem } from '../types';
 
 const TOPIC_NOISE = new Set([
   'analysis',
+  'and',
   'announcing',
   'announcement',
   'ask',
