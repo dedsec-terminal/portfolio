@@ -9,6 +9,7 @@ export interface SignalItem {
   category: string; // e.g., "film", "website", "article"
   tier: SignalTier;
   image?: string;
+  curiosity?: string;
   timestamp?: string;
   metadata?: Record<string, unknown>;
 }

@@ -10,6 +10,7 @@ import {
   WildcardAdapter,
 } from '../src/lib/signal/adapters';
 import { SignalGenerator, GeneratorConfig } from '../src/lib/signal/generator';
+import { enrichSignalCuriosity } from '../src/lib/signal/enrich';
 import { SignalItem } from '../src/lib/signal/types';
 import { signalDaySchema } from '../src/lib/signal/schemas';
 import * as dotenv from 'dotenv';
@@ -131,9 +132,10 @@ async function main() {
   };
 
   const signalDay = generator.generate(candidates, config);
+  const enrichedSignalDay = await enrichSignalCuriosity(signalDay);
 
   // 5. Validate Output
-  const validation = signalDaySchema.safeParse(signalDay);
+  const validation = signalDaySchema.safeParse(enrichedSignalDay);
   if (!validation.success) {
     console.error(
       `[Signal Engine] FATAL: Generated data failed schema validation!`,

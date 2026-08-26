@@ -1,5 +1,6 @@
 import type { SignalDayType } from '@/lib/signal/schemas';
 import { ExternalLink, X } from 'lucide-react';
+import SignalPreviewSurface from './SignalPreviewSurface';
 
 type SignalNode = SignalDayType['nodes'][0];
 
@@ -26,16 +27,7 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
         </button>
 
         <div className="grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          {node.image ? (
-            <div className="relative min-h-72 border-b-2 border-foreground/80 md:min-h-[560px] md:border-b-0 md:border-r-2" aria-hidden="true">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="absolute inset-0 h-full w-full object-cover" src={node.image} alt="" />
-            </div>
-          ) : (
-            <div className="hidden border-r-2 border-foreground/80 md:flex md:min-h-[560px] md:items-center md:justify-center">
-              <span className="select-none font-mono text-[10rem] leading-none text-foreground/5">↗</span>
-            </div>
-          )}
+          <SignalPreviewSurface className="min-h-72 border-b-2 border-foreground/80 md:min-h-[560px] md:border-b-0 md:border-r-2" node={node} />
 
           <div className="flex min-h-80 flex-col justify-between p-6 pr-20 md:p-10 md:pr-20">
             <div>
@@ -45,6 +37,11 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
               <h2 className="text-3xl font-semibold leading-[0.95] tracking-[-0.045em] text-foreground md:text-5xl">
                 {title}
               </h2>
+              {node.curiosity ? (
+                <p className="mt-5 max-w-[38ch] font-mono text-xs uppercase leading-6 tracking-[0.14em] text-subtle">
+                  {node.curiosity}
+                </p>
+              ) : null}
               <p className="mt-8 max-w-[48ch] whitespace-pre-line text-sm leading-7 text-muted md:text-base">
                 {node.description}
               </p>

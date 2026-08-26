@@ -7,6 +7,7 @@ import {
   type SignalTreatment,
   type SignalVisualPlacement,
 } from '@/lib/signal/visual';
+import SignalPreviewSurface from './SignalPreviewSurface';
 
 type SignalNode = SignalDayType['nodes'][number];
 
@@ -71,24 +72,8 @@ function SignalObject({
 
   const body = (
     <>
-      {node.image && placement.treatment === 'poster' ? (
-        <div
-          className={`relative overflow-hidden ${
-            placement.treatment === 'poster'
-              ? 'min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none'
-              : 'h-28 md:h-[38%]'
-          }`}
-          aria-hidden="true"
-        >
-          {/* Remote sources vary daily, so this stays deliberately unoptimized. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className="absolute inset-0 h-full w-full object-cover grayscale transition duration-300 group-hover:grayscale-0"
-            src={node.image}
-            alt=""
-            loading="lazy"
-          />
-        </div>
+      {placement.treatment === 'poster' ? (
+        <SignalPreviewSurface className="min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none" node={node} />
       ) : null}
 
       <div className="relative flex min-h-0 flex-1 flex-col justify-end p-3 md:p-2">

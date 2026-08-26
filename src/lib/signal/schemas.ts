@@ -11,6 +11,7 @@ export const signalItemSchema = z.object({
   category: z.string(),
   tier: signalTierSchema,
   image: z.string().url().optional(),
+  curiosity: z.string().min(1).max(180).optional(),
   timestamp: z.string().optional(),
   metadata: z.record(z.string(), z.any()).optional(),
 });
