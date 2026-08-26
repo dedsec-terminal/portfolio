@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import Link from 'next/link';
 import SignalArchiveExperience from '@/components/features/signal/SignalArchiveExperience';
 import { signalDaySchema, type SignalDayType } from '@/lib/signal/schemas';
 
@@ -37,9 +38,9 @@ export default function SignalArchivePage() {
             Archive
           </h1>
         </div>
-        <a href="/signal" className="font-mono text-xs uppercase tracking-[0.16em] text-muted hover:text-foreground">
+        <Link href="/signal" className="font-mono text-xs uppercase tracking-[0.16em] text-muted hover:text-foreground">
           Today ↗
-        </a>
+        </Link>
       </header>
 
       <div className="mx-auto max-w-7xl">

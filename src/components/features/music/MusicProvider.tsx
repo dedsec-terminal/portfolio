@@ -21,6 +21,20 @@ export interface NormalizedTrack {
 
 type PlaybackIntent = 'idle' | 'playing' | 'paused';
 
+const PAUSED_PLAYBACK_STORAGE_KEY = 'portfolio:music-paused';
+
+function getInitialPlaybackIntent(): PlaybackIntent {
+  if (typeof window === 'undefined') return 'idle';
+
+  try {
+    return window.sessionStorage.getItem(PAUSED_PLAYBACK_STORAGE_KEY) === 'true'
+      ? 'paused'
+      : 'idle';
+  } catch {
+    return 'idle';
+  }
+}
+
 interface MusicContextType {
   track: NormalizedTrack | null;
   isPlaying: boolean;
@@ -47,7 +61,23 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [currentIndexState, setCurrentIndexState] = useState(-1);
   const currentIndexRef = useRef(-1);
-  const playbackIntentRef = useRef<PlaybackIntent>('idle');
+  const playbackIntentRef = useRef<PlaybackIntent>(getInitialPlaybackIntent());
+
+  const setPlaybackIntent = useCallback((intent: PlaybackIntent) => {
+    playbackIntentRef.current = intent;
+
+    if (typeof window === 'undefined') return;
+
+    try {
+      if (intent === 'paused') {
+        window.sessionStorage.setItem(PAUSED_PLAYBACK_STORAGE_KEY, 'true');
+      } else {
+        window.sessionStorage.removeItem(PAUSED_PLAYBACK_STORAGE_KEY);
+      }
+    } catch {
+      // Storage is optional; playback still works in restricted browser contexts.
+    }
+  }, []);
 
   const setCurrentIndex = useCallback((index: number) => {
     currentIndexRef.current = index;
@@ -105,7 +135,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       setIsReady(true);
 
       if (audioRef.current && item.audioSource) {
-        playbackIntentRef.current = 'playing';
+        setPlaybackIntent('playing');
         audioRef.current.src = item.audioSource;
 
         // We only attempt to play if it was already playing, OR if it's explicitly starting
@@ -113,11 +143,13 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         audioRef.current.play().catch((err) => {
           console.error('Playback failed for', item.title, err);
           // Skip to next track on failure
-          loadAndPlayTrackRef.current(safeIndex + 1, attempt + 1);
+          if (playbackIntentRef.current === 'playing') {
+            loadAndPlayTrackRef.current(safeIndex + 1, attempt + 1);
+          }
         });
       }
     },
-    [setCurrentIndex]
+    [setCurrentIndex, setPlaybackIntent]
   );
 
   useEffect(() => {
@@ -162,7 +194,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       }
     };
     const handlePlay = () => {
-      playbackIntentRef.current = 'playing';
+      setPlaybackIntent('playing');
       setIsPlaying(true);
     };
     const handlePause = () => setIsPlaying(false);
@@ -194,7 +226,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       audio.removeEventListener('error', handleError);
       audio.pause();
     };
-  }, [loadAndPlayTrack]);
+  }, [loadAndPlayTrack, setPlaybackIntent]);
 
   useEffect(() => {
     if (playbackIntentRef.current !== 'idle') return;
@@ -224,7 +256,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      playbackIntentRef.current = 'playing';
+      setPlaybackIntent('playing');
       cleanupListeners();
 
       if (!audioRef.current.src && track?.audioSource) {
@@ -248,12 +280,12 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     document.addEventListener('keydown', handleInteraction);
 
     return cleanupListeners;
-  }, [track]);
+  }, [setPlaybackIntent, track]);
 
   const togglePlay = useCallback(() => {
     if (!audioRef.current || catalogueData.tracks.length === 0) return;
     if (audioRef.current.paused) {
-      playbackIntentRef.current = 'playing';
+      setPlaybackIntent('playing');
       // Ensure source is set if it was never loaded
       if (!audioRef.current.src && track?.audioSource) {
         audioRef.current.src = track.audioSource;
@@ -261,16 +293,18 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       audioRef.current.play().catch((err) => {
         console.error('Playback failed on toggle:', err);
         // If the current track fails on toggle, skip to the next valid one
-        loadAndPlayTrack(
-          (currentIndexRef.current + 1) % catalogueData.tracks.length,
-          1
-        );
+        if (playbackIntentRef.current === 'playing') {
+          loadAndPlayTrack(
+            (currentIndexRef.current + 1) % catalogueData.tracks.length,
+            1
+          );
+        }
       });
     } else {
-      playbackIntentRef.current = 'paused';
+      setPlaybackIntent('paused');
       audioRef.current.pause();
     }
-  }, [track, loadAndPlayTrack]);
+  }, [track, loadAndPlayTrack, setPlaybackIntent]);
 
   const next = useCallback(() => {
     if (catalogueData.tracks.length === 0) return;
@@ -304,10 +338,10 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const playTrack = useCallback(
     (index: number) => {
       // Used by manual queue selection
-      playbackIntentRef.current = 'playing';
+      setPlaybackIntent('playing');
       loadAndPlayTrack(index);
     },
-    [loadAndPlayTrack]
+    [loadAndPlayTrack, setPlaybackIntent]
   );
 
   const contextValue: MusicContextType = {

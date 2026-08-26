@@ -68,6 +68,7 @@ describe('MusicProvider', () => {
 
   afterEach(() => {
     cleanup();
+    window.sessionStorage.clear();
     vi.unstubAllGlobals();
     vi.resetModules();
   });
@@ -192,6 +193,40 @@ describe('MusicProvider', () => {
       screen.getByTestId('play').click();
       screen.getByTestId('play').click();
     });
+
+    await act(async () => {
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.removeChild(link);
+    });
+
+    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(mockAudioInstance.paused).toBe(true);
+  });
+
+  it('keeps a manual pause after a full provider remount and later navigation', async () => {
+    const firstPage = render(
+      <MusicProvider>
+        <TestComponent />
+      </MusicProvider>
+    );
+
+    await act(async () => {
+      const link = document.createElement('a');
+      document.body.appendChild(link);
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      document.body.removeChild(link);
+      screen.getByTestId('play').click();
+    });
+
+    firstPage.unmount();
+
+    render(
+      <MusicProvider>
+        <TestComponent />
+      </MusicProvider>
+    );
 
     await act(async () => {
       const link = document.createElement('a');

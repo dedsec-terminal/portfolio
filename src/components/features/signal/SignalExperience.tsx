@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import type { SignalDayType } from '@/lib/signal/schemas';
 import SignalCollage from './SignalCollage';
 import SignalDetailPanel from './SignalDetailPanel';
@@ -27,9 +28,9 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
         </div>
         <div className="shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.18em] text-muted md:text-xs">
           <p>{data.date}</p>
-          <a href="/signal/archive" className="mt-2 inline-block hover:text-foreground">
+          <Link href="/signal/archive" className="mt-2 inline-block hover:text-foreground">
             Archive ↗
-          </a>
+          </Link>
         </div>
       </header>
 
