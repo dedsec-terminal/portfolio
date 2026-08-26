@@ -11,6 +11,33 @@ type CuriosityResponse = {
   notes?: Array<{ id?: unknown; curiosity?: unknown }>;
 };
 
+const CURIOSITY_RESPONSE_FORMAT = {
+  type: 'json_schema',
+  json_schema: {
+    name: 'signal_curiosity',
+    strict: true,
+    schema: {
+      type: 'object',
+      properties: {
+        notes: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              curiosity: { type: 'string' },
+            },
+            required: ['id', 'curiosity'],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ['notes'],
+      additionalProperties: false,
+    },
+  },
+} as const;
+
 export interface SignalEnrichmentOptions {
   requireComplete?: boolean;
 }
@@ -41,6 +68,20 @@ function parseCuriosityResponse(value: string): Map<string, string> {
   return notes;
 }
 
+async function groqErrorMessage(response: Response): Promise<string> {
+  const fallback = `Groq responded with ${response.status}.`;
+
+  try {
+    const body = (await response.json()) as { error?: { code?: unknown } };
+    const code = body.error?.code;
+    return typeof code === 'string' && code.length <= 80
+      ? `${fallback} (${code})`
+      : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function enrichSignalCuriosity(
   day: SignalDay,
   { requireComplete = false }: SignalEnrichmentOptions = {}
@@ -65,18 +106,15 @@ export async function enrichSignalCuriosity(
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
-        temperature: 0.4,
+        temperature: 0.6,
         max_completion_tokens: 500,
-        response_format: { type: 'json_object' },
+        reasoning_effort: 'low',
+        include_reasoning: false,
+        response_format: CURIOSITY_RESPONSE_FORMAT,
         messages: [
           {
-            role: 'system',
-            content:
-              'Write restrained curiosity cues for a daily personal collage. Use only facts in the supplied title and description. Do not add facts, labels, recommendations, or markdown. Return valid JSON only.',
-          },
-          {
             role: 'user',
-            content: `For every entry, return {"notes":[{"id":"entry id","curiosity":"6-15 word cue"}]}. Keep each cue grounded in its entry. Entries: ${JSON.stringify(entries)}`,
+            content: `Write restrained curiosity cues for a daily personal collage. Use only facts in the supplied title and description. Do not add facts, labels, recommendations, or markdown. For every entry, return an id and a 6-15 word cue. Keep each cue grounded in its entry. Entries: ${JSON.stringify(entries)}`,
           },
         ],
       }),
@@ -84,7 +122,7 @@ export async function enrichSignalCuriosity(
     });
 
     if (!response.ok) {
-      return failOrFallback(day, `Groq responded with ${response.status}.`, requireComplete);
+      return failOrFallback(day, await groqErrorMessage(response), requireComplete);
     }
 
     const completion = (await response.json()) as GroqCompletion;
