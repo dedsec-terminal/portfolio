@@ -32,6 +32,23 @@ export interface GeneratorConfig {
   historicalIds: string[];
 }
 
+const VISUAL_CULTURE_CATEGORIES = new Set([
+  'Anime',
+  'Art',
+  'Book',
+  'Film',
+  'Music',
+  'Reading',
+]);
+
+function topicKeyFor(item: SignalItem): string {
+  return item.topicKey ?? `${item.source}:${item.id}`;
+}
+
+function isVisualCulture(item: SignalItem): boolean {
+  return Boolean(item.image) && VISUAL_CULTURE_CATEGORIES.has(item.category);
+}
+
 export class SignalGenerator {
   public generate(candidates: SignalItem[], config: GeneratorConfig): SignalDay {
     const seedString = `${config.date}-${config.generatorVersion}`;
@@ -49,14 +66,34 @@ export class SignalGenerator {
 
     available.sort((a, b) => a.id.localeCompare(b.id));
 
-    // The Signal is intentionally not balanced by category. The daily issue is a
-    // chance collision of interesting things; the cooldown is the only editorial
-    // constraint beyond deterministic selection.
+    // Curation stays invisible in the finished issue: it avoids duplicate stories,
+    // gives the composition a visual-cultural anchor when possible, and otherwise
+    // lets the seeded selection make the day's collision.
     const selected: SignalItem[] = [];
+    const usedTopics = new Set<string>();
+    const usedSources = new Set<string>();
+
+    const choose = (pool: SignalItem[]) => {
+      const index = Math.floor(prng.next() * pool.length);
+      const item = pool[index];
+      available.splice(available.indexOf(item), 1);
+      selected.push(item);
+      usedTopics.add(topicKeyFor(item));
+      usedSources.add(item.source);
+    };
+
+    const visualCulture = available.filter(isVisualCulture);
+    if (visualCulture.length > 0 && selected.length < config.targetCount) {
+      choose(visualCulture);
+    }
+
     while (selected.length < config.targetCount && available.length > 0) {
-      const index = Math.floor(prng.next() * available.length);
-      selected.push(available[index]);
-      available.splice(index, 1);
+      const topicDistinct = available.filter((item) => !usedTopics.has(topicKeyFor(item)));
+      const sourceDistinct = topicDistinct.filter((item) => !usedSources.has(item.source));
+      const pool = sourceDistinct.length > 0 ? sourceDistinct : topicDistinct;
+
+      if (pool.length === 0) break;
+      choose(pool);
     }
 
     // Keep legacy coordinates in the artifact so all archived v1 days continue to

@@ -3,7 +3,13 @@ name: Generate Signal
 on:
   schedule:
     - cron: '0 0 * * *' # Run daily at midnight UTC
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      repair_today:
+        description: Replace today’s artifact after a verified correction
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -32,6 +38,8 @@ jobs:
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          SIGNAL_REGENERATE: ${{ inputs.repair_today && 'true' || 'false' }}
+          SIGNAL_REQUIRE_GROQ: ${{ inputs.repair_today && 'true' || 'false' }}
 
       - name: Commit and Push Changes
         run: |

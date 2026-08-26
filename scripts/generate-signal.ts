@@ -11,13 +11,13 @@ import {
 } from '../src/lib/signal/adapters';
 import { SignalGenerator, GeneratorConfig } from '../src/lib/signal/generator';
 import { enrichSignalCuriosity } from '../src/lib/signal/enrich';
+import { resolveSignalRunOptions } from '../src/lib/signal/runtime';
 import { SignalItem } from '../src/lib/signal/types';
 import { signalDaySchema } from '../src/lib/signal/schemas';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const GENERATOR_VERSION = 'v1.0.0';
 const TARGET_COUNT = 5;
 
 const SIGNAL_DIR = path.join(process.cwd(), 'signal');
@@ -34,13 +34,14 @@ async function main() {
   const now = new Date();
   const dateStr = now.toISOString().split('T')[0];
   const historyFile = path.join(HISTORY_DIR, `${dateStr}.json`);
+  const { isRepair, requireGroq, generatorVersion } = resolveSignalRunOptions();
 
   // Ensure directories exist
   if (!fs.existsSync(SIGNAL_DIR)) fs.mkdirSync(SIGNAL_DIR);
   if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR);
 
   // 1. Immutable History Check
-  if (fs.existsSync(historyFile)) {
+  if (fs.existsSync(historyFile) && !isRepair) {
     console.log(
       `[Signal Engine] History for ${dateStr} already exists. Validating and skipping generation.`
     );
@@ -62,6 +63,10 @@ async function main() {
     return;
   }
 
+  if (isRepair) {
+    console.log(`[Signal Engine] Repairing the existing artifact for ${dateStr}.`);
+  }
+
   console.log(`[Signal Engine] Starting generation for ${dateStr}`);
 
   // 2. Load historical IDs for cooldown (e.g. past 30 days)
@@ -71,6 +76,7 @@ async function main() {
     // Sort descending and take last 30
     const recentFiles = files
       .filter((f) => f.endsWith('.json'))
+      .filter((f) => path.join(HISTORY_DIR, f) !== historyFile)
       .sort((a, b) => b.localeCompare(a))
       .slice(0, 30);
 
@@ -126,13 +132,15 @@ async function main() {
   const generator = new SignalGenerator();
   const config: GeneratorConfig = {
     date: dateStr,
-    generatorVersion: GENERATOR_VERSION,
+    generatorVersion,
     targetCount: TARGET_COUNT,
     historicalIds,
   };
 
   const signalDay = generator.generate(candidates, config);
-  const enrichedSignalDay = await enrichSignalCuriosity(signalDay);
+  const enrichedSignalDay = await enrichSignalCuriosity(signalDay, {
+    requireComplete: requireGroq,
+  });
 
   // 5. Validate Output
   const validation = signalDaySchema.safeParse(enrichedSignalDay);

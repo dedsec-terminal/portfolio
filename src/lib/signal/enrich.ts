@@ -11,6 +11,20 @@ type CuriosityResponse = {
   notes?: Array<{ id?: unknown; curiosity?: unknown }>;
 };
 
+export interface SignalEnrichmentOptions {
+  requireComplete?: boolean;
+}
+
+function failOrFallback(
+  day: SignalDay,
+  message: string,
+  requireComplete: boolean
+): SignalDay {
+  if (requireComplete) throw new Error(message);
+  console.warn(`[Signal Engine] Groq enrichment skipped: ${message}`);
+  return day;
+}
+
 function parseCuriosityResponse(value: string): Map<string, string> {
   const parsed = JSON.parse(value) as CuriosityResponse;
   const notes = new Map<string, string>();
@@ -27,9 +41,14 @@ function parseCuriosityResponse(value: string): Map<string, string> {
   return notes;
 }
 
-export async function enrichSignalCuriosity(day: SignalDay): Promise<SignalDay> {
+export async function enrichSignalCuriosity(
+  day: SignalDay,
+  { requireComplete = false }: SignalEnrichmentOptions = {}
+): Promise<SignalDay> {
   const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) return day;
+  if (!apiKey) {
+    return failOrFallback(day, 'GROQ_API_KEY is missing.', requireComplete);
+  }
 
   const entries = day.nodes.map(({ id, title, description }) => ({
     id,
@@ -65,15 +84,25 @@ export async function enrichSignalCuriosity(day: SignalDay): Promise<SignalDay> 
     });
 
     if (!response.ok) {
-      console.warn(`[Signal Engine] Groq enrichment skipped: ${response.status}`);
-      return day;
+      return failOrFallback(day, `Groq responded with ${response.status}.`, requireComplete);
     }
 
     const completion = (await response.json()) as GroqCompletion;
     const content = completion.choices?.[0]?.message?.content;
-    if (!content) return day;
+    if (!content) {
+      return failOrFallback(day, 'Groq returned no message content.', requireComplete);
+    }
 
     const notes = parseCuriosityResponse(content);
+    const missingNotes = day.nodes.filter((node) => !notes.has(node.id));
+    if (missingNotes.length > 0) {
+      return failOrFallback(
+        day,
+        `Groq omitted curiosity cues for ${missingNotes.length} item(s).`,
+        requireComplete
+      );
+    }
+
     return {
       ...day,
       nodes: day.nodes.map((node) => ({
@@ -82,7 +111,7 @@ export async function enrichSignalCuriosity(day: SignalDay): Promise<SignalDay> 
       })),
     };
   } catch (error) {
-    console.warn('[Signal Engine] Groq enrichment skipped:', error);
-    return day;
+    const message = error instanceof Error ? error.message : 'Unknown Groq error.';
+    return failOrFallback(day, message, requireComplete);
   }
 }

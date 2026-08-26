@@ -36,7 +36,7 @@ const titleClass: Record<SignalTreatment, string> = {
     'text-2xl font-semibold uppercase leading-[0.86] tracking-[-0.055em] md:text-3xl',
   note: 'text-lg font-medium leading-tight tracking-[-0.025em] md:text-xl',
   strip:
-    'text-lg font-medium uppercase leading-none tracking-[-0.03em] md:text-2xl',
+    'text-base font-medium uppercase leading-tight tracking-[-0.03em] md:text-lg',
   fragment:
     'text-base font-medium uppercase leading-tight tracking-[0.08em] md:text-xl',
 };
@@ -48,11 +48,20 @@ const mobileAlignClass: Record<SignalVisualPlacement['mobileAlign'], string> = {
 };
 
 function objectStyle(placement: SignalVisualPlacement): CSSProperties {
+  const zIndexByTreatment: Record<SignalTreatment, number> = {
+    poster: 4,
+    headline: 6,
+    note: 5,
+    strip: 3,
+    fragment: 2,
+  };
+
   return {
     gridColumn: `${placement.col} / span ${placement.colSpan}`,
     gridRow: `${placement.row} / span ${placement.rowSpan}`,
     '--signal-mobile-width': `${placement.mobileWidth}%`,
     transform: `rotate(${placement.rotation}deg)`,
+    zIndex: zIndexByTreatment[placement.treatment],
   } as CSSProperties;
 }
 
@@ -74,9 +83,14 @@ function SignalObject({
     <>
       {placement.treatment === 'poster' ? (
         <SignalPreviewSurface className="min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none" node={node} />
-      ) : null}
+      ) : (
+        <SignalPreviewSurface
+          className="pointer-events-none absolute inset-0 opacity-55 transition-opacity duration-200 group-hover:opacity-75"
+          node={node}
+        />
+      )}
 
-      <div className="relative flex min-h-0 flex-1 flex-col justify-end p-3 md:p-2">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-end bg-background/45 p-3 backdrop-blur-[2px] md:p-2">
         <span className="absolute left-3 top-3 font-mono text-[10px] leading-none tracking-[0.24em] opacity-50 md:left-2 md:top-2">
           {String(index + 1).padStart(2, '0')}
         </span>

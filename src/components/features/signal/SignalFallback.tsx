@@ -3,7 +3,7 @@ import { SignalDayType } from '@/lib/signal/schemas';
 export default function SignalFallback({ data }: { data: SignalDayType }) {
   return (
     <div className="sr-only">
-      <h2>Signal for {data.date}</h2>
+      <h2>Today for {data.date}</h2>
       <ol>
         {data.nodes.map((node) => (
           <li key={node.id}>

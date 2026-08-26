@@ -4,7 +4,7 @@ import SignalExperience from '@/components/features/signal/SignalExperience';
 import { signalDaySchema } from '@/lib/signal/schemas';
 
 export const metadata = {
-  title: 'The Signal | Swaraj Singh',
+  title: 'Today | Swaraj Singh',
   description: 'Five unrelated things, placed together for one day.',
 };
 
@@ -28,7 +28,7 @@ export default function SignalPage() {
     return (
       <main className="min-h-[calc(100svh-4.5rem)] px-6 pt-32 lg:px-12">
         <h1 className="text-4xl font-semibold uppercase tracking-[-0.04em] text-foreground">
-          The Signal
+          Today
         </h1>
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.16em] text-muted">
           {error || 'Unable to load Signal.'}

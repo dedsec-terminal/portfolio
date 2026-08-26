@@ -19,10 +19,10 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
       <header className="flex shrink-0 items-end justify-between gap-6 border-b-2 border-foreground/80 bg-background/20 px-5 pb-4 pt-8 md:px-10 md:pb-4 md:pt-6">
         <div>
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.3em] text-subtle">
-            Five things, placed together
+            Five things, placed together now
           </p>
           <h1 className="text-4xl font-semibold uppercase leading-none tracking-[-0.055em] text-foreground md:text-5xl">
-            The Signal
+            Today
           </h1>
         </div>
         <div className="shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.18em] text-muted md:text-xs">
@@ -38,8 +38,8 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
       </div>
 
       <footer className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-t-2 border-foreground/80 bg-background/20 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.18em] text-subtle md:px-10">
-        <span>{data.nodes.length} things / today</span>
-        <span>Changes daily</span>
+        <span>{data.nodes.length} things / now</span>
+        <span>Changes tomorrow</span>
       </footer>
 
       <SignalDetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />

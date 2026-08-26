@@ -31,10 +31,10 @@ export default function SignalArchivePage() {
       <header className="mx-auto flex max-w-7xl items-end justify-between gap-8 border-b-2 border-foreground/80 pb-6">
         <div>
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.28em] text-subtle">
-            Frozen daily collisions
+            Past daily collisions
           </p>
           <h1 className="text-4xl font-semibold uppercase leading-none tracking-[-0.05em] md:text-7xl">
-            Signal Archive
+            Archive
           </h1>
         </div>
         <a href="/signal" className="font-mono text-xs uppercase tracking-[0.16em] text-muted hover:text-foreground">

@@ -83,4 +83,41 @@ describe('SignalGenerator', () => {
     const uniqueIds = new Set(selectedIds);
     expect(selectedIds.length).toBe(uniqueIds.size);
   });
+
+  it('keeps the daily mix visually grounded and source-diverse when possible', () => {
+    const candidates: SignalItem[] = [
+      { id: 'art', title: 'Art', description: 'A work of art', source: 'Gallery', category: 'Art', tier: 'Personal', image: 'https://example.com/art.jpg' },
+      { id: 'book', title: 'Book', description: 'A book', source: 'Library', category: 'Book', tier: 'Curated', image: 'https://example.com/book.jpg' },
+      { id: 'news', title: 'News', description: 'A story', source: 'News', category: 'Tech', tier: 'Discovery' },
+      { id: 'anime', title: 'Anime', description: 'A show', source: 'AniList', category: 'Anime', tier: 'Curated', image: 'https://example.com/anime.jpg' },
+    ];
+
+    const day = new SignalGenerator().generate(candidates, {
+      date: '2026-08-26',
+      generatorVersion: 'v1.1.0',
+      targetCount: 3,
+      historicalIds: [],
+    });
+
+    expect(day.nodes.some((node) => node.category === 'Art' || node.category === 'Book' || node.category === 'Anime')).toBe(true);
+    expect(new Set(day.nodes.map((node) => node.source)).size).toBeGreaterThan(1);
+  });
+
+  it('does not select two candidates that share a topic key', () => {
+    const candidates: SignalItem[] = [
+      { id: 'glm-1', title: 'GLM 5.3 Flash', description: 'First story', source: 'Hacker News', category: 'Tech', tier: 'Discovery', topicKey: 'glm 5 3' },
+      { id: 'glm-2', title: 'GLM 5.3 Flash analysis', description: 'Second story', source: 'Hacker News', category: 'Tech', tier: 'Discovery', topicKey: 'glm 5 3' },
+      { id: 'book', title: 'Book', description: 'A book', source: 'Library', category: 'Book', tier: 'Curated', image: 'https://example.com/book.jpg' },
+      { id: 'news', title: 'News', description: 'A story', source: 'News', category: 'Tech', tier: 'Discovery' },
+    ];
+
+    const day = new SignalGenerator().generate(candidates, {
+      date: '2026-08-26',
+      generatorVersion: 'v1.1.0',
+      targetCount: 3,
+      historicalIds: [],
+    });
+
+    expect(day.nodes.filter((node) => node.topicKey === 'glm 5 3')).toHaveLength(1);
+  });
 });

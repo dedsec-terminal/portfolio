@@ -314,6 +314,7 @@ describe('MusicProvider', () => {
     );
 
     await act(async () => {
+      screen.getByTestId('play').click();
       mockAudioInstance.dispatchEvent('ended');
     });
 
@@ -328,12 +329,30 @@ describe('MusicProvider', () => {
     );
 
     await act(async () => {
+      screen.getByTestId('play').click();
       mockAudioInstance.dispatchEvent('ended'); // B
       mockAudioInstance.dispatchEvent('ended'); // C
       mockAudioInstance.dispatchEvent('ended'); // A
     });
 
     expect(screen.getByTestId('title').textContent).toBe('Track A');
+  });
+
+  it('does not advance after a paused track emits ended', async () => {
+    render(
+      <MusicProvider>
+        <TestComponent />
+      </MusicProvider>
+    );
+
+    await act(async () => {
+      screen.getByTestId('play').click();
+      screen.getByTestId('play').click();
+      mockAudioInstance.dispatchEvent('ended');
+    });
+
+    expect(screen.getByTestId('title').textContent).toBe('Track A');
+    expect(mockAudioInstance.paused).toBe(true);
   });
 
   it('10. broken track does not crash provider, skips to next', async () => {

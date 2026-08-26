@@ -19,6 +19,8 @@ export interface NormalizedTrack {
   audioSource?: string;
 }
 
+type PlaybackIntent = 'idle' | 'playing' | 'paused';
+
 interface MusicContextType {
   track: NormalizedTrack | null;
   isPlaying: boolean;
@@ -45,7 +47,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [currentIndexState, setCurrentIndexState] = useState(-1);
   const currentIndexRef = useRef(-1);
-  const hasAutoPlayedRef = useRef(false);
+  const playbackIntentRef = useRef<PlaybackIntent>('idle');
 
   const setCurrentIndex = useCallback((index: number) => {
     currentIndexRef.current = index;
@@ -103,6 +105,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       setIsReady(true);
 
       if (audioRef.current && item.audioSource) {
+        playbackIntentRef.current = 'playing';
         audioRef.current.src = item.audioSource;
 
         // We only attempt to play if it was already playing, OR if it's explicitly starting
@@ -151,19 +154,22 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     const handleTimeUpdate = () => setProgress(audio.currentTime * 1000);
     const handleDurationChange = () => setDuration(audio.duration * 1000 || 0);
     const handleEnded = () => {
-      // Loop the catalogue automatically when a track naturally ends
-      if (catalogueData.tracks.length > 0) {
+      // A paused player must never advance or resume itself.
+      if (playbackIntentRef.current === 'playing' && catalogueData.tracks.length > 0) {
         const nextIdx =
           (currentIndexRef.current + 1) % catalogueData.tracks.length;
         loadAndPlayTrack(nextIdx);
       }
     };
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      playbackIntentRef.current = 'playing';
+      setIsPlaying(true);
+    };
     const handlePause = () => setIsPlaying(false);
     const handleError = () => {
       console.error('Audio playback error encountered.');
       // Skip to next track on failure if it was currently trying to play
-      if (isPlayingRef.current || audioRef.current?.autoplay) {
+      if (playbackIntentRef.current === 'playing') {
         const nextIdx =
           (currentIndexRef.current + 1) % catalogueData.tracks.length;
         loadAndPlayTrack(nextIdx, 1);
@@ -191,11 +197,11 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, [loadAndPlayTrack]);
 
   useEffect(() => {
-    if (hasAutoPlayedRef.current) return;
+    if (playbackIntentRef.current !== 'idle') return;
 
     const handleInteraction = (e: Event) => {
       if (
-        hasAutoPlayedRef.current ||
+        playbackIntentRef.current !== 'idle' ||
         isPlayingRef.current ||
         (audioRef.current && !audioRef.current.paused)
       ) {
@@ -218,7 +224,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      hasAutoPlayedRef.current = true;
+      playbackIntentRef.current = 'playing';
       cleanupListeners();
 
       if (!audioRef.current.src && track?.audioSource) {
@@ -247,7 +253,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const togglePlay = useCallback(() => {
     if (!audioRef.current || catalogueData.tracks.length === 0) return;
     if (audioRef.current.paused) {
-      hasAutoPlayedRef.current = true;
+      playbackIntentRef.current = 'playing';
       // Ensure source is set if it was never loaded
       if (!audioRef.current.src && track?.audioSource) {
         audioRef.current.src = track.audioSource;
@@ -261,6 +267,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         );
       });
     } else {
+      playbackIntentRef.current = 'paused';
       audioRef.current.pause();
     }
   }, [track, loadAndPlayTrack]);
@@ -297,7 +304,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const playTrack = useCallback(
     (index: number) => {
       // Used by manual queue selection
-      hasAutoPlayedRef.current = true;
+      playbackIntentRef.current = 'playing';
       loadAndPlayTrack(index);
     },
     [loadAndPlayTrack]

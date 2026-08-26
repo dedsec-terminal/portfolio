@@ -10,6 +10,7 @@ export interface SignalItem {
   tier: SignalTier;
   image?: string;
   curiosity?: string;
+  topicKey?: string;
   timestamp?: string;
   metadata?: Record<string, unknown>;
 }
