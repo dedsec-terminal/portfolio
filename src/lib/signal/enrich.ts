@@ -66,7 +66,7 @@ export async function enrichSignalCuriosity(
       body: JSON.stringify({
         model: GROQ_MODEL,
         temperature: 0.4,
-        max_tokens: 500,
+        max_completion_tokens: 500,
         response_format: { type: 'json_object' },
         messages: [
           {
