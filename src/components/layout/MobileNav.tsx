@@ -15,37 +15,32 @@ const icons = {
 
 export default function MobileNav() {
   const pathname = usePathname();
-  const [isHidden, setIsHidden] = useState(false);
-  const lastScrollY = useRef(0);
+  const [isHidden, setIsHidden] = useState(true);
+  const hideTimer = useRef<number | null>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    lastScrollY.current = window.scrollY;
     let frameId: number | null = null;
 
-    const updateVisibility = () => {
-      const currentScrollY = window.scrollY;
-      const previousScrollY = lastScrollY.current;
-      const isAtPageEnd =
-        currentScrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 24;
+    const revealDuringMotion = () => {
+      setIsHidden(false);
 
-      if (currentScrollY < 72 || isAtPageEnd) {
-        setIsHidden(false);
-        lastScrollY.current = currentScrollY;
-      } else if (currentScrollY > previousScrollY + 24) {
-        setIsHidden(true);
-        lastScrollY.current = currentScrollY;
-      } else if (currentScrollY < previousScrollY - 16) {
-        setIsHidden(false);
-        lastScrollY.current = currentScrollY;
+      if (hideTimer.current !== null) {
+        window.clearTimeout(hideTimer.current);
       }
+
+      hideTimer.current = window.setTimeout(() => {
+        if (!navRef.current?.contains(document.activeElement)) {
+          setIsHidden(true);
+        }
+      }, 650);
 
       frameId = null;
     };
 
     const handleScroll = () => {
       if (frameId === null) {
-        frameId = window.requestAnimationFrame(updateVisibility);
+        frameId = window.requestAnimationFrame(revealDuringMotion);
       }
     };
 
@@ -54,15 +49,31 @@ export default function MobileNav() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (frameId !== null) window.cancelAnimationFrame(frameId);
+      if (hideTimer.current !== null) {
+        window.clearTimeout(hideTimer.current);
+      }
     };
   }, []);
 
   return (
     <nav
+      ref={navRef}
       aria-label="Mobile navigation"
-      onFocusCapture={() => setIsHidden(false)}
+      onFocusCapture={() => {
+        if (hideTimer.current !== null) {
+          window.clearTimeout(hideTimer.current);
+        }
+        setIsHidden(false);
+      }}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          hideTimer.current = window.setTimeout(() => {
+            setIsHidden(true);
+          }, 400);
+        }
+      }}
       className={[
-        'fixed inset-x-3 z-40 mx-auto max-w-md overflow-hidden rounded-3xl border border-foreground/10 shadow-[0_12px_36px_rgb(0_0_0_/_28%)] ring-1 ring-inset ring-foreground/[0.04] transition-[transform,opacity,filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transition-none md:hidden',
+        'fixed inset-x-3 z-40 mx-auto max-w-md overflow-hidden rounded-3xl border border-foreground/10 shadow-[0_12px_36px_rgb(0_0_0_/_28%)] ring-1 ring-inset ring-foreground/[0.04] transition-[transform,opacity,filter] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transition-none md:hidden',
         isHidden
           ? 'pointer-events-none translate-y-[calc(100%+2rem)] opacity-0 blur-sm'
           : 'translate-y-0 opacity-100 blur-0',
