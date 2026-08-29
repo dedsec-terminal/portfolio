@@ -27,19 +27,19 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Swaraj Singh',
-    default: 'Swaraj Singh',
+    template: '%s | Dedsec Terminal',
+    default: siteConfig.title,
   },
   description: siteConfig.description,
   metadataBase: siteConfig.url ? new URL(siteConfig.url) : undefined,
   alternates: siteConfig.url ? { canonical: '/' } : undefined,
   authors: [{ name: siteConfig.name, url: siteConfig.links.github }],
   creator: siteConfig.name,
-  publisher: siteConfig.name,
+  publisher: siteConfig.brandName,
   openGraph: {
-    title: siteConfig.name,
+    title: siteConfig.title,
     description: siteConfig.description,
-    siteName: siteConfig.name,
+    siteName: siteConfig.brandName,
     type: 'website',
     url: siteConfig.url,
     images: [
@@ -47,16 +47,42 @@ export const metadata: Metadata = {
         url: '/images/avatar/pfp.jpg',
         width: 1200,
         height: 800,
-        alt: siteConfig.name,
+        alt: `${siteConfig.name}, creator of ${siteConfig.brandName}`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: siteConfig.name,
+    title: siteConfig.title,
     description: siteConfig.description,
     images: ['/images/avatar/pfp.jpg'],
   },
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${siteConfig.url}/#website`,
+      name: siteConfig.brandName,
+      alternateName: ['Dedsec Terminal', 'dedsec-terminal'],
+      url: siteConfig.url,
+      description: siteConfig.description,
+      publisher: { '@id': `${siteConfig.url}/#person` },
+      inLanguage: 'en',
+    },
+    {
+      '@type': 'Person',
+      '@id': `${siteConfig.url}/#person`,
+      name: siteConfig.name,
+      alternateName: siteConfig.brandName,
+      url: siteConfig.url,
+      image: `${siteConfig.url}/images/avatar/pfp.jpg`,
+      jobTitle: 'Cybersecurity practitioner',
+      sameAs: [siteConfig.links.github, siteConfig.links.linkedin, siteConfig.links.x],
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -70,6 +96,12 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, '\\u003c'),
+          }}
+        />
         {children}
         <Analytics />
         <SpeedInsights />

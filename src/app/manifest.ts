@@ -2,9 +2,10 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Swaraj Singh',
-    short_name: 'Swaraj Singh',
-    description: 'Cybersecurity portfolio and personal digital space.',
+    name: 'Dedsec Terminal | Cybersecurity Portfolio of Swaraj Singh',
+    short_name: 'Dedsec Terminal',
+    description:
+      'Dedsec Terminal is the cybersecurity portfolio of Swaraj Singh, covering SOC, GRC, security research, and projects.',
     start_url: '/',
     display: 'standalone',
     background_color: '#09090b',

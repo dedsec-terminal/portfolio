@@ -1,11 +1,13 @@
 export const siteConfig = {
+  brandName: 'Dedsec Terminal',
   name: 'Swaraj Singh',
-  title: 'Swaraj Singh - Cybersecurity Enthusiast',
+  title: 'Dedsec Terminal | Cybersecurity Portfolio of Swaraj Singh',
   description:
-    'Personal portfolio of Swaraj Singh, specializing in SOC, GRC, and Security Research.',
+    'Dedsec Terminal is the cybersecurity portfolio of Swaraj Singh, documenting security operations, GRC, security research, and projects.',
   email: 'swarajsingh211@gmail.com',
-  // Set this before the first production deployment. It is intentionally public.
-  url: process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, ''),
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ??
+    'https://dedsec-terminal.vercel.app',
   discordId: '521225730491940864',
   links: {
     github: 'https://github.com/dedsec-terminal',

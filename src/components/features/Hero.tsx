@@ -97,7 +97,7 @@ export default function Hero() {
                 Swaraj Singh
               </h1>
               <p className="mt-3 text-base text-zinc-300 font-light tracking-widest">
-                cybersecurity enthusiast
+                Dedsec Terminal — cybersecurity portfolio
               </p>
             </div>
 
