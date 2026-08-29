@@ -18,29 +18,42 @@ export default function MobileNav() {
   const [isHidden, setIsHidden] = useState(true);
   const hideTimer = useRef<number | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const wasAtPageEnd = useRef(false);
 
   useEffect(() => {
     let frameId: number | null = null;
 
-    const revealDuringMotion = () => {
-      setIsHidden(false);
+    const updateVisibility = () => {
+      const isAtPageEnd =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 24;
 
-      if (hideTimer.current !== null) {
-        window.clearTimeout(hideTimer.current);
+      if (isAtPageEnd && !wasAtPageEnd.current) {
+        setIsHidden(false);
+
+        if (hideTimer.current !== null) {
+          window.clearTimeout(hideTimer.current);
+        }
+
+        hideTimer.current = window.setTimeout(() => {
+          if (!navRef.current?.contains(document.activeElement)) {
+            setIsHidden(true);
+          }
+        }, 1400);
+      } else if (!isAtPageEnd) {
+        if (hideTimer.current !== null) {
+          window.clearTimeout(hideTimer.current);
+        }
+        setIsHidden(true);
       }
 
-      hideTimer.current = window.setTimeout(() => {
-        if (!navRef.current?.contains(document.activeElement)) {
-          setIsHidden(true);
-        }
-      }, 650);
-
+      wasAtPageEnd.current = isAtPageEnd;
       frameId = null;
     };
 
     const handleScroll = () => {
       if (frameId === null) {
-        frameId = window.requestAnimationFrame(revealDuringMotion);
+        frameId = window.requestAnimationFrame(updateVisibility);
       }
     };
 
@@ -59,17 +72,9 @@ export default function MobileNav() {
     <nav
       ref={navRef}
       aria-label="Mobile navigation"
-      onFocusCapture={() => {
-        if (hideTimer.current !== null) {
-          window.clearTimeout(hideTimer.current);
-        }
-        setIsHidden(false);
-      }}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          hideTimer.current = window.setTimeout(() => {
-            setIsHidden(true);
-          }, 400);
+          setIsHidden(true);
         }
       }}
       className={[
