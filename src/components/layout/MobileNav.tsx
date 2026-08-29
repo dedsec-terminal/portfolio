@@ -18,15 +18,17 @@ export default function MobileNav() {
   return (
     <nav
       aria-label="Mobile navigation"
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border/40"
+      className="fixed inset-x-3 z-40 mx-auto max-w-md overflow-hidden rounded-2xl border border-border/50 shadow-[0_18px_48px_rgb(0_0_0_/_42%)] md:hidden"
       style={{
+        bottom:
+          'max(0.75rem, calc(env(safe-area-inset-bottom) + 0.75rem))',
         backgroundColor:
-          'color-mix(in srgb, var(--background) 92%, transparent)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+          'color-mix(in srgb, var(--background) 68%, transparent)',
+        backdropFilter: 'blur(18px) saturate(115%)',
+        WebkitBackdropFilter: 'blur(18px) saturate(115%)',
       }}
     >
-      <ul className="flex items-stretch list-none m-0 p-0">
+      <ul className="m-0 flex list-none items-stretch gap-1 p-1">
         {primaryNavigation.map(({ href, label }) => {
           const Icon = icons[href];
           const isActive =
@@ -37,8 +39,10 @@ export default function MobileNav() {
                 href={href}
                 aria-current={isActive ? 'page' : undefined}
                 className={[
-                  'flex flex-col items-center justify-center gap-1 py-3 w-full text-[10px] tracking-wide transition-colors duration-200',
-                  isActive ? 'text-accent' : 'text-muted hover:text-foreground',
+                  'flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] tracking-wide transition-colors duration-200',
+                  isActive
+                    ? 'bg-accent/10 text-accent'
+                    : 'text-muted hover:bg-foreground/5 hover:text-foreground',
                 ].join(' ')}
               >
                 <Icon
