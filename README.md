@@ -4,7 +4,7 @@ Personal portfolio of Swaraj Singh, specializing in SOC, GRC, and Security Resea
 
 ## Live site
 
-[dedsec-terminal.vercel.app](https://dedsec-terminal.vercel.app/)
+[www.dedsec-terminal.in](https://www.dedsec-terminal.in/)
 
 ## Local development
 
@@ -23,4 +23,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 ## About Dedsec Terminal
 
-This repository powers [Dedsec Terminal](https://dedsec-terminal.vercel.app/), a Next.js portfolio deployed on Vercel. Visit the site for selected projects, security writeups, a professional resume, and ongoing research notes.
+This repository powers [Dedsec Terminal](https://www.dedsec-terminal.in/), a Next.js portfolio deployed on Vercel. Visit the site for selected projects, security writeups, a professional resume, and ongoing research notes.
