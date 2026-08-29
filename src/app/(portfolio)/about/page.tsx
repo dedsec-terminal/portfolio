@@ -65,6 +65,10 @@ export default function AboutPage() {
               on.
             </p>
             <p>
+              Dedsec Terminal is where I publish that work: projects, security
+              writeups, research notes, and the systems I build while learning.
+            </p>
+            <p>
               My current work spans threat investigation, risk and compliance
               programmes, and automation for security teams.
             </p>

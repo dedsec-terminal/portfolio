@@ -1,6 +1,6 @@
 # Dedsec Terminal | Cybersecurity Portfolio of Swaraj Singh
 
-Dedsec Terminal is the personal cybersecurity portfolio of Swaraj Singh. It documents work and writing across security operations (SOC), governance, risk and compliance (GRC), security research, and practical security engineering.
+Personal portfolio of Swaraj Singh, specializing in SOC, GRC, and Security Research. Published as **Dedsec Terminal**, it documents projects, security writeups, research notes, and practical security engineering.
 
 ## Live site
 

@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Dedsec Terminal | Cybersecurity Portfolio of Swaraj Singh',
     short_name: 'Dedsec Terminal',
     description:
-      'Dedsec Terminal is the cybersecurity portfolio of Swaraj Singh, covering SOC, GRC, security research, and projects.',
+      'Personal portfolio of Swaraj Singh, specializing in SOC, GRC, and Security Research.',
     start_url: '/',
     display: 'standalone',
     background_color: '#09090b',

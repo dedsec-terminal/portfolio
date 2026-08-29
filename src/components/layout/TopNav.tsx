@@ -28,7 +28,7 @@ export default function TopNav() {
             {/* Site mark */}
             <Link
               href="/"
-              aria-label="DedSec — home"
+              aria-label="Dedsec Terminal — home"
               className="flex items-center gap-2.5 text-foreground/80 hover:text-foreground transition-colors duration-200 group"
             >
               <Image

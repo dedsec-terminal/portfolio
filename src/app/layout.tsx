@@ -26,18 +26,40 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  applicationName: siteConfig.brandName,
   title: {
-    template: '%s | Dedsec Terminal',
+    template: `%s | ${siteConfig.name} · ${siteConfig.brandName}`,
     default: siteConfig.title,
   },
   description: siteConfig.description,
+  keywords: [
+    'Dedsec Terminal',
+    'dedsec-terminal',
+    'Swaraj Singh',
+    'cybersecurity portfolio',
+    'SOC',
+    'GRC',
+    'security research',
+  ],
+  category: 'technology',
   metadataBase: siteConfig.url ? new URL(siteConfig.url) : undefined,
   alternates: siteConfig.url ? { canonical: '/' } : undefined,
   authors: [{ name: siteConfig.name, url: siteConfig.links.github }],
   creator: siteConfig.name,
   publisher: siteConfig.brandName,
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
   openGraph: {
-    title: siteConfig.title,
+    title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.brandName,
     type: 'website',
@@ -53,7 +75,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: siteConfig.title,
+    title: siteConfig.name,
     description: siteConfig.description,
     images: ['/images/avatar/pfp.jpg'],
   },

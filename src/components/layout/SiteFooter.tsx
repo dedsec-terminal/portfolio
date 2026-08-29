@@ -16,7 +16,7 @@ export default function SiteFooter() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Left */}
         <p className="text-xs text-subtle font-mono tracking-wider">
-          © {year} Swaraj Singh
+          Dedsec Terminal · © {year} Swaraj Singh
         </p>
 
         {/* Right — sparse links */}
