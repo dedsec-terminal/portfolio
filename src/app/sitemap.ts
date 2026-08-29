@@ -7,7 +7,6 @@ const routes = [
   { path: '/about', changeFrequency: 'monthly', priority: 0.9 },
   { path: '/projects', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/writeups', changeFrequency: 'weekly', priority: 0.8 },
-  { path: '/blog', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/journal', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/art', changeFrequency: 'weekly', priority: 0.6 },
   { path: '/resume', changeFrequency: 'monthly', priority: 0.8 },
@@ -21,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: new URL(route.path, `${siteConfig.url}/`).toString(),
   }));
 
-  const contentRoutes = contentTypes.flatMap((type) =>
+  const contentRoutes = contentTypes.filter((type) => type !== 'blog').flatMap((type) =>
     getContent(type).map((item) => ({
       url: new URL(`/${type}/${item.slug}`, `${siteConfig.url}/`).toString(),
       lastModified: item.updatedAt ?? item.date,
