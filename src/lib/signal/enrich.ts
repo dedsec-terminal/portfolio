@@ -138,54 +138,56 @@ export async function curateSignalCandidates(
     timestamp,
   }));
 
-  try {
-    const response = await fetch(GROQ_COMPLETIONS_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        temperature: 0.2,
-        max_completion_tokens: 1_500,
-        // Groq's strict JSON schema mode is reliable only when reasoning is disabled.
-        reasoning_effort: 'none',
-        include_reasoning: false,
-        response_format: EDITORIAL_RESPONSE_FORMAT,
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You edit a high-quality daily curiosity page. Select only supplied candidate IDs. Every factual word in a cue must be directly supported by that candidate title, description, source, category, or timestamp. Never add dates, rankings, sales status, reception, credentials, plot facts, or technical claims that are not explicitly supplied. Favor specificity, substance, primary or technical sources, and genuine curiosity over popularity. For the frontier slot, prefer timely cybersecurity or significant AI research/model news when present, but reject sensational framing when a more substantive candidate exists. Avoid hype, repetition, generic praise, invented context, and markdown.',
-          },
-          {
-            role: 'user',
-            content: `Choose exactly one candidate for each required slot (${SIGNAL_SLOTS.map((slot) => `${slot}: ${SIGNAL_SLOT_LABELS[slot]}`).join(', ')}). For every choice, write a restrained 8-18 word curiosity cue using only the supplied evidence. Before returning, silently verify every claim against that candidate and remove anything unsupported. Candidates: ${JSON.stringify(entries)}`,
-          },
-        ],
-      }),
-      signal: AbortSignal.timeout(20_000),
-    });
+  let lastMessage = 'Groq did not return a complete editorial selection.';
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const response = await fetch(GROQ_COMPLETIONS_URL, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          temperature: 0,
+          max_completion_tokens: 700,
+          reasoning_effort: 'low',
+          response_format: EDITORIAL_RESPONSE_FORMAT,
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You edit a high-quality daily curiosity page. Select only supplied candidate IDs. Every factual word in a cue must be directly supported by that candidate title, description, source, category, or timestamp. Never add dates, rankings, sales status, reception, credentials, plot facts, or technical claims that are not explicitly supplied. Favor specificity, substance, primary or technical sources, and genuine curiosity over popularity. For the frontier slot, prefer timely cybersecurity or significant AI research/model news when present, but reject sensational framing when a more substantive candidate exists. Avoid hype, repetition, generic praise, invented context, and markdown.',
+            },
+            {
+              role: 'user',
+              content: `Choose exactly one candidate for each required slot (${SIGNAL_SLOTS.map((slot) => `${slot}: ${SIGNAL_SLOT_LABELS[slot]}`).join(', ')}). For every choice, write a restrained 8-18 word curiosity cue using only the supplied evidence. Candidates: ${JSON.stringify(entries)}`,
+            },
+          ],
+        }),
+        signal: AbortSignal.timeout(20_000),
+      });
 
-    if (!response.ok) {
-      return failOrFallback(candidates, await groqErrorMessage(response), requireComplete);
+      if (!response.ok) {
+        lastMessage = await groqErrorMessage(response);
+        if (response.status === 400 || response.status >= 500) continue;
+        return failOrFallback(candidates, lastMessage, requireComplete);
+      }
+
+      const completion = (await response.json()) as GroqCompletion;
+      const content = completion.choices?.[0]?.message?.content;
+      if (!content) {
+        lastMessage = 'Groq returned no message content.';
+        continue;
+      }
+
+      const selected = parseEditorialResponse(content, candidates);
+      if (selected) return selected;
+      lastMessage = 'Groq returned incomplete or mismatched editorial selections.';
+    } catch (error) {
+      lastMessage = error instanceof Error ? error.message : 'Unknown Groq error.';
     }
-
-    const completion = (await response.json()) as GroqCompletion;
-    const content = completion.choices?.[0]?.message?.content;
-    if (!content) {
-      return failOrFallback(candidates, 'Groq returned no message content.', requireComplete);
-    }
-
-    const selected = parseEditorialResponse(content, candidates);
-    return selected ?? failOrFallback(
-      candidates,
-      'Groq returned incomplete or mismatched editorial selections.',
-      requireComplete
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown Groq error.';
-    return failOrFallback(candidates, message, requireComplete);
   }
+
+  return failOrFallback(candidates, lastMessage, requireComplete);
 }
