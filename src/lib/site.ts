@@ -7,7 +7,7 @@ export const siteConfig = {
   email: 'swarajsingh211@gmail.com',
   url:
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ??
-    'https://www.dedsec-terminal.in',
+    'https://dedsec-terminal.in',
   discordId: '521225730491940864',
   links: {
     github: 'https://github.com/dedsec-terminal',

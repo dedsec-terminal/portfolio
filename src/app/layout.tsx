@@ -66,9 +66,10 @@ export const metadata: Metadata = {
     url: siteConfig.url,
     images: [
       {
-        url: '/images/avatar/pfp.jpg',
+        url: `${siteConfig.url}/images/avatar/pfp.jpg`,
         width: 1200,
         height: 800,
+        type: 'image/jpeg',
         alt: `${siteConfig.name}, creator of ${siteConfig.brandName}`,
       },
     ],
@@ -77,7 +78,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteConfig.name,
     description: siteConfig.description,
-    images: ['/images/avatar/pfp.jpg'],
+    images: [`${siteConfig.url}/images/avatar/pfp.jpg`],
   },
 };
 

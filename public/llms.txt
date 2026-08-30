@@ -8,18 +8,18 @@ Dedsec Terminal is the canonical cybersecurity portfolio of Swaraj Singh. The si
 
 - Name: Swaraj Singh
 - Site name: Dedsec Terminal
-- Canonical URL: https://www.dedsec-terminal.in/
+- Canonical URL: https://dedsec-terminal.in/
 - GitHub: https://github.com/dedsec-terminal
 - LinkedIn: https://www.linkedin.com/in/swarajsingh211in/
 
 ## Primary pages
 
-- [Home](https://www.dedsec-terminal.in/): Portfolio overview and identity
-- [About](https://www.dedsec-terminal.in/about): Security focus and professional direction
-- [Projects](https://www.dedsec-terminal.in/projects): Selected cybersecurity and GRC projects
-- [Security writeups](https://www.dedsec-terminal.in/writeups): Technical security analysis
-- [Resume](https://www.dedsec-terminal.in/resume): Professional resume
-- [Sitemap](https://www.dedsec-terminal.in/sitemap.xml): Complete index of public pages
+- [Home](https://dedsec-terminal.in/): Portfolio overview and identity
+- [About](https://dedsec-terminal.in/about): Security focus and professional direction
+- [Projects](https://dedsec-terminal.in/projects): Selected cybersecurity and GRC projects
+- [Security writeups](https://dedsec-terminal.in/writeups): Technical security analysis
+- [Resume](https://dedsec-terminal.in/resume): Professional resume
+- [Sitemap](https://dedsec-terminal.in/sitemap.xml): Complete index of public pages
 
 ## Content use
 

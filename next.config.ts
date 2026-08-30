@@ -8,21 +8,21 @@ const nextConfig: NextConfig = {
         has: [
           {
             type: 'host',
-            value: 'dedsec-terminal.in',
+            value: 'www.dedsec-terminal.in',
           },
         ],
-        destination: 'https://www.dedsec-terminal.in/:path*',
+        destination: 'https://dedsec-terminal.in/:path*',
         permanent: true,
       },
       {
-        source: '/:path*',
+        source: '/:path((?!googleb26de6b6cf083888\\.html$).*)',
         has: [
           {
             type: 'host',
             value: 'dedsec-terminal.vercel.app',
           },
         ],
-        destination: 'https://www.dedsec-terminal.in/:path*',
+        destination: 'https://dedsec-terminal.in/:path',
         permanent: true,
       },
     ];

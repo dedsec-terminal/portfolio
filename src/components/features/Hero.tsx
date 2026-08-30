@@ -118,9 +118,6 @@ export default function Hero() {
               ))}
             </div>
 
-            {/* Divider */}
-            <div className="w-6 h-px bg-white/40" aria-hidden="true" />
-
             {/* Social links */}
             <nav aria-label="Social profiles">
               <ul className="flex flex-wrap gap-x-5 gap-y-2 list-none m-0 p-0">
