@@ -149,7 +149,8 @@ export async function curateSignalCandidates(
         model: GROQ_MODEL,
         temperature: 0.2,
         max_completion_tokens: 1_500,
-        reasoning_effort: 'medium',
+        // Groq's strict JSON schema mode is reliable only when reasoning is disabled.
+        reasoning_effort: 'none',
         include_reasoning: false,
         response_format: EDITORIAL_RESPONSE_FORMAT,
         messages: [
