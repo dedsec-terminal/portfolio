@@ -33,7 +33,14 @@ const focusAreas = [
 const toolkit = [
   'MITRE ATT&CK',
   'Microsoft Sentinel',
+  'SentinelOne',
   'Splunk',
+  'Threat Hunting',
+  'Incident Response',
+  'Threat Intelligence',
+  'Vulnerability Management',
+  'Threat Modeling',
+  'IAM / RBAC',
   'NIST CSF 2.0',
   'ISO 27001',
   'Python',
@@ -41,6 +48,8 @@ const toolkit = [
   'Terraform',
   'Docker',
   'Checkov',
+  'AWS',
+  'Google Cloud',
 ] as const;
 
 export default function AboutPage() {
@@ -63,10 +72,6 @@ export default function AboutPage() {
               I&apos;m Swaraj Singh, a cybersecurity practitioner interested in
               making security work clearer, more repeatable, and easier to act
               on.
-            </p>
-            <p>
-              Dedsec Terminal is where I publish that work: projects, security
-              writeups, research notes, and the systems I build while learning.
             </p>
             <p>
               My current work spans threat investigation, risk and compliance
@@ -115,11 +120,11 @@ export default function AboutPage() {
             <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-subtle">
               Toolkit
             </p>
-            <ul className="mt-6 flex list-none flex-wrap gap-2 p-0">
+            <ul className="mt-6 grid list-none grid-cols-2 gap-2 p-0 xl:grid-cols-3">
               {toolkit.map((item) => (
                 <li
                   key={item}
-                  className="rounded-full border border-border/40 bg-black/20 px-3 py-1.5 font-mono text-[10px] tracking-wide text-muted"
+                  className="flex min-h-9 items-center justify-center rounded-full border border-border/40 bg-black/20 px-3 py-1.5 text-center font-mono text-[10px] leading-4 tracking-wide text-muted"
                 >
                   {item}
                 </li>
