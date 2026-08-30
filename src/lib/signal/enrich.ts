@@ -117,6 +117,18 @@ async function groqErrorMessage(response: Response): Promise<string> {
   }
 }
 
+function groqRetryDelayMs(response: Response, attempt: number): number {
+  const retryAfter = Number(response.headers.get('retry-after'));
+  if (Number.isFinite(retryAfter) && retryAfter > 0) {
+    return Math.min(Math.round(retryAfter * 1_000), 60_000);
+  }
+  return Math.min(1_000 * 2 ** (attempt + 1), 8_000);
+}
+
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
 export async function curateSignalCandidates(
   candidates: SignalItem[],
   { requireComplete = false }: SignalEnrichmentOptions = {}
@@ -170,7 +182,10 @@ export async function curateSignalCandidates(
 
       if (!response.ok) {
         lastMessage = await groqErrorMessage(response);
-        if (response.status === 400 || response.status >= 500) continue;
+        if ((response.status === 400 || response.status === 429 || response.status >= 500) && attempt < 2) {
+          await wait(groqRetryDelayMs(response, attempt));
+          continue;
+        }
         return failOrFallback(candidates, lastMessage, requireComplete);
       }
 
