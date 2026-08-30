@@ -33,6 +33,14 @@ export function getHackerNewsTopicKey(title: string): string {
   return tokens.slice(0, 8).join(' ') || title.toLocaleLowerCase('en-US');
 }
 
+export function cleanHackerNewsTitle(title: string): string {
+  const normalized = title.replace(/\s+/g, ' ').trim();
+  if (normalized.length < 78 || /[.!?…'”)]$/.test(normalized)) return normalized;
+
+  const withoutPartialWord = normalized.replace(/\s+\S+$/, '').trim();
+  return `${withoutPartialWord || normalized}…`;
+}
+
 export class HackerNewsAdapter implements SignalSourceAdapter {
   id = 'hackernews';
   tier = 'Discovery' as const;
@@ -91,13 +99,14 @@ export class HackerNewsAdapter implements SignalSourceAdapter {
 
       for (const story of stories) {
         if (story && !story.deleted && !story.dead) {
-          const topicKey = getHackerNewsTopicKey(story.title);
+          const title = cleanHackerNewsTitle(story.title);
+          const topicKey = getHackerNewsTopicKey(title);
           if (seenTopics.has(topicKey)) continue;
           seenTopics.add(topicKey);
 
           candidates.push({
             id: `hn-${story.id}`,
-            title: story.title,
+            title,
             description: `A recent Hacker News story shared by ${story.by ?? 'the community'}.`,
             url: story.url || `https://news.ycombinator.com/item?id=${story.id}`,
             source: 'Hacker News',
