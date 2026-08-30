@@ -38,6 +38,7 @@ const toolkit = [
   'Threat Hunting',
   'Incident Response',
   'Threat Intelligence',
+  'OSINT',
   'Vulnerability Management',
   'Threat Modeling',
   'IAM / RBAC',
