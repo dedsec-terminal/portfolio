@@ -5,5 +5,5 @@ export * from './hackernews';
 export * from './openlibrary';
 export * from './tmdb';
 export * from './wildcard';
-export * from './art-institute';
+export * from './met-museum';
 export * from './words';

@@ -20,15 +20,15 @@ interface SignalCollageProps {
 
 const treatmentClass: Record<SignalTreatment, string> = {
   poster:
-    'border-2 border-foreground/80 bg-background/80 text-left backdrop-blur-md hover:bg-background',
+    'border-2 border-foreground/80 bg-background/20 text-left hover:bg-background/30',
   headline:
-    'border-y-2 border-foreground/80 bg-background/65 text-left backdrop-blur-md hover:border-accent hover:text-accent',
+    'border-y-2 border-foreground/80 bg-background/20 text-left hover:border-accent hover:text-accent',
   note:
-    'border border-border bg-background/70 text-left backdrop-blur-md hover:border-foreground',
+    'border border-border bg-background/20 text-left hover:border-foreground',
   strip:
-    'border-l-4 border-foreground/80 bg-background/65 text-left backdrop-blur-md hover:border-accent',
+    'border-l-4 border-foreground/80 bg-background/20 text-left hover:border-accent',
   fragment:
-    'border border-dashed border-border bg-background/65 text-left backdrop-blur-md hover:border-foreground',
+    'border border-dashed border-border bg-background/20 text-left hover:border-foreground',
 };
 
 const titleClass: Record<SignalTreatment, string> = {
@@ -49,20 +49,11 @@ const mobileAlignClass: Record<SignalVisualPlacement['mobileAlign'], string> = {
 };
 
 function objectStyle(placement: SignalVisualPlacement): CSSProperties {
-  const zIndexByTreatment: Record<SignalTreatment, number> = {
-    poster: 4,
-    headline: 6,
-    note: 5,
-    strip: 3,
-    fragment: 2,
-  };
-
   return {
     gridColumn: `${placement.col} / span ${placement.colSpan}`,
     gridRow: `${placement.row} / span ${placement.rowSpan}`,
     '--signal-mobile-width': `${placement.mobileWidth}%`,
     transform: `rotate(${placement.rotation}deg)`,
-    zIndex: zIndexByTreatment[placement.treatment],
   } as CSSProperties;
 }
 
@@ -87,12 +78,12 @@ function SignalObject({
         <SignalPreviewSurface className="min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none" node={node} />
       ) : (
         <SignalPreviewSurface
-          className="pointer-events-none absolute inset-0 opacity-55 transition-opacity duration-200 group-hover:opacity-75"
+          className="pointer-events-none absolute inset-0 transition-opacity duration-200 group-hover:opacity-90"
           node={node}
         />
       )}
 
-      <div className="relative flex min-h-0 flex-1 flex-col justify-end bg-background/45 p-3 backdrop-blur-[2px] md:p-2">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-end bg-gradient-to-t from-background via-background/52 to-background/5 p-3 md:p-2">
         <span className="absolute left-3 top-3 font-mono text-[9px] uppercase leading-none tracking-[0.2em] opacity-60 md:left-2 md:top-2">
           {String(index + 1).padStart(2, '0')} / {slotLabel}
         </span>
@@ -145,7 +136,7 @@ export default function SignalCollage({
         <SignalObject
           key={node.id}
           node={node}
-          placement={plan.placements[index]}
+          placement={plan.placements.find((placement) => placement.slot === node.slot) ?? plan.placements[index]}
           index={index}
           onSelect={onSelect}
         />

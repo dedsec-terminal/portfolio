@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "content:check": "tsx scripts/check-content.ts",
     "signal:generate": "tsx scripts/generate-signal.ts",
-    "signal:test": "vitest run",
+    "signal:test": "vitest run src/lib/signal src/components/features/signal/SignalPreviewSurface.test.tsx",
     "resume:pdf": "node scripts/generate-pdf.mjs"
   },
   "dependencies": {

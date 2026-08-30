@@ -43,9 +43,18 @@ jobs:
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          SIGNAL_REGENERATE: ${{ inputs.repair_today && 'true' || 'false' }}
+          SIGNAL_REGENERATE: 'true'
           SIGNAL_REQUIRE_GROQ: 'true'
           SIGNAL_TIME_ZONE: Asia/Kolkata
+
+      - name: Validate generated Signal artifact
+        run: npm run signal:test
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Production build
+        run: npm run build
 
       - name: Commit and Push Changes
         run: |

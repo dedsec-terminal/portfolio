@@ -1,29 +1,35 @@
-export type SignalTreatment =
-  | 'poster'
-  | 'headline'
-  | 'note'
-  | 'strip'
-  | 'fragment';
+import { SIGNAL_SLOTS, type SignalSlot } from './types';
 
+export const SIGNAL_GRID = { columns: 12, rows: 12 } as const;
+
+export type SignalTreatment = 'poster' | 'headline' | 'note' | 'strip' | 'fragment';
 export type SignalMobileAlign = 'start' | 'center' | 'end';
 
-export interface SignalVisualSlot {
-  col: number;
-  colSpan: number;
-  row: number;
-  rowSpan: number;
+export interface SignalRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface SignalVisualSlot extends SignalRect {
+  slot: SignalSlot;
   treatment: SignalTreatment;
   mobileAlign: SignalMobileAlign;
   mobileWidth: number;
+  rotation: number;
 }
 
-interface SignalLayoutGrammar {
+export interface SignalLayoutGrammar {
   name: string;
   slots: SignalVisualSlot[];
 }
 
 export interface SignalVisualPlacement extends SignalVisualSlot {
-  rotation: number;
+  col: number;
+  colSpan: number;
+  row: number;
+  rowSpan: number;
 }
 
 export interface SignalVisualPlan {
@@ -31,115 +37,108 @@ export interface SignalVisualPlan {
   placements: SignalVisualPlacement[];
 }
 
-const LAYOUTS: SignalLayoutGrammar[] = [
+function tile(
+  slot: SignalSlot,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  treatment: SignalTreatment,
+  mobileAlign: SignalMobileAlign,
+  mobileWidth: number,
+  rotation = 0
+): SignalVisualSlot {
+  return { slot, x, y, w, h, treatment, mobileAlign, mobileWidth, rotation };
+}
+
+// Coordinates map directly to canonical slots. One-cell gutters and subtle
+// rotations retain the hand-cut rhythm without depending on z-index stacking.
+export const SIGNAL_LAYOUTS: SignalLayoutGrammar[] = [
   {
     name: 'scatter',
     slots: [
-      { col: 1, colSpan: 5, row: 1, rowSpan: 5, treatment: 'poster', mobileAlign: 'start', mobileWidth: 92 },
-      { col: 8, colSpan: 5, row: 1, rowSpan: 3, treatment: 'headline', mobileAlign: 'end', mobileWidth: 78 },
-      { col: 6, colSpan: 3, row: 5, rowSpan: 2, treatment: 'note', mobileAlign: 'center', mobileWidth: 84 },
-      { col: 9, colSpan: 4, row: 7, rowSpan: 6, treatment: 'poster', mobileAlign: 'end', mobileWidth: 88 },
-      { col: 1, colSpan: 3, row: 8, rowSpan: 3, treatment: 'strip', mobileAlign: 'start', mobileWidth: 72 },
-      { col: 4, colSpan: 4, row: 10, rowSpan: 3, treatment: 'fragment', mobileAlign: 'center', mobileWidth: 76 },
+      tile('artwork', 1, 1, 5, 5, 'poster', 'start', 92),
+      tile('website', 8, 1, 5, 3, 'headline', 'end', 78, -0.3),
+      tile('frontier', 6, 5, 3, 2, 'note', 'center', 84, 0.25),
+      tile('screen', 9, 7, 4, 6, 'poster', 'end', 88, 0.2),
+      tile('reading', 1, 8, 3, 3, 'strip', 'start', 72, -0.2),
+      tile('words', 4, 10, 4, 3, 'fragment', 'center', 76),
     ],
   },
   {
     name: 'front-page',
     slots: [
-      { col: 1, colSpan: 7, row: 1, rowSpan: 6, treatment: 'poster', mobileAlign: 'start', mobileWidth: 100 },
-      { col: 9, colSpan: 4, row: 1, rowSpan: 3, treatment: 'fragment', mobileAlign: 'end', mobileWidth: 66 },
-      { col: 9, colSpan: 4, row: 4, rowSpan: 4, treatment: 'note', mobileAlign: 'end', mobileWidth: 82 },
-      { col: 1, colSpan: 6, row: 8, rowSpan: 4, treatment: 'headline', mobileAlign: 'start', mobileWidth: 88 },
-      { col: 7, colSpan: 6, row: 9, rowSpan: 3, treatment: 'strip', mobileAlign: 'end', mobileWidth: 76 },
-      { col: 7, colSpan: 2, row: 6, rowSpan: 2, treatment: 'fragment', mobileAlign: 'center', mobileWidth: 68 },
+      tile('artwork', 1, 1, 6, 6, 'poster', 'start', 100),
+      tile('website', 1, 8, 6, 4, 'headline', 'start', 88, -0.2),
+      tile('frontier', 9, 4, 4, 4, 'note', 'end', 82, 0.25),
+      tile('screen', 7, 9, 6, 3, 'strip', 'end', 76, 0.2),
+      tile('reading', 9, 1, 4, 3, 'fragment', 'end', 66, -0.25),
+      tile('words', 7, 6, 2, 2, 'fragment', 'center', 68),
     ],
   },
   {
     name: 'margins',
     slots: [
-      { col: 1, colSpan: 3, row: 1, rowSpan: 4, treatment: 'note', mobileAlign: 'start', mobileWidth: 74 },
-      { col: 9, colSpan: 4, row: 1, rowSpan: 6, treatment: 'poster', mobileAlign: 'end', mobileWidth: 90 },
-      { col: 4, colSpan: 5, row: 5, rowSpan: 4, treatment: 'headline', mobileAlign: 'center', mobileWidth: 94 },
-      { col: 1, colSpan: 4, row: 9, rowSpan: 4, treatment: 'poster', mobileAlign: 'start', mobileWidth: 86 },
-      { col: 9, colSpan: 4, row: 8, rowSpan: 3, treatment: 'fragment', mobileAlign: 'end', mobileWidth: 70 },
-      { col: 5, colSpan: 3, row: 1, rowSpan: 3, treatment: 'strip', mobileAlign: 'center', mobileWidth: 76 },
+      tile('artwork', 9, 1, 4, 6, 'poster', 'end', 90),
+      tile('website', 1, 1, 3, 4, 'note', 'start', 74, -0.25),
+      tile('frontier', 4, 5, 5, 4, 'headline', 'center', 94, 0.2),
+      tile('screen', 1, 9, 4, 4, 'poster', 'start', 86, 0.25),
+      tile('reading', 9, 8, 4, 3, 'fragment', 'end', 70, -0.2),
+      tile('words', 5, 1, 3, 3, 'strip', 'center', 76),
     ],
   },
   {
     name: 'stack',
     slots: [
-      { col: 2, colSpan: 6, row: 1, rowSpan: 5, treatment: 'poster', mobileAlign: 'center', mobileWidth: 94 },
-      { col: 8, colSpan: 5, row: 2, rowSpan: 4, treatment: 'headline', mobileAlign: 'end', mobileWidth: 86 },
-      { col: 1, colSpan: 4, row: 6, rowSpan: 3, treatment: 'strip', mobileAlign: 'start', mobileWidth: 72 },
-      { col: 6, colSpan: 6, row: 7, rowSpan: 6, treatment: 'poster', mobileAlign: 'center', mobileWidth: 96 },
-      { col: 1, colSpan: 4, row: 9, rowSpan: 4, treatment: 'note', mobileAlign: 'start', mobileWidth: 82 },
-      { col: 9, colSpan: 4, row: 10, rowSpan: 3, treatment: 'fragment', mobileAlign: 'end', mobileWidth: 70 },
+      tile('artwork', 2, 1, 6, 5, 'poster', 'center', 94),
+      tile('website', 8, 2, 5, 4, 'headline', 'end', 86, -0.2),
+      tile('frontier', 1, 6, 4, 3, 'strip', 'start', 72, 0.2),
+      tile('screen', 7, 7, 6, 6, 'poster', 'center', 96, 0.2),
+      tile('reading', 1, 9, 4, 4, 'note', 'start', 82, -0.2),
+      tile('words', 5, 10, 2, 3, 'fragment', 'end', 70),
     ],
   },
   {
     name: 'index',
     slots: [
-      { col: 1, colSpan: 6, row: 1, rowSpan: 4, treatment: 'headline', mobileAlign: 'start', mobileWidth: 96 },
-      { col: 8, colSpan: 4, row: 2, rowSpan: 4, treatment: 'poster', mobileAlign: 'end', mobileWidth: 82 },
-      { col: 2, colSpan: 3, row: 6, rowSpan: 3, treatment: 'fragment', mobileAlign: 'start', mobileWidth: 64 },
-      { col: 6, colSpan: 7, row: 7, rowSpan: 4, treatment: 'note', mobileAlign: 'end', mobileWidth: 92 },
-      { col: 1, colSpan: 5, row: 9, rowSpan: 2, treatment: 'strip', mobileAlign: 'start', mobileWidth: 78 },
-      { col: 10, colSpan: 3, row: 10, rowSpan: 3, treatment: 'fragment', mobileAlign: 'end', mobileWidth: 68 },
+      tile('artwork', 8, 1, 5, 5, 'poster', 'end', 82),
+      tile('website', 1, 1, 6, 4, 'headline', 'start', 96, -0.2),
+      tile('frontier', 2, 6, 3, 3, 'fragment', 'start', 64, 0.2),
+      tile('screen', 6, 7, 7, 4, 'note', 'end', 92, 0.2),
+      tile('reading', 1, 10, 5, 3, 'strip', 'start', 78, -0.2),
+      tile('words', 10, 11, 3, 2, 'fragment', 'end', 68),
     ],
   },
   {
     name: 'collision',
     slots: [
-      { col: 1, colSpan: 6, row: 1, rowSpan: 5, treatment: 'poster', mobileAlign: 'start', mobileWidth: 98 },
-      { col: 7, colSpan: 6, row: 2, rowSpan: 3, treatment: 'headline', mobileAlign: 'end', mobileWidth: 90 },
-      { col: 1, colSpan: 4, row: 8, rowSpan: 4, treatment: 'note', mobileAlign: 'start', mobileWidth: 86 },
-      { col: 6, colSpan: 7, row: 7, rowSpan: 6, treatment: 'poster', mobileAlign: 'end', mobileWidth: 96 },
-      { col: 2, colSpan: 3, row: 6, rowSpan: 2, treatment: 'fragment', mobileAlign: 'start', mobileWidth: 68 },
-      { col: 9, colSpan: 4, row: 5, rowSpan: 2, treatment: 'strip', mobileAlign: 'end', mobileWidth: 76 },
+      tile('artwork', 1, 1, 6, 5, 'poster', 'start', 98),
+      tile('website', 7, 2, 6, 3, 'headline', 'end', 90, -0.2),
+      tile('frontier', 1, 8, 4, 4, 'note', 'start', 86, 0.2),
+      tile('screen', 6, 7, 7, 6, 'poster', 'end', 96, 0.2),
+      tile('reading', 2, 6, 3, 2, 'fragment', 'start', 68, -0.2),
+      tile('words', 9, 5, 4, 2, 'strip', 'end', 76),
     ],
   },
 ];
 
-function hashString(value: string): number {
+export function rectanglesIntersect(a: SignalRect, b: SignalRect): boolean {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+export function getSignalVisualPlan(seed: string, count: number = SIGNAL_SLOTS.length): SignalVisualPlan {
   let hash = 2166136261;
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
     hash = Math.imul(hash, 16777619);
   }
-  return hash >>> 0;
-}
-
-function createPrng(seed: number) {
-  let state = seed >>> 0;
-  return () => {
-    state += 0x6d2b79f5;
-    let value = state;
-    value = Math.imul(value ^ (value >>> 15), value | 1);
-    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
-    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-export function getSignalVisualPlan(seed: string, count: number): SignalVisualPlan {
-  const seedHash = hashString(seed);
-  const grammar = LAYOUTS[seedHash % LAYOUTS.length];
-  const random = createPrng(hashString(`${seed}:visual`));
-  const treatmentPriority: Record<SignalTreatment, number> = {
-    poster: 0,
-    headline: 1,
-    note: 2,
-    strip: 3,
-    fragment: 4,
-  };
-  const slots = grammar.slots
-    .map((slot) => ({ ...slot }))
-    .sort((a, b) => treatmentPriority[a.treatment] - treatmentPriority[b.treatment]);
-
-  const placements = Array.from({ length: count }, (_, index) => {
-    const slot = slots[index % slots.length];
-    const rotation = Math.round((random() - 0.5) * 3 * 10) / 10;
-    return { ...slot, rotation };
-  });
-
+  const grammar = SIGNAL_LAYOUTS[(hash >>> 0) % SIGNAL_LAYOUTS.length];
+  const placements = grammar.slots.slice(0, count).map((slot) => ({
+    ...slot,
+    col: slot.x,
+    colSpan: slot.w,
+    row: slot.y,
+    rowSpan: slot.h,
+  }));
   return { name: grammar.name, placements };
 }

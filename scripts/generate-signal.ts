@@ -8,11 +8,12 @@ import {
   OpenLibraryAdapter,
   TmdbAdapter,
   WildcardAdapter,
-  ArtInstituteAdapter,
+  MetMuseumAdapter,
   WordsAdapter,
 } from '../src/lib/signal/adapters';
 import { SignalGenerator, GeneratorConfig } from '../src/lib/signal/generator';
 import { curateSignalCandidates } from '../src/lib/signal/enrich';
+import { resolveSignalPreviews } from '../src/lib/signal/previews';
 import { getSignalDate, resolveSignalRunOptions } from '../src/lib/signal/runtime';
 import { SignalItem } from '../src/lib/signal/types';
 import { signalDaySchema } from '../src/lib/signal/schemas';
@@ -94,7 +95,7 @@ async function main() {
   // 3. Fetch Candidates from Adapters
   const adapters = [
     new PersonalCatalogueAdapter(),
-    new ArtInstituteAdapter(),
+    new MetMuseumAdapter(),
     new AnilistAdapter(),
     new WikimediaAdapter(),
     new HackerNewsAdapter(),
@@ -142,7 +143,8 @@ async function main() {
   const curatedCandidates = await curateSignalCandidates(shortlist, {
     requireComplete: requireGroq,
   });
-  const signalDay = generator.generate(curatedCandidates, config);
+  const candidatesWithPreviews = await resolveSignalPreviews(curatedCandidates);
+  const signalDay = generator.generate(candidatesWithPreviews, config);
 
   // 5. Validate Output
   const validation = signalDaySchema.safeParse(signalDay);
