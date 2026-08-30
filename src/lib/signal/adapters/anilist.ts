@@ -60,6 +60,7 @@ export class AnilistAdapter implements SignalSourceAdapter {
         url: item.siteUrl,
         source: 'AniList',
         category: 'Anime',
+        slot: 'screen',
         tier: this.tier,
         image: item.coverImage?.large,
       }));

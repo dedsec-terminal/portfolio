@@ -40,6 +40,7 @@ const LAYOUTS: SignalLayoutGrammar[] = [
       { col: 6, colSpan: 3, row: 5, rowSpan: 2, treatment: 'note', mobileAlign: 'center', mobileWidth: 84 },
       { col: 9, colSpan: 4, row: 7, rowSpan: 6, treatment: 'poster', mobileAlign: 'end', mobileWidth: 88 },
       { col: 1, colSpan: 3, row: 8, rowSpan: 3, treatment: 'strip', mobileAlign: 'start', mobileWidth: 72 },
+      { col: 4, colSpan: 4, row: 10, rowSpan: 3, treatment: 'fragment', mobileAlign: 'center', mobileWidth: 76 },
     ],
   },
   {
@@ -50,6 +51,7 @@ const LAYOUTS: SignalLayoutGrammar[] = [
       { col: 9, colSpan: 4, row: 4, rowSpan: 4, treatment: 'note', mobileAlign: 'end', mobileWidth: 82 },
       { col: 1, colSpan: 6, row: 8, rowSpan: 4, treatment: 'headline', mobileAlign: 'start', mobileWidth: 88 },
       { col: 7, colSpan: 6, row: 9, rowSpan: 3, treatment: 'strip', mobileAlign: 'end', mobileWidth: 76 },
+      { col: 7, colSpan: 2, row: 6, rowSpan: 2, treatment: 'fragment', mobileAlign: 'center', mobileWidth: 68 },
     ],
   },
   {
@@ -60,6 +62,7 @@ const LAYOUTS: SignalLayoutGrammar[] = [
       { col: 4, colSpan: 5, row: 5, rowSpan: 4, treatment: 'headline', mobileAlign: 'center', mobileWidth: 94 },
       { col: 1, colSpan: 4, row: 9, rowSpan: 4, treatment: 'poster', mobileAlign: 'start', mobileWidth: 86 },
       { col: 9, colSpan: 4, row: 8, rowSpan: 3, treatment: 'fragment', mobileAlign: 'end', mobileWidth: 70 },
+      { col: 5, colSpan: 3, row: 1, rowSpan: 3, treatment: 'strip', mobileAlign: 'center', mobileWidth: 76 },
     ],
   },
   {
@@ -70,6 +73,7 @@ const LAYOUTS: SignalLayoutGrammar[] = [
       { col: 1, colSpan: 4, row: 6, rowSpan: 3, treatment: 'strip', mobileAlign: 'start', mobileWidth: 72 },
       { col: 6, colSpan: 6, row: 7, rowSpan: 6, treatment: 'poster', mobileAlign: 'center', mobileWidth: 96 },
       { col: 1, colSpan: 4, row: 9, rowSpan: 4, treatment: 'note', mobileAlign: 'start', mobileWidth: 82 },
+      { col: 9, colSpan: 4, row: 10, rowSpan: 3, treatment: 'fragment', mobileAlign: 'end', mobileWidth: 70 },
     ],
   },
   {
@@ -80,6 +84,7 @@ const LAYOUTS: SignalLayoutGrammar[] = [
       { col: 2, colSpan: 3, row: 6, rowSpan: 3, treatment: 'fragment', mobileAlign: 'start', mobileWidth: 64 },
       { col: 6, colSpan: 7, row: 7, rowSpan: 4, treatment: 'note', mobileAlign: 'end', mobileWidth: 92 },
       { col: 1, colSpan: 5, row: 9, rowSpan: 2, treatment: 'strip', mobileAlign: 'start', mobileWidth: 78 },
+      { col: 10, colSpan: 3, row: 10, rowSpan: 3, treatment: 'fragment', mobileAlign: 'end', mobileWidth: 68 },
     ],
   },
   {
@@ -90,6 +95,7 @@ const LAYOUTS: SignalLayoutGrammar[] = [
       { col: 1, colSpan: 4, row: 8, rowSpan: 4, treatment: 'note', mobileAlign: 'start', mobileWidth: 86 },
       { col: 6, colSpan: 7, row: 7, rowSpan: 6, treatment: 'poster', mobileAlign: 'end', mobileWidth: 96 },
       { col: 2, colSpan: 3, row: 6, rowSpan: 2, treatment: 'fragment', mobileAlign: 'start', mobileWidth: 68 },
+      { col: 9, colSpan: 4, row: 5, rowSpan: 2, treatment: 'strip', mobileAlign: 'end', mobileWidth: 76 },
     ],
   },
 ];

@@ -1,14 +1,16 @@
 import { SignalSourceAdapter, SignalItem } from '../types';
 
-type TmdbMovie = {
+type TmdbMedia = {
   id: number;
   title?: string;
   original_title?: string;
+  name?: string;
+  original_name?: string;
   overview?: string;
   poster_path?: string;
 };
 
-type TmdbResponse = { results?: TmdbMovie[] };
+type TmdbResponse = { results?: TmdbMedia[] };
 
 export class TmdbAdapter implements SignalSourceAdapter {
   id = 'tmdb';
@@ -23,27 +25,39 @@ export class TmdbAdapter implements SignalSourceAdapter {
     }
 
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`
+      const mediaTypes = ['movie', 'tv'] as const;
+      const responses = await Promise.all(
+        mediaTypes.map(async (mediaType) => {
+          const response = await fetch(
+            `https://api.themoviedb.org/3/trending/${mediaType}/day?api_key=${apiKey}`
+          );
+          if (!response.ok) {
+            throw new Error(`TMDB ${mediaType} API failed: ${response.statusText}`);
+          }
+          return { mediaType, payload: (await response.json()) as TmdbResponse };
+        })
       );
-      if (!response.ok)
-        throw new Error(`TMDB API failed: ${response.statusText}`);
 
-      const data = (await response.json()) as TmdbResponse;
-      const results = data.results ?? [];
-
-      return results.map((movie) => ({
-        id: `tmdb-${movie.id}`,
-        title: movie.title ?? movie.original_title ?? 'Untitled film',
-        description: movie.overview ?? 'No description available.',
-        url: `https://www.themoviedb.org/movie/${movie.id}`,
-        source: 'TMDB',
-        category: 'Film',
-        tier: this.tier,
-        image: movie.poster_path
-          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-          : undefined,
-      }));
+      return responses.flatMap(({ mediaType, payload }) =>
+        (payload.results ?? []).map((item) => ({
+          id: `tmdb-${mediaType}-${item.id}`,
+          title:
+            item.title ??
+            item.name ??
+            item.original_title ??
+            item.original_name ??
+            'Untitled screen entry',
+          description: item.overview ?? 'No description available.',
+          url: `https://www.themoviedb.org/${mediaType}/${item.id}`,
+          source: 'TMDB',
+          category: mediaType === 'movie' ? 'Film' : 'TV',
+          slot: 'screen',
+          tier: this.tier,
+          image: item.poster_path
+            ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+            : undefined,
+        }))
+      );
     } catch (error) {
       console.warn('[TmdbAdapter] fetch failed:', error);
       return [];

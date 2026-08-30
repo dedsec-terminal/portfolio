@@ -32,6 +32,7 @@ export class OpenLibraryAdapter implements SignalSourceAdapter {
           url: `https://openlibrary.org${work.key}`,
           source: 'Open Library',
           category: 'Book',
+          slot: 'reading',
           tier: this.tier,
           image: coverUrl,
         };

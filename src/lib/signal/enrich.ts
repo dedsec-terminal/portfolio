@@ -1,4 +1,9 @@
-import type { SignalDay } from './types';
+import {
+  SIGNAL_SLOT_LABELS,
+  SIGNAL_SLOTS,
+  type SignalItem,
+  type SignalSlot,
+} from './types';
 
 const GROQ_COMPLETIONS_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'openai/gpt-oss-20b';
@@ -7,32 +12,35 @@ type GroqCompletion = {
   choices?: Array<{ message?: { content?: string | null } }>;
 };
 
-type CuriosityResponse = {
-  notes?: Array<{ id?: unknown; curiosity?: unknown }>;
+type EditorialResponse = {
+  selections?: Array<{ slot?: unknown; id?: unknown; curiosity?: unknown }>;
 };
 
-const CURIOSITY_RESPONSE_FORMAT = {
+const EDITORIAL_RESPONSE_FORMAT = {
   type: 'json_schema',
   json_schema: {
-    name: 'signal_curiosity',
+    name: 'signal_editorial_selection',
     strict: true,
     schema: {
       type: 'object',
       properties: {
-        notes: {
+        selections: {
           type: 'array',
+          minItems: SIGNAL_SLOTS.length,
+          maxItems: SIGNAL_SLOTS.length,
           items: {
             type: 'object',
             properties: {
+              slot: { type: 'string', enum: SIGNAL_SLOTS },
               id: { type: 'string' },
               curiosity: { type: 'string' },
             },
-            required: ['id', 'curiosity'],
+            required: ['slot', 'id', 'curiosity'],
             additionalProperties: false,
           },
         },
       },
-      required: ['notes'],
+      required: ['selections'],
       additionalProperties: false,
     },
   },
@@ -42,59 +50,92 @@ export interface SignalEnrichmentOptions {
   requireComplete?: boolean;
 }
 
-function failOrFallback(
-  day: SignalDay,
-  message: string,
-  requireComplete: boolean
-): SignalDay {
-  if (requireComplete) throw new Error(message);
-  console.warn(`[Signal Engine] Groq enrichment skipped: ${message}`);
-  return day;
+function deterministicFallback(candidates: SignalItem[]): SignalItem[] {
+  return SIGNAL_SLOTS.map((slot) => {
+    const candidate = candidates.find((item) => item.slot === slot);
+    if (!candidate) throw new Error(`Signal shortlist has no ${slot} candidate.`);
+    return candidate;
+  });
 }
 
-function parseCuriosityResponse(value: string): Map<string, string> {
-  const parsed = JSON.parse(value) as CuriosityResponse;
-  const notes = new Map<string, string>();
+function failOrFallback(
+  candidates: SignalItem[],
+  message: string,
+  requireComplete: boolean
+): SignalItem[] {
+  if (requireComplete) throw new Error(message);
+  console.warn(`[Signal Engine] Groq editorial pass skipped: ${message}`);
+  return deterministicFallback(candidates);
+}
 
-  for (const note of parsed.notes ?? []) {
-    if (typeof note.id !== 'string' || typeof note.curiosity !== 'string') continue;
+function parseEditorialResponse(
+  value: string,
+  candidates: SignalItem[]
+): SignalItem[] | null {
+  const parsed = JSON.parse(value) as EditorialResponse;
+  const candidateById = new Map(candidates.map((candidate) => [candidate.id, candidate]));
+  const selected = new Map<SignalSlot, SignalItem>();
 
-    const curiosity = note.curiosity.replace(/\s+/g, ' ').trim();
-    if (curiosity.length > 0 && curiosity.length <= 180) {
-      notes.set(note.id, curiosity);
+  for (const choice of parsed.selections ?? []) {
+    if (
+      typeof choice.slot !== 'string' ||
+      !SIGNAL_SLOTS.includes(choice.slot as SignalSlot) ||
+      typeof choice.id !== 'string' ||
+      typeof choice.curiosity !== 'string'
+    ) {
+      continue;
     }
+
+    const slot = choice.slot as SignalSlot;
+    const candidate = candidateById.get(choice.id);
+    const curiosity = choice.curiosity.replace(/\s+/g, ' ').trim();
+    if (
+      !candidate ||
+      candidate.slot !== slot ||
+      selected.has(slot) ||
+      curiosity.length < 12 ||
+      curiosity.length > 180
+    ) {
+      continue;
+    }
+    selected.set(slot, { ...candidate, curiosity });
   }
 
-  return notes;
+  return selected.size === SIGNAL_SLOTS.length
+    ? SIGNAL_SLOTS.map((slot) => selected.get(slot)!)
+    : null;
 }
 
 async function groqErrorMessage(response: Response): Promise<string> {
   const fallback = `Groq responded with ${response.status}.`;
-
   try {
     const body = (await response.json()) as { error?: { code?: unknown } };
     const code = body.error?.code;
-    return typeof code === 'string' && code.length <= 80
-      ? `${fallback} (${code})`
-      : fallback;
+    return typeof code === 'string' && code.length <= 80 ? `${fallback} (${code})` : fallback;
   } catch {
     return fallback;
   }
 }
 
-export async function enrichSignalCuriosity(
-  day: SignalDay,
+export async function curateSignalCandidates(
+  candidates: SignalItem[],
   { requireComplete = false }: SignalEnrichmentOptions = {}
-): Promise<SignalDay> {
+): Promise<SignalItem[]> {
+  deterministicFallback(candidates);
+
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return failOrFallback(day, 'GROQ_API_KEY is missing.', requireComplete);
+    return failOrFallback(candidates, 'GROQ_API_KEY is missing.', requireComplete);
   }
 
-  const entries = day.nodes.map(({ id, title, description }) => ({
+  const entries = candidates.map(({ id, slot, title, description, source, category, timestamp }) => ({
     id,
+    slot,
     title,
-    description,
+    description: description.replace(/\s+/g, ' ').trim().slice(0, 520),
+    source,
+    category,
+    timestamp,
   }));
 
   try {
@@ -106,50 +147,44 @@ export async function enrichSignalCuriosity(
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
-        temperature: 0.6,
-        max_completion_tokens: 500,
+        temperature: 0.35,
+        max_completion_tokens: 900,
         reasoning_effort: 'low',
         include_reasoning: false,
-        response_format: CURIOSITY_RESPONSE_FORMAT,
+        response_format: EDITORIAL_RESPONSE_FORMAT,
         messages: [
           {
+            role: 'system',
+            content:
+              'You edit a high-quality daily curiosity page. Select only supplied candidate IDs and use only supplied facts. Favor specificity, substance, trustworthy sources, and genuine curiosity over popularity. For the frontier slot, prefer timely cybersecurity or significant AI research/model news when present. Avoid hype, repetition, generic praise, invented context, and markdown.',
+          },
+          {
             role: 'user',
-            content: `Write restrained curiosity cues for a daily personal collage. Use only facts in the supplied title and description. Do not add facts, labels, recommendations, or markdown. For every entry, return an id and a 6-15 word cue. Keep each cue grounded in its entry. Entries: ${JSON.stringify(entries)}`,
+            content: `Choose exactly one candidate for each required slot (${SIGNAL_SLOTS.map((slot) => `${slot}: ${SIGNAL_SLOT_LABELS[slot]}`).join(', ')}). For every choice, write a grounded 8-18 word curiosity cue explaining the useful tension, idea, or reason to open it. Candidates: ${JSON.stringify(entries)}`,
           },
         ],
       }),
-      signal: AbortSignal.timeout(12_000),
+      signal: AbortSignal.timeout(20_000),
     });
 
     if (!response.ok) {
-      return failOrFallback(day, await groqErrorMessage(response), requireComplete);
+      return failOrFallback(candidates, await groqErrorMessage(response), requireComplete);
     }
 
     const completion = (await response.json()) as GroqCompletion;
     const content = completion.choices?.[0]?.message?.content;
     if (!content) {
-      return failOrFallback(day, 'Groq returned no message content.', requireComplete);
+      return failOrFallback(candidates, 'Groq returned no message content.', requireComplete);
     }
 
-    const notes = parseCuriosityResponse(content);
-    const missingNotes = day.nodes.filter((node) => !notes.has(node.id));
-    if (missingNotes.length > 0) {
-      return failOrFallback(
-        day,
-        `Groq omitted curiosity cues for ${missingNotes.length} item(s).`,
-        requireComplete
-      );
-    }
-
-    return {
-      ...day,
-      nodes: day.nodes.map((node) => ({
-        ...node,
-        curiosity: notes.get(node.id),
-      })),
-    };
+    const selected = parseEditorialResponse(content, candidates);
+    return selected ?? failOrFallback(
+      candidates,
+      'Groq returned incomplete or mismatched editorial selections.',
+      requireComplete
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown Groq error.';
-    return failOrFallback(day, message, requireComplete);
+    return failOrFallback(candidates, message, requireComplete);
   }
 }

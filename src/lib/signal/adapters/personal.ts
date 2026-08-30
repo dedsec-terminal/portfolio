@@ -1,6 +1,14 @@
 import fs from 'fs';
 import path from 'path';
-import { SignalSourceAdapter, SignalItem } from '../types';
+import { SignalSourceAdapter, SignalItem, type SignalSlot } from '../types';
+
+const CATALOGUE_SLOTS: Record<string, SignalSlot> = {
+  'films.json': 'screen',
+  'music.json': 'words',
+  'art.json': 'artwork',
+  'websites.json': 'website',
+  'reading.json': 'reading',
+};
 
 export class PersonalCatalogueAdapter implements SignalSourceAdapter {
   id = 'personal';
@@ -20,7 +28,9 @@ export class PersonalCatalogueAdapter implements SignalSourceAdapter {
           const content = fs.readFileSync(filePath, 'utf-8');
           const items = JSON.parse(content);
           if (Array.isArray(items)) {
-            candidates = candidates.concat(items);
+            candidates = candidates.concat(
+              items.map((item) => ({ ...item, slot: CATALOGUE_SLOTS[file] }))
+            );
           }
         }
       } catch (error) {

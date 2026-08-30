@@ -1,6 +1,7 @@
 import type { SignalDayType } from '@/lib/signal/schemas';
 import { ExternalLink, X } from 'lucide-react';
 import SignalPreviewSurface from './SignalPreviewSurface';
+import { SIGNAL_SLOT_LABELS } from '@/lib/signal/types';
 
 type SignalNode = SignalDayType['nodes'][0];
 
@@ -13,6 +14,7 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
   if (!node) return null;
 
   const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
+  const slotLabel = node.slot ? SIGNAL_SLOT_LABELS[node.slot] : node.category;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-background/92 p-4 backdrop-blur-sm md:items-center md:justify-center md:p-10">
@@ -32,7 +34,7 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
           <div className="flex min-h-80 flex-col justify-between p-6 pr-20 md:p-10 md:pr-20">
             <div>
               <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">
-                Found today
+                {slotLabel} / found today
               </p>
               <h2 className="text-3xl font-semibold leading-[0.95] tracking-[-0.045em] text-foreground md:text-5xl">
                 {title}

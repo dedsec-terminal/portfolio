@@ -8,6 +8,7 @@ import {
   type SignalVisualPlacement,
 } from '@/lib/signal/visual';
 import SignalPreviewSurface from './SignalPreviewSurface';
+import { SIGNAL_SLOT_LABELS } from '@/lib/signal/types';
 
 type SignalNode = SignalDayType['nodes'][number];
 
@@ -77,6 +78,7 @@ function SignalObject({
   onSelect?: (node: SignalNode) => void;
 }) {
   const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
+  const slotLabel = node.slot ? SIGNAL_SLOT_LABELS[node.slot] : node.category;
   const sharedClass = `group relative flex w-[var(--signal-mobile-width)] min-w-0 flex-col overflow-hidden p-0 transition-colors duration-200 md:h-full md:w-auto ${mobileAlignClass[placement.mobileAlign]} ${treatmentClass[placement.treatment]}`;
 
   const body = (
@@ -91,8 +93,8 @@ function SignalObject({
       )}
 
       <div className="relative flex min-h-0 flex-1 flex-col justify-end bg-background/45 p-3 backdrop-blur-[2px] md:p-2">
-        <span className="absolute left-3 top-3 font-mono text-[10px] leading-none tracking-[0.24em] opacity-50 md:left-2 md:top-2">
-          {String(index + 1).padStart(2, '0')}
+        <span className="absolute left-3 top-3 font-mono text-[9px] uppercase leading-none tracking-[0.2em] opacity-60 md:left-2 md:top-2">
+          {String(index + 1).padStart(2, '0')} / {slotLabel}
         </span>
         <h2 className={`line-clamp-2 ${titleClass[placement.treatment]}`}>{title}</h2>
         <span className="absolute bottom-3 right-4 font-mono text-sm opacity-35 transition group-hover:opacity-100">

@@ -5,7 +5,7 @@ import { signalDaySchema } from '@/lib/signal/schemas';
 
 export const metadata = {
   title: 'Today | Swaraj Singh',
-  description: 'Five unrelated things, placed together for one day.',
+  description: 'Six carefully chosen things: art, web, frontier news, screen, reading, and words.',
 };
 
 export default function SignalPage() {

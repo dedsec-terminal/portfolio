@@ -8,17 +8,17 @@ import {
   OpenLibraryAdapter,
   TmdbAdapter,
   WildcardAdapter,
+  ArtInstituteAdapter,
+  WordsAdapter,
 } from '../src/lib/signal/adapters';
 import { SignalGenerator, GeneratorConfig } from '../src/lib/signal/generator';
-import { enrichSignalCuriosity } from '../src/lib/signal/enrich';
-import { resolveSignalRunOptions } from '../src/lib/signal/runtime';
+import { curateSignalCandidates } from '../src/lib/signal/enrich';
+import { getSignalDate, resolveSignalRunOptions } from '../src/lib/signal/runtime';
 import { SignalItem } from '../src/lib/signal/types';
 import { signalDaySchema } from '../src/lib/signal/schemas';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-
-const TARGET_COUNT = 5;
 
 const SIGNAL_DIR = path.join(process.cwd(), 'signal');
 const HISTORY_DIR = path.join(SIGNAL_DIR, 'history');
@@ -32,7 +32,7 @@ function writeFileAtomically(filePath: string, contents: string) {
 
 async function main() {
   const now = new Date();
-  const dateStr = now.toISOString().split('T')[0];
+  const dateStr = getSignalDate(now);
   const historyFile = path.join(HISTORY_DIR, `${dateStr}.json`);
   const { isRepair, requireGroq, generatorVersion } = resolveSignalRunOptions();
 
@@ -94,12 +94,14 @@ async function main() {
   // 3. Fetch Candidates from Adapters
   const adapters = [
     new PersonalCatalogueAdapter(),
+    new ArtInstituteAdapter(),
     new AnilistAdapter(),
     new WikimediaAdapter(),
     new HackerNewsAdapter(),
     new OpenLibraryAdapter(),
     new TmdbAdapter(),
     new WildcardAdapter(),
+    new WordsAdapter(),
   ];
 
   let candidates: SignalItem[] = [];
@@ -133,17 +135,17 @@ async function main() {
   const config: GeneratorConfig = {
     date: dateStr,
     generatorVersion,
-    targetCount: TARGET_COUNT,
     historicalIds,
   };
 
-  const signalDay = generator.generate(candidates, config);
-  const enrichedSignalDay = await enrichSignalCuriosity(signalDay, {
+  const shortlist = generator.shortlist(candidates, config);
+  const curatedCandidates = await curateSignalCandidates(shortlist, {
     requireComplete: requireGroq,
   });
+  const signalDay = generator.generate(curatedCandidates, config);
 
   // 5. Validate Output
-  const validation = signalDaySchema.safeParse(enrichedSignalDay);
+  const validation = signalDaySchema.safeParse(signalDay);
   if (!validation.success) {
     console.error(
       `[Signal Engine] FATAL: Generated data failed schema validation!`,

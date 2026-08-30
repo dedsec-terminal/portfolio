@@ -1,4 +1,5 @@
 import { SignalSourceAdapter, SignalItem } from '../types';
+import { getSignalDate } from '../runtime';
 
 export class WikimediaAdapter implements SignalSourceAdapter {
   id = 'wikimedia';
@@ -7,13 +8,9 @@ export class WikimediaAdapter implements SignalSourceAdapter {
 
   async fetchCandidates(): Promise<SignalItem[]> {
     try {
-      // Get today's date for "On this day" or "Featured"
-      const now = new Date();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      
+      const [yyyy, mm, dd] = getSignalDate().split('-');
       const response = await fetch(
-        `https://en.wikipedia.org/api/rest_v1/feed/featured/2026/${mm}/${dd}`,
+        `https://en.wikipedia.org/api/rest_v1/feed/featured/${yyyy}/${mm}/${dd}`,
         { headers: { 'Accept': 'application/json' } }
       );
 
@@ -33,6 +30,7 @@ export class WikimediaAdapter implements SignalSourceAdapter {
           url: data.tfa.content_urls?.desktop?.page,
           source: 'Wikipedia',
           category: 'Article',
+          slot: 'frontier',
           tier: this.tier,
           image: data.tfa.thumbnail?.source,
         });

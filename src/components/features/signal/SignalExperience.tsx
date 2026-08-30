@@ -20,7 +20,7 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
       <header className="flex shrink-0 items-end justify-between gap-6 border-b-2 border-foreground/80 bg-background/20 px-5 pb-4 pt-8 md:px-10 md:pb-4 md:pt-6">
         <div>
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.3em] text-subtle">
-            Five things, placed together now
+            Six good reasons to stay curious
           </p>
           <h1 className="text-4xl font-semibold uppercase leading-none tracking-[-0.055em] text-foreground md:text-5xl">
             Today
