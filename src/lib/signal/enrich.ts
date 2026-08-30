@@ -6,7 +6,7 @@ import {
 } from './types';
 
 const GROQ_COMPLETIONS_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'openai/gpt-oss-20b';
+const GROQ_MODEL = 'openai/gpt-oss-120b';
 
 type GroqCompletion = {
   choices?: Array<{ message?: { content?: string | null } }>;
@@ -147,20 +147,20 @@ export async function curateSignalCandidates(
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
-        temperature: 0.35,
-        max_completion_tokens: 900,
-        reasoning_effort: 'low',
+        temperature: 0.2,
+        max_completion_tokens: 1_500,
+        reasoning_effort: 'medium',
         include_reasoning: false,
         response_format: EDITORIAL_RESPONSE_FORMAT,
         messages: [
           {
             role: 'system',
             content:
-              'You edit a high-quality daily curiosity page. Select only supplied candidate IDs and use only supplied facts. Favor specificity, substance, trustworthy sources, and genuine curiosity over popularity. For the frontier slot, prefer timely cybersecurity or significant AI research/model news when present. Avoid hype, repetition, generic praise, invented context, and markdown.',
+              'You edit a high-quality daily curiosity page. Select only supplied candidate IDs. Every factual word in a cue must be directly supported by that candidate title, description, source, category, or timestamp. Never add dates, rankings, sales status, reception, credentials, plot facts, or technical claims that are not explicitly supplied. Favor specificity, substance, primary or technical sources, and genuine curiosity over popularity. For the frontier slot, prefer timely cybersecurity or significant AI research/model news when present, but reject sensational framing when a more substantive candidate exists. Avoid hype, repetition, generic praise, invented context, and markdown.',
           },
           {
             role: 'user',
-            content: `Choose exactly one candidate for each required slot (${SIGNAL_SLOTS.map((slot) => `${slot}: ${SIGNAL_SLOT_LABELS[slot]}`).join(', ')}). For every choice, write a grounded 8-18 word curiosity cue explaining the useful tension, idea, or reason to open it. Candidates: ${JSON.stringify(entries)}`,
+            content: `Choose exactly one candidate for each required slot (${SIGNAL_SLOTS.map((slot) => `${slot}: ${SIGNAL_SLOT_LABELS[slot]}`).join(', ')}). For every choice, write a restrained 8-18 word curiosity cue using only the supplied evidence. Before returning, silently verify every claim against that candidate and remove anything unsupported. Candidates: ${JSON.stringify(entries)}`,
           },
         ],
       }),
