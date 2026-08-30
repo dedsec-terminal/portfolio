@@ -33,15 +33,7 @@ const focusAreas = [
 const toolkit = [
   'MITRE ATT&CK',
   'Microsoft Sentinel',
-  'SentinelOne',
   'Splunk',
-  'Threat Hunting',
-  'Incident Response',
-  'Threat Intelligence',
-  'OSINT',
-  'Vulnerability Management',
-  'Threat Modeling',
-  'IAM / RBAC',
   'NIST CSF 2.0',
   'ISO 27001',
   'Python',
@@ -49,8 +41,6 @@ const toolkit = [
   'Terraform',
   'Docker',
   'Checkov',
-  'AWS',
-  'Google Cloud',
 ] as const;
 
 export default function AboutPage() {
@@ -121,11 +111,11 @@ export default function AboutPage() {
             <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-subtle">
               Toolkit
             </p>
-            <ul className="mt-6 grid list-none grid-cols-2 gap-2 p-0 xl:grid-cols-3">
+            <ul className="mt-6 flex list-none flex-wrap gap-2 p-0">
               {toolkit.map((item) => (
                 <li
                   key={item}
-                  className="flex min-h-9 items-center justify-center rounded-full border border-border/40 bg-black/20 px-3 py-1.5 text-center font-mono text-[10px] leading-4 tracking-wide text-muted"
+                  className="rounded-full border border-border/40 bg-black/20 px-3 py-1.5 font-mono text-[10px] tracking-wide text-muted"
                 >
                   {item}
                 </li>
