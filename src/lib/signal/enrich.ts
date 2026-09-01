@@ -53,7 +53,8 @@ export interface SignalEnrichmentOptions {
 function deterministicFallback(candidates: SignalItem[]): SignalItem[] {
   return SIGNAL_SLOTS.map((slot) => {
     const candidate = candidates.find((item) => item.slot === slot);
-    if (!candidate) throw new Error(`Signal shortlist has no ${slot} candidate.`);
+    if (!candidate)
+      throw new Error(`Signal shortlist has no ${slot} candidate.`);
     return candidate;
   });
 }
@@ -73,7 +74,9 @@ function parseEditorialResponse(
   candidates: SignalItem[]
 ): SignalItem[] | null {
   const parsed = JSON.parse(value) as EditorialResponse;
-  const candidateById = new Map(candidates.map((candidate) => [candidate.id, candidate]));
+  const candidateById = new Map(
+    candidates.map((candidate) => [candidate.id, candidate])
+  );
   const selected = new Map<SignalSlot, SignalItem>();
 
   for (const choice of parsed.selections ?? []) {
@@ -111,7 +114,9 @@ async function groqErrorMessage(response: Response): Promise<string> {
   try {
     const body = (await response.json()) as { error?: { code?: unknown } };
     const code = body.error?.code;
-    return typeof code === 'string' && code.length <= 80 ? `${fallback} (${code})` : fallback;
+    return typeof code === 'string' && code.length <= 80
+      ? `${fallback} (${code})`
+      : fallback;
   } catch {
     return fallback;
   }
@@ -137,18 +142,24 @@ export async function curateSignalCandidates(
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return failOrFallback(candidates, 'GROQ_API_KEY is missing.', requireComplete);
+    return failOrFallback(
+      candidates,
+      'GROQ_API_KEY is missing.',
+      requireComplete
+    );
   }
 
-  const entries = candidates.map(({ id, slot, title, description, source, category, timestamp }) => ({
-    id,
-    slot,
-    title,
-    description: description.replace(/\s+/g, ' ').trim().slice(0, 520),
-    source,
-    category,
-    timestamp,
-  }));
+  const entries = candidates.map(
+    ({ id, slot, title, description, source, category, timestamp }) => ({
+      id,
+      slot,
+      title,
+      description: description.replace(/\s+/g, ' ').trim().slice(0, 520),
+      source,
+      category,
+      timestamp,
+    })
+  );
 
   let lastMessage = 'Groq did not return a complete editorial selection.';
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -161,9 +172,11 @@ export async function curateSignalCandidates(
         },
         body: JSON.stringify({
           model: GROQ_MODEL,
-          temperature: 0,
-          max_completion_tokens: 700,
-          reasoning_effort: 'low',
+          temperature: 0.2,
+          max_completion_tokens: 1_500,
+          // Groq validates this strict schema only when model reasoning is disabled.
+          reasoning_effort: 'none',
+          include_reasoning: false,
           response_format: EDITORIAL_RESPONSE_FORMAT,
           messages: [
             {
@@ -182,7 +195,12 @@ export async function curateSignalCandidates(
 
       if (!response.ok) {
         lastMessage = await groqErrorMessage(response);
-        if ((response.status === 400 || response.status === 429 || response.status >= 500) && attempt < 2) {
+        if (
+          (response.status === 400 ||
+            response.status === 429 ||
+            response.status >= 500) &&
+          attempt < 2
+        ) {
           await wait(groqRetryDelayMs(response, attempt));
           continue;
         }
@@ -198,9 +216,11 @@ export async function curateSignalCandidates(
 
       const selected = parseEditorialResponse(content, candidates);
       if (selected) return selected;
-      lastMessage = 'Groq returned incomplete or mismatched editorial selections.';
+      lastMessage =
+        'Groq returned incomplete or mismatched editorial selections.';
     } catch (error) {
-      lastMessage = error instanceof Error ? error.message : 'Unknown Groq error.';
+      lastMessage =
+        error instanceof Error ? error.message : 'Unknown Groq error.';
     }
   }
 
