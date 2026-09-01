@@ -18,7 +18,7 @@ afterEach(() => {
 });
 
 describe('curateSignalCandidates', () => {
-  it('uses the Groq strict-schema contract with reasoning disabled', async () => {
+  it('uses Groq’s supported strict-schema contract', async () => {
     process.env.GROQ_API_KEY = 'test-key';
     const response = {
       choices: [
@@ -49,7 +49,7 @@ describe('curateSignalCandidates', () => {
     expect(request).toMatchObject({
       temperature: 0.2,
       max_completion_tokens: 1_500,
-      reasoning_effort: 'none',
+      reasoning_effort: 'medium',
       include_reasoning: false,
       response_format: { type: 'json_schema' },
     });

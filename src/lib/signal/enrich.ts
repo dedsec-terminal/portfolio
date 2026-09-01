@@ -26,8 +26,6 @@ const EDITORIAL_RESPONSE_FORMAT = {
       properties: {
         selections: {
           type: 'array',
-          minItems: SIGNAL_SLOTS.length,
-          maxItems: SIGNAL_SLOTS.length,
           items: {
             type: 'object',
             properties: {
@@ -174,8 +172,9 @@ export async function curateSignalCandidates(
           model: GROQ_MODEL,
           temperature: 0.2,
           max_completion_tokens: 1_500,
-          // Groq validates this strict schema only when model reasoning is disabled.
-          reasoning_effort: 'none',
+          // GPT-OSS supports low, medium, and high reasoning levels. Medium
+          // preserves editorial quality while the strict schema constrains output.
+          reasoning_effort: 'medium',
           include_reasoning: false,
           response_format: EDITORIAL_RESPONSE_FORMAT,
           messages: [
