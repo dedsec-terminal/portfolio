@@ -5,7 +5,6 @@ import { SignalSourceAdapter, SignalItem, type SignalSlot } from '../types';
 const CATALOGUE_SLOTS: Record<string, SignalSlot> = {
   'films.json': 'screen',
   'music.json': 'words',
-  'art.json': 'artwork',
   'websites.json': 'website',
   'reading.json': 'reading',
 };
@@ -16,9 +15,14 @@ export class PersonalCatalogueAdapter implements SignalSourceAdapter {
   weight = 1.0;
 
   async fetchCandidates(): Promise<SignalItem[]> {
-    const catalogueDir = path.join(process.cwd(), 'src/content/personal-catalogue');
-    const files = ['films.json', 'music.json', 'art.json', 'websites.json', 'reading.json'];
-    
+    const catalogueDir = path.join(
+      process.cwd(),
+      'src/content/personal-catalogue'
+    );
+    // The Art & Media catalogue is editorial reference material. Daily Signal
+    // artwork always comes from the public-domain museum painting source instead.
+    const files = ['films.json', 'music.json', 'websites.json', 'reading.json'];
+
     let candidates: SignalItem[] = [];
 
     for (const file of files) {
@@ -34,7 +38,10 @@ export class PersonalCatalogueAdapter implements SignalSourceAdapter {
           }
         }
       } catch (error) {
-        console.warn(`[PersonalCatalogueAdapter] Failed to load ${file}:`, error);
+        console.warn(
+          `[PersonalCatalogueAdapter] Failed to load ${file}:`,
+          error
+        );
       }
     }
 

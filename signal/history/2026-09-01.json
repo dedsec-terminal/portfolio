@@ -4,16 +4,16 @@
   "generatorVersion": "v2.0.0",
   "nodes": [
     {
-      "id": "met-451902",
-      "title": "Hexagonal Tile",
-      "description": "15th century",
-      "url": "https://www.metmuseum.org/art/collection/search/451902",
+      "id": "met-437164",
+      "title": "Bartolomeo Bonghi (died 1584)",
+      "description": "Giovanni Battista Moroni · Italian · shortly after 1553",
+      "url": "https://www.metmuseum.org/art/collection/search/437164",
       "source": "The Metropolitan Museum of Art",
       "category": "Art",
       "slot": "artwork",
       "tier": "Curated",
-      "image": "https://images.metmuseum.org/CRDImages/is/web-large/67-69-3.jpg",
-      "curiosity": "A 15th‑century hexagonal tile showcases intricate medieval design at the Met.",
+      "image": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-25740-001.jpg",
+      "curiosity": "Moroni’s Renaissance portrait turns formal dress and a steady gaze into a vivid study of presence.",
       "x": 20.62847571730867,
       "y": 23.376431345818368,
       "r": 3.2818391984328628
