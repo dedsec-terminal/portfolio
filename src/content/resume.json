@@ -73,7 +73,7 @@
           "link": { "url": "https://dedsec-terminal.github.io/greyfield/", "label": "Live" },
           "metadata": "Python · Cowrie · Oracle Cloud · MITRE ATT&CK · GitHub Pages",
           "bullets": [
-            "Built a defensive OCI honeypot with Cowrie and a sanitized telemetry pipeline that publishes bounded network, credential, command, payload, and ATT&CK evidence without exposing raw sessions or treating enrichment as attribution."
+            "Engineered an outbound-only threat observatory that transforms Cowrie activity into searchable, paginated evidence aggregates and ATT&CK Navigator layers, with hash-only MalwareBazaar and VirusTotal correlation for payload intelligence."
           ]
         },
         {
