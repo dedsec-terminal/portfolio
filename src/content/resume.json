@@ -73,7 +73,7 @@
           "link": { "url": "https://dedsec-terminal.github.io/greyfield/", "label": "Live" },
           "metadata": "Python · Cowrie · Oracle Cloud · MITRE ATT&CK · GitHub Pages",
           "bullets": [
-            "Built a defensive cloud honeypot and telemetry pipeline that converts unsolicited access attempts into a searchable threat dashboard and evidence-backed ATT&CK behavior analysis."
+            "Built a defensive cloud honeypot and threat-intelligence processing pipeline that converts unsolicited access attempts into bounded network, credential, command, and payload observables with evidence-backed ATT&CK behavior mapping."
           ]
         },
         {
