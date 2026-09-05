@@ -35,7 +35,7 @@ describe('Resume Data Canonical Integrity', () => {
 
     expect(projSection.entries[0].title).toContain('Faultplane');
     expect(projSection.entries[1].title).toContain('LedgerCast');
-    expect(projSection.entries[2].title).toContain('PolicyForge');
+    expect(projSection.entries[2].title).toContain('Greyfield');
     expect(projSection.entries[3].title).toContain(
       'Agentic IaC Vulnerability Detection & Remediation'
     );

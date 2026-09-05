@@ -69,12 +69,11 @@
           ]
         },
         {
-          "title": "PolicyForge",
-          "link": { "url": "https://dedsec-terminal.github.io/PolicyForge/", "label": "Live" },
-          "metadata": "Security Governance · ISO 27001 · NIST CSF 2.0 · DPDP Act 2023",
+          "title": "Greyfield",
+          "link": { "url": "https://dedsec-terminal.github.io/greyfield/", "label": "Live" },
+          "metadata": "Python · Cowrie · Oracle Cloud · MITRE ATT&CK · GitHub Pages",
           "bullets": [
-            "Created a portfolio GRC programme for a fictional fintech with eight security policies, numbered safeguards, a control-traceability matrix, and exception and review-cadence registers mapped to major security and privacy frameworks.",
-            "Defined evidence expectations and review cycles while keeping the suite clearly illustrative."
+            "Built a defensive OCI honeypot with Cowrie and a sanitized telemetry pipeline that publishes bounded network, credential, command, payload, and ATT&CK evidence without exposing raw sessions or treating enrichment as attribution."
           ]
         },
         {
