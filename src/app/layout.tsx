@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   ],
   category: 'technology',
   metadataBase: siteConfig.url ? new URL(siteConfig.url) : undefined,
-  alternates: siteConfig.url ? { canonical: '/' } : undefined,
   authors: [{ name: siteConfig.name, url: siteConfig.links.github }],
   creator: siteConfig.name,
   publisher: siteConfig.brandName,
@@ -108,6 +107,12 @@ const structuredData = {
   ],
 };
 
+const socialProfiles = [
+  siteConfig.links.github,
+  siteConfig.links.linkedin,
+  siteConfig.links.x,
+];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -118,6 +123,11 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        {socialProfiles.map((profile) => (
+          <link key={profile} rel="me" href={profile} />
+        ))}
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <script
           type="application/ld+json"

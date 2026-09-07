@@ -67,7 +67,7 @@ export default function Hero() {
             <div className="sm:hidden">
               <Avatar
                 src="/images/avatar/pfp.jpg"
-                alt="Swaraj Singh"
+                alt="Swaraj Singh, cybersecurity practitioner and creator of Dedsec Terminal"
                 size={160}
                 className="rounded-sm"
               />
@@ -75,7 +75,7 @@ export default function Hero() {
             <div className="hidden sm:block">
               <Avatar
                 src="/images/avatar/pfp.jpg"
-                alt="Swaraj Singh"
+                alt="Swaraj Singh, cybersecurity practitioner and creator of Dedsec Terminal"
                 size={280}
                 className="rounded-sm"
               />

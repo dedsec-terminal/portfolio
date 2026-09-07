@@ -1,7 +1,12 @@
+import type { Metadata } from 'next';
 import Hero from '@/components/features/Hero';
 import WriteupRow from '@/components/features/WriteupRow';
 import JournalTeaser from '@/components/features/JournalTeaser';
 import ArtPreview from '@/components/features/ArtPreview';
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 /*
   Page composition order (intentional):

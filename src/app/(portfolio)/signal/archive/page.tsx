@@ -1,8 +1,15 @@
+import type { Metadata } from 'next';
 import fs from 'fs';
 import path from 'path';
 import Link from 'next/link';
 import SignalArchiveExperience from '@/components/features/signal/SignalArchiveExperience';
 import { signalDaySchema, type SignalDayType } from '@/lib/signal/schemas';
+
+export const metadata: Metadata = {
+  title: 'Signal Archive',
+  description: 'An archive of past daily Signal selections from Swaraj Singh.',
+  alternates: { canonical: '/signal/archive' },
+};
 
 export default function SignalArchivePage() {
   let days: SignalDayType[] = [];

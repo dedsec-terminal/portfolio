@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: 'About',
   description:
     'About Swaraj Singh, a cybersecurity practitioner focused on security operations, governance, and security research.',
+  alternates: { canonical: '/about' },
 };
 
 const focusAreas = [

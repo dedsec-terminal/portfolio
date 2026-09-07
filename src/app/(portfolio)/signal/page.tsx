@@ -1,11 +1,13 @@
+import type { Metadata } from 'next';
 import fs from 'fs';
 import path from 'path';
 import SignalExperience from '@/components/features/signal/SignalExperience';
 import { signalDaySchema } from '@/lib/signal/schemas';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Today | Swaraj Singh',
   description: 'Six carefully chosen things: art, web, frontier news, screen, reading, and words.',
+  alternates: { canonical: '/signal' },
 };
 
 export default function SignalPage() {

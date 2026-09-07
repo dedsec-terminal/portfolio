@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Resume",
   description: "Swaraj Singh's professional resume.",
   alternates: {
+    canonical: "/resume",
     types: {
       "application/json": "/resume.json",
       "text/markdown": "/resume.md",
