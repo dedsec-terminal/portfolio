@@ -14,7 +14,11 @@ import {
 import { SignalGenerator, GeneratorConfig } from '../src/lib/signal/generator';
 import { curateSignalCandidates } from '../src/lib/signal/enrich';
 import { resolveSignalPreviews } from '../src/lib/signal/previews';
-import { getSignalDate, resolveSignalRunOptions } from '../src/lib/signal/runtime';
+import {
+  getSignalDate,
+  resolveSignalRunOptions,
+} from '../src/lib/signal/runtime';
+import { recoverArtworkCandidates } from '../src/lib/signal/recovery';
 import { SignalItem } from '../src/lib/signal/types';
 import { signalDaySchema } from '../src/lib/signal/schemas';
 import * as dotenv from 'dotenv';
@@ -65,13 +69,16 @@ async function main() {
   }
 
   if (isRepair) {
-    console.log(`[Signal Engine] Repairing the existing artifact for ${dateStr}.`);
+    console.log(
+      `[Signal Engine] Repairing the existing artifact for ${dateStr}.`
+    );
   }
 
   console.log(`[Signal Engine] Starting generation for ${dateStr}`);
 
   // 2. Load historical IDs for cooldown (e.g. past 30 days)
   const historicalIds: string[] = [];
+  const historicalCandidates: SignalItem[] = [];
   try {
     const files = fs.readdirSync(HISTORY_DIR);
     // Sort descending and take last 30
@@ -86,6 +93,11 @@ async function main() {
       const day = signalDaySchema.safeParse(JSON.parse(content));
       if (day.success) {
         historicalIds.push(...day.data.nodes.map((node) => node.id));
+        historicalCandidates.push(
+          ...day.data.nodes
+            .filter((node) => node.slot === 'artwork')
+            .map((node) => ({ ...node, slot: 'artwork' as const }))
+        );
       }
     }
   } catch (err) {
@@ -139,7 +151,13 @@ async function main() {
     historicalIds,
   };
 
-  const shortlist = generator.shortlist(candidates, config);
+  const recovered = recoverArtworkCandidates(candidates, historicalCandidates);
+  if (recovered.length > candidates.length) {
+    console.warn(
+      '[Signal Engine] Live artwork source unavailable; reusing validated historical artwork.'
+    );
+  }
+  const shortlist = generator.shortlist(recovered, config);
   const curatedCandidates = await curateSignalCandidates(shortlist, {
     requireComplete: requireGroq,
   });
