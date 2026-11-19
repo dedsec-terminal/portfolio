@@ -49,52 +49,6 @@ function Tags({ tags }: { tags: string[] }) {
   );
 }
 
-function ProjectList({ items }: { items: ContentItem[] }) {
-  return (
-    <ul className="grid list-none gap-4 p-0">
-      {items.map(({ slug, title, description, tags }) => {
-        const titleId = `project-title-${slug}`;
-        const actionId = `project-action-${slug}`;
-
-        return (
-          <li key={slug}>
-            <Link
-              href={`/projects/${slug}`}
-              aria-labelledby={`${actionId} ${titleId}`}
-              className="project-link group grid gap-4 rounded-xl border border-border bg-surface p-4 transition-colors hover:border-blue-300/70 hover:bg-surface-raised sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-6 sm:p-6"
-            >
-              <div>
-                <h2
-                  id={titleId}
-                  className="text-xl font-medium leading-snug text-foreground"
-                >
-                  {title}
-                </h2>
-                <p className="mt-2 max-w-[65ch] text-base leading-relaxed text-zinc-300">
-                  {description}
-                </p>
-                {tags.length > 0 ? (
-                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 font-mono text-xs text-zinc-400">
-                    {tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-              <span
-                id={actionId}
-                className="inline-flex min-h-11 items-center justify-self-start gap-2 rounded-lg border border-blue-400/50 bg-blue-950/60 px-3 text-sm font-medium text-blue-200 group-hover:bg-blue-900/70 group-focus-visible:bg-blue-900/70"
-              >
-                View project <ArrowRight aria-hidden="true" className="size-4" />
-              </span>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
 export default function ContentIndex({
   type,
   items,
@@ -109,12 +63,10 @@ export default function ContentIndex({
 
   return (
     <section
-      className={`glass-surface mx-3 my-4 max-w-5xl rounded-2xl sm:mx-6 md:px-12 lg:mx-auto ${isProjects ? 'px-4 py-10 sm:px-6 md:py-16' : 'px-6 py-16 md:py-24'} ${isWriteups ? 'glass-surface--readable' : ''}`}
+      className={`glass-surface mx-3 my-4 max-w-5xl rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto ${isWriteups ? 'glass-surface--readable' : ''}`}
     >
-      <header className={isProjects ? 'mb-7' : 'mb-12 border-b border-border/30 pb-8'}>
-        <p
-          className={`font-mono text-xs uppercase tracking-[0.2em] ${isProjects ? 'text-zinc-300' : 'text-subtle'}`}
-        >
+      <header className="mb-12 border-b border-border/30 pb-8">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
           {label.eyebrow}
         </p>
         <h1 className="mt-3 text-4xl font-medium tracking-tight text-foreground md:text-5xl">
@@ -123,11 +75,7 @@ export default function ContentIndex({
       </header>
 
       {items.length === 0 ? (
-        <p className={isProjects ? 'text-sm text-zinc-300' : 'text-sm text-muted'}>
-          {label.empty}
-        </p>
-      ) : isProjects ? (
-        <ProjectList items={items} />
+        <p className="text-sm text-muted">{label.empty}</p>
       ) : isArt ? (
         <ul className="grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2">
           {items.map((item) => {
@@ -167,11 +115,18 @@ export default function ContentIndex({
             <li key={item.slug}>
               <Link
                 href={`/${type}/${item.slug}`}
-                className="group block py-6 first:pt-0"
+                aria-label={isProjects ? `View project ${item.title}` : undefined}
+                className={isProjects ? 'project-link group block py-5' : 'group block py-6 first:pt-0'}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
                   <div>
-                    <h2 className="text-lg text-foreground group-hover:text-accent">
+                    <h2
+                      className={
+                        isProjects
+                          ? 'text-lg text-foreground'
+                          : 'text-lg text-foreground group-hover:text-accent'
+                      }
+                    >
                       {item.title}
                     </h2>
                     <p
@@ -180,12 +135,21 @@ export default function ContentIndex({
                       {item.description}
                     </p>
                   </div>
-                  <time
-                    dateTime={item.date}
-                    className="shrink-0 font-mono text-[10px] tracking-wider text-subtle"
-                  >
-                    {item.date}
-                  </time>
+                  {isProjects ? (
+                    <span className="inline-flex shrink-0 items-center gap-2 self-start font-mono text-xs text-zinc-400 transition-colors group-hover:text-foreground group-focus-visible:text-foreground sm:self-baseline">
+                      <span className="underline decoration-foreground/35 underline-offset-4">
+                        View project
+                      </span>
+                      <ArrowRight aria-hidden="true" className="size-3.5" />
+                    </span>
+                  ) : (
+                    <time
+                      dateTime={item.date}
+                      className="shrink-0 font-mono text-[10px] tracking-wider text-subtle"
+                    >
+                      {item.date}
+                    </time>
+                  )}
                 </div>
                 {isWriteups && item.type === 'writeups' ? (
                   <p className="mt-3 font-mono text-[10px] tracking-wider text-subtle">

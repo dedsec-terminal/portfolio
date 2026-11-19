@@ -133,7 +133,7 @@ body {
 }
 
 .project-link:focus-visible {
-  outline: 2px solid var(--color-blue-300);
+  outline: 2px solid var(--foreground);
   outline-offset: 2px;
 }
 
@@ -168,10 +168,6 @@ h6 {
   line-height: 1.75;
 }
 
-.article-prose--project {
-  color: var(--color-zinc-200);
-}
-
 .article-prose--wide {
   max-width: none;
   overflow-wrap: anywhere;
@@ -200,9 +196,6 @@ h6 {
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 3px;
-}
-.article-prose--project a {
-  color: var(--color-blue-200);
 }
 .article-prose ul,
 .article-prose ol {

@@ -4,10 +4,8 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { ContentItem } from '@/lib/content';
 
-const projectLinkBase =
-  'project-link inline-flex min-h-11 items-center gap-2 rounded-lg border px-3 text-sm font-medium';
-const projectLinkClass = `${projectLinkBase} border-zinc-500 bg-surface text-zinc-100 hover:border-blue-300 hover:text-blue-200`;
-const projectSourceLinkClass = `${projectLinkBase} border-blue-400/60 bg-blue-950/80 text-blue-200 hover:border-blue-200 hover:bg-blue-900`;
+const projectLinkClass =
+  'project-link inline-flex min-h-11 items-center gap-2 font-mono text-xs tracking-wider text-zinc-400 underline decoration-foreground/35 underline-offset-4 transition-colors hover:text-foreground';
 const projectDateFormat = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'medium',
   timeZone: 'UTC',
@@ -22,17 +20,13 @@ function ProjectsBackLink() {
   );
 }
 
-function Tags({ tags, readable = false }: { tags: string[]; readable?: boolean }) {
+function Tags({ tags }: { tags: string[] }) {
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-1">
       {tags.map((tag) => (
         <span
           key={tag}
-          className={
-            readable
-              ? 'font-mono text-xs text-zinc-300'
-              : 'font-mono text-[10px] tracking-wider text-subtle'
-          }
+          className="font-mono text-[10px] tracking-wider text-subtle"
         >
           {tag}
         </span>
@@ -58,7 +52,6 @@ export default async function ContentArticle({
     'article-prose',
     isWriting && 'article-prose--wide mt-8',
     type === 'writeups' && 'article-prose--dense',
-    project && 'article-prose--project',
   ]
     .filter(Boolean)
     .join(' ');
@@ -91,7 +84,7 @@ export default async function ContentArticle({
           {item.title}
         </h1>
         <p
-          className={`mt-4 max-w-2xl text-base leading-relaxed ${project || isWriting ? 'text-zinc-200' : 'text-muted'}`}
+          className={`mt-4 max-w-2xl text-base leading-relaxed ${isWriting ? 'text-zinc-200' : 'text-muted'}`}
         >
           {item.description}
         </p>
@@ -99,11 +92,7 @@ export default async function ContentArticle({
           <div className="flex items-center gap-3">
             <time
               dateTime={item.date}
-              className={
-                project
-                  ? 'font-mono text-xs text-zinc-300'
-                  : 'font-mono text-[10px] tracking-wider text-subtle'
-              }
+              className="font-mono text-[10px] tracking-wider text-subtle"
             >
               {(() => {
                 if (project) return projectDateFormat.format(new Date(item.date));
@@ -116,7 +105,7 @@ export default async function ContentArticle({
               {item.updatedAt ? ` · updated ${item.updatedAt}` : ''}
             </time>
           </div>
-          <Tags tags={item.tags} readable={Boolean(project)} />
+          <Tags tags={item.tags} />
         </div>
         {project && (project.liveUrl || project.codeUrl) ? (
           <div className="mt-5 flex flex-wrap gap-3">
@@ -125,7 +114,7 @@ export default async function ContentArticle({
                 href={project.codeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={projectSourceLinkClass}
+                className={projectLinkClass}
               >
                 Source on GitHub <ArrowUpRight aria-hidden="true" className="size-4" />
               </a>
@@ -181,9 +170,7 @@ export default async function ContentArticle({
 
       {related.length > 0 ? (
         <aside className="mt-14 border-t border-border/30 pt-8">
-          <h2
-            className={`font-mono text-xs uppercase tracking-[0.2em] ${project ? 'text-zinc-300' : 'text-subtle'}`}
-          >
+          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
             Related {type}
           </h2>
           <ul className="mt-5 list-none divide-y divide-border/20 p-0">
@@ -191,7 +178,7 @@ export default async function ContentArticle({
               <li key={entry.slug}>
                 <Link
                   href={`/${entry.type}/${entry.slug}`}
-                  className={`block py-4 text-sm ${project ? 'project-link text-zinc-200 underline underline-offset-4 hover:text-blue-200' : 'text-muted hover:text-accent'}`}
+                  className={`block py-4 text-sm text-muted ${project ? 'project-link hover:text-foreground' : 'hover:text-accent'}`}
                 >
                   {entry.title}
                 </Link>
