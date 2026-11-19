@@ -1,15 +1,38 @@
 /* eslint-disable @next/next/no-img-element -- Markdown content deliberately uses public URLs for Obsidian authoring. */
 import Link from 'next/link';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import type { ContentItem, ContentType } from '@/lib/content';
+import type { ContentItem } from '@/lib/content';
 
-function Tags({ tags }: { tags: string[] }) {
+const projectLinkBase =
+  'project-link inline-flex min-h-11 items-center gap-2 rounded-lg border px-3 text-sm font-medium';
+const projectLinkClass = `${projectLinkBase} border-zinc-500 bg-surface text-zinc-100 hover:border-blue-300 hover:text-blue-200`;
+const projectSourceLinkClass = `${projectLinkBase} border-blue-400/60 bg-blue-950/80 text-blue-200 hover:border-blue-200 hover:bg-blue-900`;
+const projectDateFormat = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'medium',
+  timeZone: 'UTC',
+});
+
+function ProjectsBackLink() {
+  return (
+    <Link href="/projects" className={projectLinkClass}>
+      <ArrowLeft aria-hidden="true" className="size-4" />
+      All projects
+    </Link>
+  );
+}
+
+function Tags({ tags, readable = false }: { tags: string[]; readable?: boolean }) {
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-1">
       {tags.map((tag) => (
         <span
           key={tag}
-          className="font-mono text-[10px] tracking-wider text-subtle"
+          className={
+            readable
+              ? 'font-mono text-xs text-zinc-300'
+              : 'font-mono text-[10px] tracking-wider text-subtle'
+          }
         >
           {tag}
         </span>
@@ -25,8 +48,8 @@ export default async function ContentArticle({
   item: ContentItem;
   related: ContentItem[];
 }) {
-  const type = item.type as ContentType;
-  const projectCodeUrl = item.type === 'projects' ? item.codeUrl : undefined;
+  const type = item.type;
+  const project = item.type === 'projects' ? item : undefined;
   const writeupMeta =
     item.type === 'writeups'
       ? [item.platform, item.challenge, item.category, item.difficulty]
@@ -35,41 +58,45 @@ export default async function ContentArticle({
       : undefined;
 
   return (
-    <article className="glass-surface mx-3 my-4 max-w-3xl rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto">
-      <Link
-        href={`/${type}`}
-        className="font-mono text-xs tracking-wider text-subtle hover:text-accent"
-      >
-        ← {type}
-      </Link>
+    <article
+      className={`glass-surface mx-3 my-4 rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto ${project ? 'max-w-4xl' : 'max-w-3xl'}`}
+    >
+      {project ? (
+        <ProjectsBackLink />
+      ) : (
+        <Link
+          href={`/${type}`}
+          className="font-mono text-xs tracking-wider text-subtle hover:text-accent"
+        >
+          ← {type}
+        </Link>
+      )}
       <header className="mt-8 border-b border-border/30 pb-8">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-          {type}
-        </p>
+        {!project ? (
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+            {type}
+          </p>
+        ) : null}
         <h1 className="mt-3 text-3xl font-medium tracking-tight text-foreground md:text-5xl">
           {item.title}
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
+        <p
+          className={`mt-4 max-w-2xl text-base leading-relaxed ${project ? 'text-zinc-200' : 'text-muted'}`}
+        >
           {item.description}
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            {projectCodeUrl ? (
-              <a
-                href={projectCodeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-[10px] tracking-wider text-subtle hover:text-accent"
-                aria-label="View source code on GitHub"
-              >
-                GitHub ↗
-              </a>
-            ) : null}
             <time
               dateTime={item.date}
-              className="font-mono text-[10px] tracking-wider text-subtle"
+              className={
+                project
+                  ? 'font-mono text-xs text-zinc-300'
+                  : 'font-mono text-[10px] tracking-wider text-subtle'
+              }
             >
               {(() => {
+                if (project) return projectDateFormat.format(new Date(item.date));
                 const parts = item.date.split('-');
                 if (parts.length === 3) {
                   return `${parts[2]}-${parts[1]}-${parts[0].slice(2)}`;
@@ -79,8 +106,32 @@ export default async function ContentArticle({
               {item.updatedAt ? ` · updated ${item.updatedAt}` : ''}
             </time>
           </div>
-          <Tags tags={item.tags} />
+          <Tags tags={item.tags} readable={Boolean(project)} />
         </div>
+        {project && (project.liveUrl || project.codeUrl) ? (
+          <div className="mt-5 flex flex-wrap gap-3">
+            {project.codeUrl ? (
+              <a
+                href={project.codeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={projectSourceLinkClass}
+              >
+                Source on GitHub <ArrowUpRight aria-hidden="true" className="size-4" />
+              </a>
+            ) : null}
+            {project.liveUrl ? (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={projectLinkClass}
+              >
+                Live site <ArrowUpRight aria-hidden="true" className="size-4" />
+              </a>
+            ) : null}
+          </div>
+        ) : null}
         {writeupMeta ? (
           <p className="mt-3 font-mono text-[10px] tracking-wider text-subtle">
             {writeupMeta}
@@ -114,7 +165,7 @@ export default async function ContentArticle({
 
       {item.content.trim() ? (
         <div
-          className={`article-prose ${item.type === 'writeups' ? 'article-prose--dense' : ''}`}
+          className={`article-prose ${project ? 'article-prose--project' : item.type === 'writeups' ? 'article-prose--dense' : ''}`}
         >
           <MDXRemote source={item.content} />
         </div>
@@ -122,7 +173,9 @@ export default async function ContentArticle({
 
       {related.length > 0 ? (
         <aside className="mt-14 border-t border-border/30 pt-8">
-          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
+          <h2
+            className={`font-mono text-xs uppercase tracking-[0.2em] ${project ? 'text-zinc-300' : 'text-subtle'}`}
+          >
             Related {type}
           </h2>
           <ul className="mt-5 list-none divide-y divide-border/20 p-0">
@@ -130,7 +183,7 @@ export default async function ContentArticle({
               <li key={entry.slug}>
                 <Link
                   href={`/${entry.type}/${entry.slug}`}
-                  className="block py-4 text-sm text-muted hover:text-accent"
+                  className={`block py-4 text-sm ${project ? 'project-link text-zinc-200 underline underline-offset-4 hover:text-blue-200' : 'text-muted hover:text-accent'}`}
                 >
                   {entry.title}
                 </Link>
@@ -138,6 +191,11 @@ export default async function ContentArticle({
             ))}
           </ul>
         </aside>
+      ) : null}
+      {project ? (
+        <footer className="mt-10 border-t border-border/30 pt-6">
+          <ProjectsBackLink />
+        </footer>
       ) : null}
     </article>
   );
