@@ -165,11 +165,12 @@ h6 {
 
 .article-prose--wide {
   max-width: none;
+  width: 100%;
   overflow-wrap: anywhere;
 }
 
-.article-prose--wide > :where(p, ul, ol, blockquote) {
-  max-width: 68ch;
+.article-prose--wide > :where(p, ul, ol, blockquote, div, pre, table) {
+  max-width: none;
 }
 
 .article-prose > * + * {

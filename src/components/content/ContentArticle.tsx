@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import type { ContentItem } from '@/lib/content';
+import type { ContentItem, ContentType } from '@/lib/content';
 
 const projectLinkClass =
   'project-link inline-flex min-h-11 items-center gap-2 font-mono text-xs tracking-wider text-zinc-400 underline decoration-foreground/35 underline-offset-4 transition-colors hover:text-foreground';
@@ -11,11 +11,23 @@ const projectDateFormat = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 
-function ProjectsBackLink() {
+function BackLink({ type }: { type: ContentType }) {
+  if (type === 'projects') {
+    return (
+      <Link href="/projects" className={projectLinkClass}>
+        <ArrowLeft aria-hidden="true" className="size-4" />
+        All projects
+      </Link>
+    );
+  }
+
   return (
-    <Link href="/projects" className={projectLinkClass}>
-      <ArrowLeft aria-hidden="true" className="size-4" />
-      All projects
+    <Link
+      href={`/${type}`}
+      className="inline-flex items-center gap-2 font-mono text-xs tracking-wider text-subtle transition-colors hover:text-accent"
+    >
+      <ArrowLeft aria-hidden="true" className="size-3.5" />
+      All {type}
     </Link>
   );
 }
@@ -65,27 +77,13 @@ export default async function ContentArticle({
 
   return (
     <article className={`glass-surface my-4 rounded-2xl ${articleLayout}`}>
-      {project ? (
-        <ProjectsBackLink />
-      ) : (
-        <Link
-          href={`/${type}`}
-          className="font-mono text-xs tracking-wider text-subtle hover:text-accent"
-        >
-          {type}
-        </Link>
-      )}
+      <BackLink type={type} />
       <header className="mt-8 border-b border-border/30 pb-8">
-        {!project ? (
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-            {type}
-          </p>
-        ) : null}
-        <h1 className="mt-3 text-3xl font-medium tracking-tight text-foreground md:text-5xl">
+        <h1 className="text-3xl font-medium tracking-tight text-foreground md:text-5xl">
           {item.title}
         </h1>
         <p
-          className={`mt-4 max-w-2xl text-base leading-relaxed ${project ? 'text-zinc-200' : 'text-muted'}`}
+          className={`mt-4 text-base leading-relaxed ${project ? 'text-zinc-200' : 'text-muted'}`}
         >
           {item.description}
         </p>
@@ -96,14 +94,7 @@ export default async function ContentArticle({
                 dateTime={item.date}
                 className="font-mono text-[10px] tracking-wider text-subtle"
               >
-                {(() => {
-                  if (project) return projectDateFormat.format(new Date(item.date));
-                  const parts = item.date.split('-');
-                  if (parts.length === 3) {
-                    return `${parts[2]}-${parts[1]}-${parts[0].slice(2)}`;
-                  }
-                  return item.date;
-                })()}
+                {project ? projectDateFormat.format(new Date(item.date)) : item.date}
                 {item.updatedAt ? ` • updated ${item.updatedAt}` : ''}
               </time>
             ) : null}
@@ -190,11 +181,9 @@ export default async function ContentArticle({
           </ul>
         </aside>
       ) : null}
-      {project ? (
-        <footer className="mt-10 border-t border-border/30 pt-6">
-          <ProjectsBackLink />
-        </footer>
-      ) : null}
+      <footer className="mt-10 border-t border-border/30 pt-6">
+        <BackLink type={type} />
+      </footer>
     </article>
   );
 }
