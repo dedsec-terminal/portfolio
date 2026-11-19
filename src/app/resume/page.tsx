@@ -35,11 +35,11 @@ export default function ResumePage() {
   return (
     <div data-resume-theme="baseline" className={shell.mainClassName}>
       <ResumeScaler />
-      <AgentEndpoints />
       <article className={shell.articleClassName}>
         {process.env.NODE_ENV === "development" && <PageEdge />}
         <BaselineTemplate resume={{ header, sections }} />
       </article>
+      <AgentEndpoints />
     </div>
   );
 }

@@ -94,7 +94,7 @@ const provenance = {
 
 const bullet = z
   .string()
-  .describe("Supports `**bold**` and Markdown links to HTTP(S) URLs");
+  .describe("Supports Markdown bold, italics, and links to HTTP(S) URLs");
 
 const contact = z.object({
   email: z.string(),
@@ -177,6 +177,8 @@ const experiencesSection = z.object({
 const educationEntry = z.object({
   title: z.string(),
   dateRange: z.string().optional(),
+  dateDetail: z.string().optional(),
+  metadata: z.string().optional(),
   summary: z.string().optional().describe("Compact secondary school or credential context"),
   bullets: z.array(bullet).optional(),
   ...provenance,

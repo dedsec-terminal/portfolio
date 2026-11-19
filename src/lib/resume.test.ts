@@ -25,19 +25,20 @@ describe('Resume Data Canonical Integrity', () => {
     expect(expSection.entries.length).toBe(3);
   });
 
-  it('contains exactly 4 selected project entries in specific order', () => {
+  it('contains exactly 5 selected project entries in specific order', () => {
     const raw = getResumeData();
     const projSection = raw.sections.find(
       (section) => section.kind === 'projects'
     );
     if (!projSection) throw new Error('Projects section is missing');
-    expect(projSection.entries.length).toBe(4);
+    expect(projSection.entries.length).toBe(5);
 
     expect(projSection.entries.map((entry) => entry.title)).toEqual([
       'Greyfield',
       'KubeSentinel',
       'TraceIR',
       'Vendor Assurance Desk',
+      'Apex Capital GRC',
     ]);
   });
 
