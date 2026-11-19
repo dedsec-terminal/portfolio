@@ -1,18 +1,12 @@
 import type { NextConfig } from 'next';
 
+const mutableAssetCache = 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400';
+
 const nextConfig: NextConfig = {
-  compress: true,
   images: {
     formats: ['image/avif', 'image/webp'],
+    qualities: [75, 85, 90],
     minimumCacheTTL: 2592000, // 30 days
-  },
-  experimental: {
-    optimizePackageImports: [
-      'lucide-react',
-      'react-icons',
-      '@radix-ui/react-popover',
-      '@radix-ui/react-slider',
-    ],
   },
   redirects() {
     return [
@@ -60,11 +54,14 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Asset filenames are not content-hashed, so they must stay revalidatable.
+        // Long CDN caching with stale-while-revalidate keeps repeat visits fast
+        // without pinning a replaced image in browser caches for a year.
         source: '/images/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: mutableAssetCache,
           },
         ],
       },
@@ -73,7 +70,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: mutableAssetCache,
           },
         ],
       },

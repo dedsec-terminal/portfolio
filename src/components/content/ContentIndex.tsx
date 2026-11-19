@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element -- Content authors use static public media URLs. */
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { ContentItem, ContentType } from '@/lib/content';
@@ -87,14 +87,17 @@ export default function ContentIndex({
                   className="group block overflow-hidden border border-border/30 bg-surface/30"
                 >
                   {media ? (
-                    <img
-                      src={media.src}
-                      alt={media.alt || `${item.title} — visual preview`}
-                      title={item.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    />
+                    <div className="relative aspect-[4/3] w-full overflow-hidden">
+                      <Image
+                        src={media.src}
+                        alt={media.alt || `${item.title} — visual preview`}
+                        title={item.title}
+                        fill
+                        sizes="(min-width: 640px) 50vw, 100vw"
+                        quality={85}
+                        className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      />
+                    </div>
                   ) : null}
                   <div className="p-5">
                     <h2 className="text-base text-foreground group-hover:text-accent">

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ShaderMount } from '@paper-design/shaders-react';
 import {
@@ -160,6 +161,7 @@ function interactionStrengthAt(clientX: number, clientY: number) {
 }
 
 export default function SiteShaderBackground() {
+  const pathname = usePathname();
   const backdropRef = useRef<HTMLDivElement>(null);
   const shaderRef = useRef<PaperShaderElement>(null);
   const interactionRef = useRef<InteractionState>({
@@ -198,7 +200,11 @@ export default function SiteShaderBackground() {
 
     const syncCapability = () => {
       setShaderReady(false);
-      setShaderEnabled(!reducedMotion.matches && supportsWebGL2());
+      // The WebGL backdrop is a home-route flourish; text-heavy pages keep the
+      // static image and skip the shader mount, RAF loop and pointer handlers.
+      setShaderEnabled(
+        pathname === '/' && !reducedMotion.matches && supportsWebGL2()
+      );
     };
 
     const syncRenderProfile = () => setRenderProfile(getRenderProfile());
@@ -212,7 +218,7 @@ export default function SiteShaderBackground() {
       reducedMotion.removeEventListener('change', syncCapability);
       window.removeEventListener('resize', syncRenderProfile);
     };
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     if (!shaderEnabled || !shaderRef.current) return;
@@ -380,7 +386,7 @@ export default function SiteShaderBackground() {
         alt=""
         fill
         sizes="100vw"
-        preload
+        fetchPriority="low"
         className="object-cover object-[56%_48%] md:object-[50%_44%]"
       />
 

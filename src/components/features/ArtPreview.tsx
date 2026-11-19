@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element -- Art media must remain simple static public URLs. */
+import Image from 'next/image';
 import Link from 'next/link';
 import { getContent } from '@/lib/content';
 
@@ -36,13 +36,14 @@ export default function ArtPreview() {
                   className="group relative aspect-square overflow-hidden bg-surface"
                   aria-label={`View artwork: ${entry.title}`}
                 >
-                  <img
+                  <Image
                     src={entry.media[0].src}
                     alt={entry.media[0].alt || `${entry.title} — visual artwork`}
                     title={entry.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    fill
+                    sizes="33vw"
+                    quality={85}
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </Link>
               ))}

@@ -29,7 +29,7 @@ describe('ArtPreview', () => {
 
   it('renders populated detail links and normal padding', () => {
     vi.mocked(getContent).mockReturnValue([
-      { slug: 'test-art', title: 'Test Art', media: [{ src: 'test.jpg', alt: 'Test' }] } as ReturnType<typeof getContent<'art'>>[number]
+      { slug: 'test-art', title: 'Test Art', media: [{ src: '/test.jpg', alt: 'Test' }] } as ReturnType<typeof getContent<'art'>>[number]
     ]);
     const { container } = render(<ArtPreview />);
     

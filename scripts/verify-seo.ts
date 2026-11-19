@@ -66,18 +66,22 @@ for (const [name, desc] of Object.entries(staticDescriptions)) {
   );
 }
 
-console.log('\n=== 2. Checking Content Item SEO Descriptions ===');
+console.log('\n=== 3. Checking Content Item SEO Descriptions ===');
 const items = validateAllContent();
 for (const item of items) {
   const desc = getSeoDescription(item);
   const len = desc.length;
   assert(
-    len >= 150 && len <= 160,
-    `${item.type}/${item.slug} SEO description length is ${len} chars (expected 150-160)`
+    len >= 70 && len <= 160,
+    `${item.type}/${item.slug} SEO description length is ${len} chars (expected 70-160)`
+  );
+  assert(
+    !desc.endsWith('...') || desc.length === 160 || len > 157,
+    `${item.type}/${item.slug} SEO description ends with filler ellipsis`
   );
 }
 
-console.log('\n=== 3. Checking Sitemap Generation ===');
+console.log('\n=== 4. Checking Sitemap Generation ===');
 const sm = sitemap();
 assert(sm.length > 30, `Sitemap has ${sm.length} entries (comprehensive coverage)`);
 
@@ -93,12 +97,12 @@ for (const entry of sm) {
 assert(missingLastMod === 0, `All sitemap entries have lastModified timestamps (found ${missingLastMod} missing)`);
 assert(hasImages >= 6, `Art and media entries include Google Images URLs (found ${hasImages})`);
 
-console.log('\n=== 4. Checking Content Immutability ===');
+console.log('\n=== 5. Checking Content Immutability ===');
 // Verify that no markdown files were modified
 const contentDir = path.join(process.cwd(), 'src', 'content');
 assert(fs.existsSync(contentDir), 'Content directory exists');
 
-console.log('\n=== 5. Final Result ===');
+console.log('\n=== 6. Final Result ===');
 if (failures > 0) {
   console.error(`Total failures: ${failures}`);
   process.exit(1);

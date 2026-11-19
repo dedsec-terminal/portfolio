@@ -6,6 +6,10 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import SiteShaderBackground from './SiteShaderBackground';
 
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/',
+}));
+
 const { setUniformsMock } = vi.hoisted(() => ({
   setUniformsMock: vi.fn(),
 }));

@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "content:check": "tsx scripts/check-content.ts",
+    "verify:seo": "tsx scripts/verify-seo.ts",
     "signal:generate": "tsx scripts/generate-signal.ts",
     "signal:test": "vitest run src/lib/signal src/components/features/signal/SignalPreviewSurface.test.tsx",
     "resume:pdf": "node scripts/generate-pdf.mjs"

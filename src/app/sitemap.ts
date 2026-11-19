@@ -1,97 +1,119 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import type { MetadataRoute } from 'next';
 import { contentTypes, getContent } from '@/lib/content';
 import { siteConfig } from '@/lib/site';
 
+function latestDate(items: Array<{ date: string; updatedAt?: string }>): string | null {
+  let latest: string | null = null;
+
+  for (const item of items) {
+    const candidate = item.updatedAt ?? item.date;
+    if (!latest || candidate > latest) latest = candidate;
+  }
+
+  return latest;
+}
+
+function toDate(value: string | null): Date | undefined {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+function readSignalDate(): string | null {
+  try {
+    const filePath = path.join(process.cwd(), 'signal', 'current.json');
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as {
+      date?: unknown;
+    };
+    return typeof data.date === 'string' && !Number.isNaN(new Date(data.date).getTime())
+      ? data.date
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url.replace(/\/$/, '');
-  const now = new Date();
 
-  // Find latest content date to accurately reflect collection freshness
-  const allContent = contentTypes
-    .filter((type) => type !== 'blog')
-    .flatMap((type) => getContent(type));
+  // One validated read per collection; getContent is memoized in production.
+  const allContent = contentTypes.flatMap((type) => getContent(type));
 
-  const latestProjectDate =
-    getContent('projects')[0]?.updatedAt ??
-    getContent('projects')[0]?.date ??
-    now.toISOString().split('T')[0];
+  const latestByType = new Map(
+    contentTypes.map((type) => [type, latestDate(getContent(type))] as const),
+  );
 
-  const latestWriteupDate =
-    getContent('writeups')[0]?.updatedAt ??
-    getContent('writeups')[0]?.date ??
-    now.toISOString().split('T')[0];
-
-  const latestJournalDate =
-    getContent('journal')[0]?.updatedAt ??
-    getContent('journal')[0]?.date ??
-    now.toISOString().split('T')[0];
-
-  const latestArtDate =
-    getContent('art')[0]?.updatedAt ??
-    getContent('art')[0]?.date ??
-    now.toISOString().split('T')[0];
+  const siteLatest = latestDate(allContent) ?? new Date().toISOString().split('T')[0];
+  const signalDate = readSignalDate() ?? siteLatest;
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${base}`,
-      lastModified: now,
+      lastModified: toDate(siteLatest),
       changeFrequency: 'daily',
       priority: 1.0,
-      images: [`${base}/images/avatar/pfp.jpg`],
+      images: [`${base}/images/og/og-default.jpg`],
     },
     {
       url: `${base}/projects`,
-      lastModified: new Date(latestProjectDate),
+      lastModified: toDate(latestByType.get('projects') ?? siteLatest),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
       url: `${base}/writeups`,
-      lastModified: new Date(latestWriteupDate),
+      lastModified: toDate(latestByType.get('writeups') ?? siteLatest),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
       url: `${base}/signal`,
-      lastModified: now,
+      lastModified: toDate(signalDate),
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
       url: `${base}/resume`,
-      lastModified: new Date('2026-11-19'),
+      lastModified: toDate(siteLatest),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/about`,
-      lastModified: new Date('2026-11-19'),
+      lastModified: toDate(siteLatest),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${base}/journal`,
-      lastModified: new Date(latestJournalDate),
+      lastModified: toDate(latestByType.get('journal') ?? siteLatest),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
+      url: `${base}/blog`,
+      lastModified: toDate(latestByType.get('blog') ?? siteLatest),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
       url: `${base}/signal/archive`,
-      lastModified: now,
+      lastModified: toDate(signalDate),
       changeFrequency: 'daily',
       priority: 0.7,
     },
     {
       url: `${base}/art`,
-      lastModified: new Date(latestArtDate),
+      lastModified: toDate(latestByType.get('art') ?? siteLatest),
       changeFrequency: 'weekly',
       priority: 0.7,
     },
   ];
 
   const contentRoutes: MetadataRoute.Sitemap = allContent.map((item) => {
-    const rawDate = item.updatedAt ?? item.date;
-    const itemDate = new Date(rawDate);
+    const itemDate = new Date(item.updatedAt ?? item.date);
     const itemImages =
       item.type === 'art' && 'media' in item && Array.isArray(item.media)
         ? item.media.map((m) => `${base}${m.src}`)
@@ -102,7 +124,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return {
       url: `${base}/${item.type}/${item.slug}`,
-      lastModified: isNaN(itemDate.getTime()) ? now : itemDate,
+      lastModified: Number.isNaN(itemDate.getTime()) ? toDate(siteLatest) : itemDate,
       changeFrequency: 'monthly' as const,
       priority,
       ...(itemImages && itemImages.length > 0 ? { images: itemImages } : {}),

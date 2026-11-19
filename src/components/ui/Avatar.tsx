@@ -42,8 +42,9 @@ export default function Avatar({
           alt={alt}
           fill
           sizes={sizes || (size ? `${size}px` : '280px')}
+          quality={90}
+          preload
           className="object-cover object-top"
-          priority
         />
       </div>
     );

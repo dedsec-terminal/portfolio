@@ -1,8 +1,10 @@
-/* eslint-disable @next/next/no-img-element -- Markdown content deliberately uses public URLs for Obsidian authoring. */
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { ContentItem, ContentType } from '@/lib/content';
+import { getPublicImageDimensions } from '@/lib/image-dimensions';
+import { siteConfig } from '@/lib/site';
 
 const projectLinkClass =
   'project-link inline-flex min-h-11 items-center gap-2 font-mono text-xs tracking-wider text-zinc-400 underline decoration-foreground/35 underline-offset-4 transition-colors hover:text-foreground';
@@ -90,11 +92,11 @@ export default async function ContentArticle({
     author: {
       '@type': 'Person',
       name: 'Swaraj Singh',
-      url: 'https://dedsec-terminal.in',
+      url: siteConfig.url,
     },
     datePublished: `${item.date}T00:00:00.000Z`,
     dateModified: item.updatedAt ? `${item.updatedAt}T00:00:00.000Z` : `${item.date}T00:00:00.000Z`,
-    mainEntityOfPage: `https://dedsec-terminal.in/${item.type}/${item.slug}`,
+    mainEntityOfPage: `${siteConfig.url}/${item.type}/${item.slug}`,
   };
 
   return (
@@ -162,21 +164,40 @@ export default async function ContentArticle({
 
       {item.type === 'art' ? (
         <div className="my-10 grid gap-6">
-          {item.media.map((media) => (
-            <figure key={media.src}>
-              <img
-                src={media.src}
-                alt={media.alt || `${item.title} — visual artwork`}
-                title={media.caption || item.title}
-                className="h-auto w-full border border-border/30 bg-surface"
-              />
-              {media.caption ? (
-                <figcaption className="mt-2 text-xs text-subtle">
-                  {media.caption}
-                </figcaption>
-              ) : null}
-            </figure>
-          ))}
+          {item.media.map((media) => {
+            const dimensions = getPublicImageDimensions(media.src);
+            return (
+              <figure key={media.src}>
+                {dimensions ? (
+                  <Image
+                    src={media.src}
+                    alt={media.alt || `${item.title} — visual artwork`}
+                    title={media.caption || item.title}
+                    width={dimensions.width}
+                    height={dimensions.height}
+                    sizes="(max-width: 768px) 100vw, 800px"
+                    quality={90}
+                    className="h-auto w-full border border-border/30 bg-surface"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element -- fallback when the media header cannot be parsed
+                  <img
+                    src={media.src}
+                    alt={media.alt || `${item.title} — visual artwork`}
+                    title={media.caption || item.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-auto w-full border border-border/30 bg-surface"
+                  />
+                )}
+                {media.caption ? (
+                  <figcaption className="mt-2 text-xs text-subtle">
+                    {media.caption}
+                  </figcaption>
+                ) : null}
+              </figure>
+            );
+          })}
           {item.source ? (
             <p className="text-xs text-subtle">
               Source / attribution: {item.source}

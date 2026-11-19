@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ContentItem } from '@/lib/content';
+import { getPublicImageDimensions } from '@/lib/image-dimensions';
 import { siteConfig } from '@/lib/site';
 
 const itemSeoDescriptions: Record<string, string> = {
@@ -70,35 +71,34 @@ export function getSeoDescription(item: ContentItem): string {
     return itemSeoDescriptions[key];
   }
 
-  const raw = (item.description ?? item.title ?? '').trim();
-  if (raw.length >= 150 && raw.length <= 160) {
-    return raw;
+  const raw = (item.description ?? item.title ?? siteConfig.description).trim();
+  if (!raw) return siteConfig.description;
+
+  // Never pad with filler characters to hit a length target. A shorter,
+  // clean description reads better in a search result than dotted padding.
+  const suffix = ' — Written by Swaraj Singh for Dedsec Terminal.';
+  if (raw.length < 120 && `${raw}${suffix}`.length <= 160) {
+    return `${raw}${suffix}`;
   }
 
-  if (raw.length < 150) {
-    const suffix = ' — Written by Swaraj Singh for Dedsec Terminal.';
-    const combined = `${raw}${suffix}`;
-    if (combined.length <= 160 && combined.length >= 150) return combined;
-    if (combined.length > 160) return combined.slice(0, 157) + '...';
-    return combined.padEnd(152, '.');
-  }
-
-  return raw.slice(0, 157) + '...';
+  return raw.length <= 160 ? raw : `${raw.slice(0, 157)}...`;
 }
 
 export function contentMetadata(item: ContentItem): Metadata {
   const path = `/${item.type}/${item.slug}`;
   const seoDescription = getSeoDescription(item);
   const mediaItem = item.type === 'art' && item.media?.[0] ? item.media[0] : null;
+  const mediaDimensions = mediaItem ? getPublicImageDimensions(mediaItem.src) : null;
   const ogImage = mediaItem
     ? {
         url: `${siteConfig.url}${mediaItem.src}`,
         alt: mediaItem.alt || item.title,
+        ...(mediaDimensions ?? {}),
       }
     : {
-        url: `${siteConfig.url}/images/avatar/pfp.jpg`,
+        url: `${siteConfig.url}/images/og/og-default.jpg`,
         width: 1200,
-        height: 800,
+        height: 630,
         alt: `${siteConfig.name} · ${siteConfig.brandName}`,
       };
 

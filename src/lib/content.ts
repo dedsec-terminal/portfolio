@@ -86,7 +86,16 @@ function parseFile<T extends ContentType>(type: T, filePath: string): ContentIte
   return { ...parsed.data, slug, content, filePath, type } as ContentItem<T>;
 }
 
+// Content is static for the life of a build, so repeat callers (page metadata,
+// sitemap, index pages) share one parse/validation pass per process.
+const validationCache = new Map<string, ContentItem[]>();
+
 export function validateAllContent(root = contentRoot) {
+  if (process.env.NODE_ENV === 'production') {
+    const cached = validationCache.get(root);
+    if (cached) return cached;
+  }
+
   const collection = contentTypes.flatMap((type) =>
     readCollectionFiles(type, root).map((filePath) => parseFile(type, filePath)),
   );
@@ -97,6 +106,10 @@ export function validateAllContent(root = contentRoot) {
       if (seen.has(item.slug)) throw new Error(`${item.filePath}: duplicate ${type} slug "${item.slug}"`);
       seen.add(item.slug);
     }
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    validationCache.set(root, collection);
   }
 
   return collection;
