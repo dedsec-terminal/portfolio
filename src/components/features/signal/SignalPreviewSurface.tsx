@@ -48,7 +48,7 @@ export default function SignalPreviewSurface({
   }, [node.image]);
 
   return (
-    <div className={`${positioning} isolate overflow-hidden bg-background ${className}`} aria-hidden="true">
+    <div className={`${positioning} isolate overflow-hidden bg-background ${className}`}>
       <div
         data-testid="signal-preview-fallback"
         className="absolute inset-0 bg-background"
@@ -68,6 +68,7 @@ export default function SignalPreviewSurface({
       </div>
 
       {showImage ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
         <img
           ref={imageRef}
           data-testid="signal-preview-image"
@@ -75,7 +76,8 @@ export default function SignalPreviewSurface({
             imageLoaded ? 'opacity-100' : 'opacity-0'
           }`}
           src={node.image}
-          alt=""
+          alt={node.title ? `${node.title} — visual preview` : 'Curated daily signal preview'}
+          title={node.title || undefined}
           loading="lazy"
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageFailed(true)}

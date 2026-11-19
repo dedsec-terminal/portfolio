@@ -4,6 +4,7 @@ interface AvatarProps {
   src?: string;
   alt: string;
   size?: number;
+  sizes?: string;
   className?: string;
 }
 
@@ -18,14 +19,17 @@ interface AvatarProps {
 export default function Avatar({
   src,
   alt,
-  size = 200,
+  size,
+  sizes,
   className = '',
 }: AvatarProps) {
-  const containerStyle: React.CSSProperties = {
-    width: size,
-    height: size,
-    flexShrink: 0,
-  };
+  const containerStyle: React.CSSProperties = size
+    ? {
+        width: size,
+        height: size,
+        flexShrink: 0,
+      }
+    : { flexShrink: 0 };
 
   if (src) {
     return (
@@ -37,7 +41,7 @@ export default function Avatar({
           src={src}
           alt={alt}
           fill
-          sizes={`${size}px`}
+          sizes={sizes || (size ? `${size}px` : '280px')}
           className="object-cover object-top"
           priority
         />

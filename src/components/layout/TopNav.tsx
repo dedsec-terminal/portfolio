@@ -33,11 +33,10 @@ export default function TopNav() {
             >
               <Image
                 src="/favicon.ico"
-                alt=""
+                alt="DedSec Terminal icon"
                 width={18}
                 height={18}
                 className="opacity-90 grayscale group-hover:grayscale-0 transition-all duration-300"
-                aria-hidden="true"
               />
               <span className="font-mono text-sm tracking-widest font-medium">
                 DedSec

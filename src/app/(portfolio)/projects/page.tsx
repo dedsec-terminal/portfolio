@@ -4,7 +4,8 @@ import { getContent } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Projects',
-  description: 'A catalogue of selected professional and personal work.',
+  description:
+    'Explore cybersecurity projects by Swaraj Singh, spanning threat intelligence platforms, Kubernetes runtime security, DevSecOps tooling, and GRC frameworks.',
   alternates: { canonical: '/projects' },
 };
 

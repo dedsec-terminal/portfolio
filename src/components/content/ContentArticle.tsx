@@ -75,8 +75,36 @@ export default async function ContentArticle({
           .join(' • ')
       : undefined;
 
+  const schemaType =
+    item.type === 'art'
+      ? 'VisualArtwork'
+      : item.type === 'projects'
+        ? 'SoftwareApplication'
+        : 'TechArticle';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': schemaType,
+    headline: item.title,
+    description: item.description,
+    author: {
+      '@type': 'Person',
+      name: 'Swaraj Singh',
+      url: 'https://dedsec-terminal.in',
+    },
+    datePublished: `${item.date}T00:00:00.000Z`,
+    dateModified: item.updatedAt ? `${item.updatedAt}T00:00:00.000Z` : `${item.date}T00:00:00.000Z`,
+    mainEntityOfPage: `https://dedsec-terminal.in/${item.type}/${item.slug}`,
+  };
+
   return (
     <article className={`glass-surface my-4 rounded-2xl ${articleLayout}`}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
       <BackLink type={type} />
       <header className="mt-8 border-b border-border/30 pb-8">
         <h1 className="text-3xl font-medium tracking-tight text-foreground md:text-5xl">
@@ -138,7 +166,8 @@ export default async function ContentArticle({
             <figure key={media.src}>
               <img
                 src={media.src}
-                alt={media.alt}
+                alt={media.alt || `${item.title} — visual artwork`}
+                title={media.caption || item.title}
                 className="h-auto w-full border border-border/30 bg-surface"
               />
               {media.caption ? (

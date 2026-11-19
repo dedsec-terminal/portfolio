@@ -6,7 +6,8 @@ import { signalDaySchema } from '@/lib/signal/schemas';
 
 export const metadata: Metadata = {
   title: 'Today | Swaraj Singh',
-  description: 'Six carefully chosen things: art, web, frontier news, screen, reading, and words.',
+  description:
+    "Today's curated daily signal by Swaraj Singh: six thought-provoking selections across visual art, open web links, frontier technology, cinema, books, and ideas.",
   alternates: { canonical: '/signal' },
 };
 

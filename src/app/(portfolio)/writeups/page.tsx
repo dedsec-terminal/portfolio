@@ -4,7 +4,8 @@ import { getContent } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Writeups',
-  description: 'CTF and security challenge writeups.',
+  description:
+    'Technical security writeups and CTF walkthroughs by Swaraj Singh, covering cryptographic flaws, sandbox escapes, incident response timelines, and CVE analyses.',
   alternates: { canonical: '/writeups' },
 };
 

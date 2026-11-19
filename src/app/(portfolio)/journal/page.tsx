@@ -4,7 +4,8 @@ import { getContent } from '@/lib/content';
 
 export const metadata: Metadata = {
   title: 'Journal',
-  description: 'Personal writing and observations.',
+  description:
+    'Personal essays, technical observations, and philosophical reflections by Swaraj Singh on technology, mythologies, human nature, and security engineering.',
   alternates: { canonical: '/journal' },
 };
 export default function JournalPage() { return <ContentIndex type="journal" items={getContent('journal')} />; }

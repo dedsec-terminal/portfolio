@@ -5,6 +5,9 @@ import JournalTeaser from '@/components/features/JournalTeaser';
 import ArtPreview from '@/components/features/ArtPreview';
 
 export const metadata: Metadata = {
+  title: {
+    absolute: 'Swaraj Singh · Dedsec Terminal',
+  },
   alternates: { canonical: '/' },
 };
 

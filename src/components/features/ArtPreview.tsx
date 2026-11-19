@@ -30,8 +30,20 @@ export default function ArtPreview() {
           ) : (
             <div className="grid grid-cols-3 gap-px bg-border/20">
               {art.map((entry) => (
-                <Link key={entry.slug} href={`/art/${entry.slug}`} className="group relative aspect-square overflow-hidden bg-surface">
-                  <img src={entry.media[0].src} alt={entry.media[0].alt} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                <Link
+                  key={entry.slug}
+                  href={`/art/${entry.slug}`}
+                  className="group relative aspect-square overflow-hidden bg-surface"
+                  aria-label={`View artwork: ${entry.title}`}
+                >
+                  <img
+                    src={entry.media[0].src}
+                    alt={entry.media[0].alt || `${entry.title} — visual artwork`}
+                    title={entry.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                 </Link>
               ))}
             </div>

@@ -1,9 +1,9 @@
 export const siteConfig = {
   brandName: 'Dedsec Terminal',
   name: 'Swaraj Singh',
-  title: 'Swaraj Singh',
+  title: 'Swaraj Singh · Dedsec Terminal',
   description:
-    'Personal portfolio of Swaraj Singh, specializing in SOC, GRC, and Security Research.',
+    'Cybersecurity portfolio of Swaraj Singh (Dedsec Terminal), featuring hands-on SOC incident response, GRC control frameworks, and technical security writeups.',
   email: 'swarajsingh211@gmail.com',
   url:
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ??

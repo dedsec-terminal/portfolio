@@ -63,23 +63,12 @@ export default function Hero() {
             className="flex justify-start items-center"
             style={{ alignSelf: 'center', paddingTop: 'clamp(0px, 6vh, 64px)' }}
           >
-            {/* Avatar is smaller on mobile to leave breathing room */}
-            <div className="sm:hidden">
-              <Avatar
-                src="/images/avatar/pfp.jpg"
-                alt="Swaraj Singh, cybersecurity practitioner and creator of Dedsec Terminal"
-                size={160}
-                className="rounded-sm"
-              />
-            </div>
-            <div className="hidden sm:block">
-              <Avatar
-                src="/images/avatar/pfp.jpg"
-                alt="Swaraj Singh, cybersecurity practitioner and creator of Dedsec Terminal"
-                size={280}
-                className="rounded-sm"
-              />
-            </div>
+            <Avatar
+              src="/images/avatar/pfp.jpg"
+              alt="Swaraj Singh, cybersecurity practitioner and creator of Dedsec Terminal"
+              sizes="(max-width: 640px) 160px, 280px"
+              className="w-40 h-40 sm:w-[280px] sm:h-[280px] rounded-sm"
+            />
           </div>
 
           {/* ── Right: Identity ──────────────────────────────────── */}

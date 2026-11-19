@@ -14,13 +14,13 @@ export default function MusicShell() {
     >
       <div
         className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden border border-border/30 bg-surface-raised"
-        aria-hidden="true"
       >
         {track?.artwork ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={track.artwork}
-            alt=""
+            alt={track?.title ? `Album cover art for ${track.title}` : 'Now playing track artwork'}
+            title={track?.title ? `${track.title} artwork` : 'Music artwork'}
             className="h-full w-full object-cover opacity-60"
           />
         ) : null}

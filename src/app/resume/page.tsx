@@ -8,7 +8,8 @@ import { BaselineTemplate, shell } from "@/components/resume/BaselineTemplate";
 
 export const metadata: Metadata = {
   title: "Resume",
-  description: "Swaraj Singh, security engineer and open-source contributor. Experience, selected projects, research, and a downloadable resume.",
+  description:
+    "Professional resume of Swaraj Singh, cybersecurity practitioner. Review experience in SOC analysis, GRC audit compliance, security tools, and certifications.",
   alternates: {
     canonical: "/resume",
     types: {

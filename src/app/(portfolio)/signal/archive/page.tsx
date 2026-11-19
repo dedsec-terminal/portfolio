@@ -7,8 +7,16 @@ import { signalDaySchema, type SignalDayType } from '@/lib/signal/schemas';
 
 export const metadata: Metadata = {
   title: 'Signal Archive',
-  description: 'An archive of past daily Signal selections from Swaraj Singh.',
+  description:
+    'Explore the historical archive of past daily Signal collections by Swaraj Singh, featuring curated collisions of art, web discoveries, cinema, and literature.',
   alternates: { canonical: '/signal/archive' },
+  openGraph: {
+    title: 'Signal Archive | Swaraj Singh',
+    description:
+      'Explore the historical archive of past daily Signal collections by Swaraj Singh, featuring curated collisions of art, web discoveries, cinema, and literature.',
+    url: '/signal/archive',
+    type: 'website',
+  },
 };
 
 export default function SignalArchivePage() {
@@ -34,8 +42,30 @@ export default function SignalArchivePage() {
     error = err instanceof Error ? err.message : 'Unable to load the Signal archive.';
   }
 
+  const archiveSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Signal Archive | Swaraj Singh',
+    description:
+      'Historical archive of curated daily Signal editions by Swaraj Singh across visual art, open web links, frontier technology, cinema, books, and ideas.',
+    url: 'https://dedsec-terminal.in/signal/archive',
+    numberOfItems: days.length,
+    itemListElement: days.slice(0, 10).map((day, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: `Signal Edition ${day.date}`,
+      description: `Curated collection of ${day.nodes.length} cultural and technical discoveries from ${day.date}`,
+    })),
+  };
+
   return (
     <main className="min-h-screen px-5 pb-20 pt-24 md:px-10 md:pt-28">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(archiveSchema).replace(/</g, '\\u003c'),
+        }}
+      />
       <header className="mx-auto flex max-w-7xl items-end justify-between gap-8 border-b-2 border-foreground/80 pb-6">
         <div>
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.28em] text-subtle">
