@@ -6,12 +6,7 @@ export default function SiteFooter() {
 
   return (
     <footer
-      className="glass-surface mt-4 rounded-t-2xl border-x-0 border-b-0 py-8"
-      /* Extra bottom padding on mobile to clear the fixed bottom nav */
-      style={{
-        paddingBottom:
-          'max(2rem, calc(env(safe-area-inset-bottom) + 6.25rem))',
-      }}
+      className="glass-surface mt-4 rounded-t-2xl border-x-0 border-b-0 pt-5 pb-[calc(env(safe-area-inset-bottom)+5.25rem)] md:py-5"
     >
       <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Left */}

@@ -8,7 +8,7 @@ const labels: Record<
   { title: string; eyebrow: string; empty: string; description: string }
 > = {
   writeups: {
-    description: 'Security walkthroughs, cryptography notes, and incident investigations. Each entry explains the reasoning, evidence, and limits of the technique.',
+    description: 'Some technical writeups, in my own words.',
     title: 'Writeups',
     eyebrow: 'Security archive',
     empty: 'No published writeups yet.',
@@ -20,7 +20,7 @@ const labels: Record<
     empty: 'No published blog posts yet.',
   },
   journal: {
-    description: 'Essays on mythology, literature, and human nature: a space for questions beyond the terminal.',
+    description: 'Some rants here.',
     title: 'Journal',
     eyebrow: 'Personal writing',
     empty: 'No published journal entries yet.',
@@ -65,19 +65,20 @@ export default function ContentIndex({
   const isArt = type === 'art';
   const isProjects = type === 'projects';
   const isWriteups = type === 'writeups';
+  const isWriting = isWriteups || type === 'journal';
 
   return (
     <section
       className="glass-surface mx-3 my-4 max-w-5xl rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto"
     >
       <header className="mb-12 border-b border-border/30 pb-8">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
-          {label.eyebrow}
-        </p>
-        <h1 className="mt-3 text-4xl font-medium tracking-tight text-foreground md:text-5xl">
+        {!isWriting ? (
+          <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-subtle">{label.eyebrow}</p>
+        ) : null}
+        <h1 className="text-4xl font-medium tracking-tight text-foreground md:text-5xl">
           {label.title}
         </h1>
-        <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">{label.description}</p>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">{label.description}</p>
         <nav aria-label="Explore the site" className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted">
           {([
             ["projects", "Projects"], ["writeups", "Writeups"],

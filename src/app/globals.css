@@ -27,9 +27,9 @@
   --border: #3f3f46;
 
   /* Text */
-  --foreground: #f4f4f5;
-  --muted: #b4b4bd;
-  --subtle: #a1a1aa;
+  --foreground: #dedee3;
+  --muted: #a1a1ac;
+  --subtle: #91919d;
 
   /* Accent — steel blue */
   --accent: #3b82f6;

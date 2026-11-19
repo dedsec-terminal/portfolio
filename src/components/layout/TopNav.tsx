@@ -29,14 +29,14 @@ export default function TopNav() {
             <Link
               href="/"
               aria-label="Dedsec Terminal — home"
-              className="flex items-center gap-2.5 text-foreground/80 hover:text-foreground transition-colors duration-200 group"
+              className="flex items-center gap-2.5 text-foreground/95 hover:text-foreground transition-colors duration-200 group"
             >
               <Image
                 src="/favicon.ico"
                 alt="DedSec Terminal icon"
                 width={18}
                 height={18}
-                className="opacity-90 grayscale group-hover:grayscale-0 transition-all duration-300"
+                className="opacity-95 saturate-[0.85] group-hover:opacity-100 group-hover:saturate-100 transition-all duration-300"
               />
               <span className="font-mono text-sm tracking-widest font-medium">
                 DedSec
@@ -60,14 +60,7 @@ export default function TopNav() {
                   </Link>
                 </li>
               ))}
-              {[
-                { href: '/writeups', label: 'Writeups' },
-                { href: '/journal', label: 'Journal' },
-              ].map(({ href, label }) => (
-                <li key={href} className="hidden md:block">
-                  <Link href={href} className="text-sm text-muted transition-colors hover:text-foreground">{label}</Link>
-                </li>
-              ))}
+
             </ul>
           </nav>
         </div>
