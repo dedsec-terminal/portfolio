@@ -79,14 +79,14 @@ export default function ContentIndex({
           {label.title}
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">{label.description}</p>
-        {!isProjects ? <nav aria-label="Explore the site" className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted">
+        <nav aria-label="Explore the site" className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted">
           {([
             ["projects", "Projects"], ["writeups", "Writeups"],
             ["journal", "Journal"], ["art", "Art"],
           ] as const).filter(([section]) => section !== type).map(([section, title]) => (
             <Link key={section} href={`/${section}`} className="underline underline-offset-4 hover:text-foreground">{title}</Link>
           ))}
-        </nav> : null}
+        </nav>
       </header>
 
       {items.length === 0 ? (
