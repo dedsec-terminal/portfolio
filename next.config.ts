@@ -74,6 +74,15 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: '/audio/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: mutableAssetCache,
+          },
+        ],
+      },
     ];
   },
 };

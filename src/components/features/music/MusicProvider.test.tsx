@@ -10,7 +10,7 @@ vi.mock('../../../content/music/catalogue.json', () => ({
     tracks: [
       { id: '1', title: 'Track A', artist: 'Artist A', audioSource: 'a.mp3' },
       { id: '2', title: 'Track B', artist: 'Artist B', audioSource: 'b.mp3' },
-      { id: '3', title: 'Track C', artist: 'Artist C', audioSource: 'c.flac' },
+      { id: '3', title: 'Track C', artist: 'Artist C', audioSource: 'c.mp3' },
     ],
   },
 }));
