@@ -13,6 +13,7 @@ technologies:
   - esbuild
   - playwright
 codeUrl: "https://github.com/dedsec-terminal/youtube-window-theater"
+liveUrl: "https://addons.mozilla.org/en-US/firefox/addon/youtube-window-theater/"
 published: true
 ---
 
@@ -26,4 +27,4 @@ I queued settings writes so rapid edits are saved in order and can finish after 
 
 ## Releases
 
-Version 1.5.0 includes a [Chrome package](https://github.com/dedsec-terminal/youtube-window-theater/releases/tag/chrome-v1.5.0) and an [unsigned Firefox package](https://github.com/dedsec-terminal/youtube-window-theater/releases/tag/firefox-v1.5.0) for temporary testing.
+Version 1.5.0 is signed and published on [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/youtube-window-theater/). Release packages also include a [Chrome package](https://github.com/dedsec-terminal/youtube-window-theater/releases/tag/chrome-v1.5.0) and an [unsigned Firefox package](https://github.com/dedsec-terminal/youtube-window-theater/releases/tag/firefox-v1.5.0) for testing.
