@@ -2,7 +2,7 @@
 title: "KubeSentinel"
 slug: "kubesentinel"
 date: "2026-09-13"
-description: "A local Kubernetes lab for workload hardening, runtime detection, and searchable security telemetry."
+description: "A local Kubernetes lab for testing workload isolation, security policies, and runtime alerts."
 tags:
   - kubernetes
   - container-security

@@ -39,33 +39,12 @@ const itemSeoDescriptions: Record<string, string> = {
     'An examination of J. M. W. Turner\'s maritime masterpiece Whalers, analyzing atmospheric sea mist, marine hunting danger, and dissolving impressionistic forms.',
   'art/wanderer-above-the-sea-of-fog':
     'Caspar David Friedrich\'s solitary romantic wanderer stands above an Alpine sea of fog, contemplating sublime nature, conquest, uncertainty, and selfhood.',
-
-  // Projects
-  'projects/agentic-iac-vulnerability-detection':
-    'Automated DevSecOps workflow by Swaraj Singh for detecting and remediating Infrastructure as Code security misconfigurations using AI agents and policy rules.',
-  'projects/apex-capital-grc':
-    'An illustrative GRC design case study mapping business risks to NIST and ISO controls, with proposed incident tabletop exercises and evidence requirements.',
-  'projects/faultplane':
-    'Faultplane aggregates security advisories, enriches them with NVD and CISA KEV context, and publishes scheduled vulnerability summaries using GitHub Actions.',
-  'projects/ghostwire':
-    'Ghostwire is a local-first security CLI and browser utility by Swaraj Singh for rapid cryptographic hashing, base encoding, and classical cipher cryptanalysis.',
-  'projects/greyfield':
-    'Greyfield is an open-source defensive cloud honeypot and privacy-governed threat intelligence observatory built by Swaraj Singh to capture live reconnaissance.',
-  'projects/kubesentinel':
-    'A local Kubernetes security lab by Swaraj Singh demonstrating pod hardening, Falco runtime threat detection, network policies, and audit telemetry pipelines.',
-  'projects/ledgercast':
-    'LedgerCast is an automated ITGC and SOX compliance assessment toolkit created by Swaraj Singh to evaluate financial systems, access controls, and audit trails.',
-  'projects/policyforge':
-    'PolicyForge is an illustrative fintech GRC portfolio by Swaraj Singh demonstrating practical policy frameworks, ISO 27001 mappings, and risk governance models.',
-  'projects/traceir':
-    'TraceIR is a digital forensics and incident investigation toolkit by Swaraj Singh that transforms raw endpoint telemetry into chronological evidence timelines.',
-  'projects/vendor-assurance-desk':
-    'A third-party supplier risk dashboard by Swaraj Singh simulating complete vendor lifecycle management from due diligence assessment to remediation tracking.',
-  'projects/youtube-window-theater':
-    'A lightweight Chrome and Firefox browser extension by Swaraj Singh that maximizes YouTube video playback to browser window dimensions with seamless controls.',
 };
 
 export function getSeoDescription(item: ContentItem): string {
+  // Project summaries are shared by tiles, page introductions, and previews.
+  if (item.type === 'projects' && item.description) return item.description;
+
   const key = `${item.type}/${item.slug}`;
   if (itemSeoDescriptions[key]) {
     return itemSeoDescriptions[key];

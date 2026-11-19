@@ -2,7 +2,7 @@
 title: "TraceIR"
 slug: "traceir"
 date: "2026-09-05"
-description: "An incident investigation toolkit that turns endpoint telemetry into a timeline and a verifiable evidence package."
+description: "Turns endpoint logs into an investigation timeline, with each finding linked back to its evidence."
 tags:
   - dfir
   - incident-response

@@ -2,7 +2,7 @@
 title: "Vendor Assurance Desk"
 slug: "vendor-assurance-desk"
 date: "2026-11-16"
-description: "A supplier-risk dashboard that follows a fictional payroll vendor from due diligence through remediation and reassessment."
+description: "A synthetic supplier review that tracks evidence, control gaps, and reassessment before an onboarding decision."
 tags:
   - third-party-risk
   - vendor-assurance

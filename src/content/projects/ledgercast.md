@@ -1,7 +1,7 @@
 ---
 title: "LedgerCast"
 date: "2026-08-19"
-description: "A Python ITGC/SOX control-testing CLI/dashboard."
+description: "A Python tool for testing IT controls, recording audit evidence, and generating reports mapped to compliance frameworks."
 tags:
   - "itgc-sox"
   - "control-testing"

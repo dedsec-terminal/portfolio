@@ -1,7 +1,7 @@
 ---
 title: "PolicyForge"
 date: "2026-08-19"
-description: "An illustrative fictional-fintech GRC portfolio."
+description: "A fictional fintech governance programme with eight security policies, control mappings, and exception records."
 tags:
   - "grc"
   - "security-governance"

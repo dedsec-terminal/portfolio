@@ -15,7 +15,7 @@ const socials = [
     href: `https://discordapp.com/users/${siteConfig.discordId}`,
     icon: FaDiscord,
   },
-  { label: 'X', href: siteConfig.links.x, icon: FaXTwitter },
+  { label: '@dedsec_terminal', href: siteConfig.links.x, icon: FaXTwitter },
 ];
 
 const specialties = ['SOC', 'GRC', 'Security Research'];

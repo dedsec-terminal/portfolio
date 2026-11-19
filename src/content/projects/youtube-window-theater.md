@@ -2,7 +2,7 @@
 title: "YouTube Window Theater"
 slug: "youtube-window-theater"
 date: "2026-11-03"
-description: "A Chrome and Firefox extension that fills the browser window with YouTube video and offers optional NonStop playback."
+description: "A Chrome and Firefox extension that brings window-filling YouTube video and optional NonStop playback together."
 tags:
   - browser-extension
   - chrome

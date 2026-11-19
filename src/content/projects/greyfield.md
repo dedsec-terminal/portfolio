@@ -1,7 +1,7 @@
 ---
 title: "Greyfield"
 date: "2026-09-02"
-description: "A defensive cloud honeypot and privacy-governed public threat observatory."
+description: "A cloud honeypot that captures attack activity and shares a public view without exposing sensitive logs."
 tags:
   - "cloud-security"
   - "honeypot"

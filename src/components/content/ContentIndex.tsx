@@ -32,7 +32,7 @@ const labels: Record<
     empty: 'No published art entries yet.',
   },
   projects: {
-    description: 'Security tools, investigation labs, and governance case studies. Explore the problem, implementation, evidence, and source material behind each project.',
+    description: 'A few things I’ve built and worked on.',
     title: 'Projects',
     eyebrow: 'Selected work',
     empty: 'No published projects yet.',
@@ -79,14 +79,14 @@ export default function ContentIndex({
           {label.title}
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">{label.description}</p>
-        <nav aria-label="Explore the site" className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted">
+        {!isProjects ? <nav aria-label="Explore the site" className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted">
           {([
             ["projects", "Projects"], ["writeups", "Writeups"],
             ["journal", "Journal"], ["art", "Art"],
           ] as const).filter(([section]) => section !== type).map(([section, title]) => (
             <Link key={section} href={`/${section}`} className="underline underline-offset-4 hover:text-foreground">{title}</Link>
           ))}
-        </nav>
+        </nav> : null}
       </header>
 
       {items.length === 0 ? (

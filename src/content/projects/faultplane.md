@@ -1,7 +1,7 @@
 ---
 title: "Faultplane"
 date: "2026-05-20"
-description: "An automated threat-intelligence platform."
+description: "Collects security advisories, adds NVD and CISA context, and publishes daily vulnerability summaries."
 tags:
   - "threat-intelligence"
 technologies:

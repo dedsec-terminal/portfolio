@@ -2,7 +2,7 @@
 title: "Apex Capital Security and GRC Report"
 slug: "apex-capital-grc"
 date: "2026-11-16"
-description: "A security design case study that connects business risks to technical controls, incident response, and evidence requirements."
+description: "A fictional finance case study connecting business risks to security controls, an incident plan, and proposed validation."
 tags:
   - grc
   - security-architecture

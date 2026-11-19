@@ -1,7 +1,7 @@
 ---
 title: "Ghostwire"
 date: "2026-08-27"
-description: "A local-first CLI and browser toolkit for everyday encoding, hashing, and classical-cipher analysis."
+description: "A local toolkit for encoding, hashing, and working through classical ciphers in a browser or terminal."
 tags:
   - "cryptography"
   - "ctf-tools"
