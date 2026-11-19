@@ -88,6 +88,12 @@ body {
   backdrop-filter: blur(18px) saturate(115%);
 }
 
+.glass-surface--readable {
+  --muted: color-mix(in oklab, var(--color-zinc-300) 40%, var(--color-zinc-400));
+  --subtle: var(--color-zinc-400);
+  --accent: var(--color-blue-200);
+}
+
 @supports not (backdrop-filter: blur(1px)) {
   .glass-surface {
     background: color-mix(in srgb, var(--background) 88%, transparent);
@@ -166,6 +172,15 @@ h6 {
   color: var(--color-zinc-200);
 }
 
+.article-prose--wide {
+  max-width: none;
+  overflow-wrap: anywhere;
+}
+
+.article-prose--wide > :where(p, ul, ol, blockquote) {
+  max-width: 68ch;
+}
+
 .article-prose > * + * {
   margin-top: 1.4rem;
 }
@@ -214,6 +229,9 @@ h6 {
   padding: 0.15rem 0.35rem;
   font-family: var(--font-mono);
   font-size: 0.875em;
+}
+.article-prose--wide code {
+  color: var(--color-zinc-300);
 }
 .article-prose pre {
   overflow-x: auto;

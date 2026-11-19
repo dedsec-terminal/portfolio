@@ -50,6 +50,18 @@ export default async function ContentArticle({
 }) {
   const type = item.type;
   const project = item.type === 'projects' ? item : undefined;
+  const isWriting = type === 'journal' || type === 'writeups';
+  const articleLayout = isWriting
+    ? 'glass-surface--readable mx-auto w-[calc(100%_-_1.5rem)] max-w-5xl px-5 py-12 sm:w-[calc(100%_-_3rem)] sm:px-6 md:px-12 md:py-16 lg:px-16 lg:py-20'
+    : `mx-3 px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto ${project ? 'max-w-4xl' : 'max-w-3xl'}`;
+  const proseClasses = [
+    'article-prose',
+    isWriting && 'article-prose--wide mt-8',
+    type === 'writeups' && 'article-prose--dense',
+    project && 'article-prose--project',
+  ]
+    .filter(Boolean)
+    .join(' ');
   const writeupMeta =
     item.type === 'writeups'
       ? [item.platform, item.challenge, item.category, item.difficulty]
@@ -58,9 +70,7 @@ export default async function ContentArticle({
       : undefined;
 
   return (
-    <article
-      className={`glass-surface mx-3 my-4 rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto ${project ? 'max-w-4xl' : 'max-w-3xl'}`}
-    >
+    <article className={`glass-surface my-4 rounded-2xl ${articleLayout}`}>
       {project ? (
         <ProjectsBackLink />
       ) : (
@@ -81,7 +91,7 @@ export default async function ContentArticle({
           {item.title}
         </h1>
         <p
-          className={`mt-4 max-w-2xl text-base leading-relaxed ${project ? 'text-zinc-200' : 'text-muted'}`}
+          className={`mt-4 max-w-2xl text-base leading-relaxed ${project || isWriting ? 'text-zinc-200' : 'text-muted'}`}
         >
           {item.description}
         </p>
@@ -164,9 +174,7 @@ export default async function ContentArticle({
       ) : null}
 
       {item.content.trim() ? (
-        <div
-          className={`article-prose ${project ? 'article-prose--project' : item.type === 'writeups' ? 'article-prose--dense' : ''}`}
-        >
+        <div className={proseClasses}>
           <MDXRemote source={item.content} />
         </div>
       ) : null}

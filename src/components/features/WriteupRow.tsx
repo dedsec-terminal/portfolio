@@ -8,12 +8,12 @@ export default function WriteupRow() {
   return (
     <section
       aria-label="Writeups"
-      className={`glass-surface mx-3 my-4 rounded-2xl ${isEmpty ? 'py-10 md:py-12' : 'py-16 md:py-20'}`}
+      className={`glass-surface glass-surface--readable mx-3 my-4 rounded-2xl ${isEmpty ? 'py-10 md:py-12' : 'py-16 md:py-20'}`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Section header */}
         <header className="mb-8 flex items-baseline gap-3">
-          <h2 className="font-mono text-xs text-subtle tracking-[0.2em] uppercase">
+          <h2 className="font-mono text-xs tracking-[0.2em] text-zinc-200 uppercase">
             <Link href="/writeups" className="hover:text-foreground transition-colors duration-200">
               Writeups
             </Link>
@@ -39,7 +39,7 @@ export default function WriteupRow() {
                 {/* Date */}
                 <time
                   dateTime={writeup.date}
-                  className="font-mono text-[10px] text-subtle tracking-wider shrink-0 w-20 hidden sm:block"
+                  className="hidden w-24 shrink-0 font-mono text-xs tracking-wider text-subtle sm:block"
                 >
                   {writeup.date}
                 </time>
@@ -47,17 +47,17 @@ export default function WriteupRow() {
                 {/* Title */}
                 <Link
                   href={`/writeups/${writeup.slug}`}
-                  className="text-sm text-muted group-hover:text-foreground transition-colors duration-200 leading-relaxed flex-1"
+                  className="min-w-0 flex-1 text-sm font-medium leading-relaxed text-zinc-200 transition-colors duration-200 group-hover:text-foreground"
                 >
                   {writeup.title}
                 </Link>
 
                 {/* Tags */}
-                <div className="hidden md:flex items-center gap-3 shrink-0">
+                <div className="hidden shrink-0 items-center gap-3 md:flex">
                   {writeup.tags.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
-                      className="font-mono text-[10px] text-subtle tracking-wider"
+                      className="font-mono text-xs tracking-wider text-subtle"
                     >
                       {tag}
                     </span>

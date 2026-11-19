@@ -88,7 +88,7 @@ published: false
 Entry body.
 ```
 
-`mood` is optional. Journal is intentionally separate from Blog and is not promoted on the professional homepage.
+`mood` is optional. Use Journal for personal and non-technical writing. Publish security analyses, technical exercises, and walkthroughs in Writeups.
 
 ### Art
 

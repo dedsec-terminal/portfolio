@@ -105,10 +105,11 @@ export default function ContentIndex({
   const label = labels[type];
   const isArt = type === 'art';
   const isProjects = type === 'projects';
+  const isWriteups = type === 'writeups';
 
   return (
     <section
-      className={`glass-surface mx-3 my-4 max-w-5xl rounded-2xl sm:mx-6 md:px-12 lg:mx-auto ${isProjects ? 'px-4 py-10 sm:px-6 md:py-16' : 'px-6 py-16 md:py-24'}`}
+      className={`glass-surface mx-3 my-4 max-w-5xl rounded-2xl sm:mx-6 md:px-12 lg:mx-auto ${isProjects ? 'px-4 py-10 sm:px-6 md:py-16' : 'px-6 py-16 md:py-24'} ${isWriteups ? 'glass-surface--readable' : ''}`}
     >
       <header className={isProjects ? 'mb-7' : 'mb-12 border-b border-border/30 pb-8'}>
         <p
@@ -173,7 +174,9 @@ export default function ContentIndex({
                     <h2 className="text-lg text-foreground group-hover:text-accent">
                       {item.title}
                     </h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+                    <p
+                      className={`mt-2 max-w-2xl text-sm leading-relaxed ${isWriteups ? 'text-zinc-200' : 'text-muted'}`}
+                    >
                       {item.description}
                     </p>
                   </div>
@@ -184,7 +187,7 @@ export default function ContentIndex({
                     {item.date}
                   </time>
                 </div>
-                {type === 'writeups' && item.type === 'writeups' ? (
+                {isWriteups && item.type === 'writeups' ? (
                   <p className="mt-3 font-mono text-[10px] tracking-wider text-subtle">
                     {[item.platform, item.category, item.difficulty]
                       .filter(Boolean)
