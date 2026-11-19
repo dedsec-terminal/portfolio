@@ -23,11 +23,11 @@ export default function FeaturedProjects() {
             <li key={project.slug}>
               <Link
                 href={`/projects/${project.slug}`}
-                className="group flex h-full flex-col rounded-xl border border-foreground/[0.06] bg-foreground/[0.025] px-5 py-5 transition-colors duration-300 hover:border-foreground/15 hover:bg-foreground/[0.05] md:px-6 md:py-6"
+                className="group flex h-full flex-col rounded-xl border border-foreground/[0.06] bg-foreground/[0.025] px-5 py-5 transition-[background-color,border-color,box-shadow,transform,translate] duration-300 ease-out hover:border-foreground/20 hover:bg-foreground/[0.065] hover:shadow-[0_10px_28px_rgb(0_0_0_/_0.18),inset_0_1px_0_rgb(255_255_255_/_0.08)] motion-safe:hover:-translate-y-1 focus-visible:border-foreground/30 focus-visible:bg-foreground/[0.065] md:px-6 md:py-6"
               >
                 <div className="flex items-baseline justify-between gap-4">
                   <h3 className="text-base font-medium text-foreground/90 transition-colors group-hover:text-foreground">{project.title}</h3>
-                  <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0 self-center text-subtle transition-colors group-hover:text-foreground" />
+                  <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0 self-center text-subtle transition-[color,transform,translate] duration-300 ease-out group-hover:text-foreground motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5" />
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-muted">{project.description}</p>
               </Link>
