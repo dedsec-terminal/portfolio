@@ -42,7 +42,6 @@ const toolkit = [
   'NIST CSF 2.0',
   'ISO 27001',
   'NIST SP 800-53',
-  'ITGC / SOX',
   'Qualys VMDR',
   'Falco',
   'Terraform',
