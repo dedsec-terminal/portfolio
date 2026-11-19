@@ -44,7 +44,8 @@ function renderSection(section: Section): string {
 function renderProjectEntry(entry: ProjectsSection["entries"][number]): string {
   const title = entry.sourceUrl ? `[${entry.title}](${entry.sourceUrl})` : entry.title;
   const link = entry.link ? `[${entry.link.label}](${entry.link.url})` : "";
-  return joinBlocks(entryHead(title, entry.dateRange), entry.metadata ?? "", link, bulletList(entry.bullets));
+  const metadata = entry.metadata ? `*${entry.metadata}*` : "";
+  return joinBlocks(entryHead(title, entry.dateRange), metadata, link, bulletList(entry.bullets));
 }
 
 function renderExperienceEntry(entry: ExperiencesSection["entries"][number]): string {
@@ -60,7 +61,8 @@ function renderExperienceEntry(entry: ExperiencesSection["entries"][number]): st
 
 function renderEducationEntry(entry: EducationSection["entries"][number]): string {
   const head = entryHead(entry.title, entry.dateRange);
-  return joinBlocks(head, entry.summary ?? "", bulletList(entry.bullets ?? []));
+  const metadata = entry.metadata ? `*${entry.metadata}*` : "";
+  return joinBlocks(head, entry.summary ?? "", entry.dateDetail ?? "", metadata, bulletList(entry.bullets ?? []));
 }
 
 function entryHead(title: string, dateRange?: string): string {
