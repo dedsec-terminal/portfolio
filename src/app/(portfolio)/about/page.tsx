@@ -35,13 +35,21 @@ const toolkit = [
   'MITRE ATT&CK',
   'Microsoft Sentinel',
   'Splunk',
+  'SentinelOne',
+  'Wazuh',
+  'Wireshark / PCAP',
   'NIST CSF 2.0',
   'ISO 27001',
-  'Python',
-  'PowerShell',
+  'NIST SP 800-53',
+  'ITGC / SOX',
+  'Qualys VMDR',
+  'Falco',
   'Terraform',
   'Docker',
+  'Kubernetes',
   'Checkov',
+  'Python',
+  'PowerShell',
 ] as const;
 
 export default function AboutPage() {
