@@ -4,24 +4,21 @@ import type {
   ProjectsSection,
   Resume,
   Section,
-  SkillsSection,
 } from "@/lib/schemas";
 
 export function resumeToMarkdown(resume: Resume): string {
-  const blocks = [renderHeader(resume.header), ...resume.sections.map(renderSection)];
-  return blocks.join("\n\n") + "\n";
+  const summary = resume.header.subtitle.length
+    ? joinBlocks("## Summary", resume.header.subtitle.join("  \n"))
+    : "";
+  return joinBlocks(renderHeader(resume.header), summary, ...resume.sections.map(renderSection)) + "\n";
 }
 
 function renderHeader(header: Resume["header"]): string {
   const lines: string[] = [`# ${header.name}`];
 
-  if (header.subtitle.length > 0) {
-    lines.push("", header.subtitle.join("  \n"));
-  }
-
   const contactLines: string[] = [`<${header.contact.email}>`];
   for (const link of header.contact.links ?? []) {
-    contactLines.push(`[${link.label}](${link.url})`);
+    contactLines.push(`[${link.display ?? link.label}](${link.url})`);
   }
   lines.push("", contactLines.join("  \n"));
 
@@ -32,9 +29,11 @@ function renderSection(section: Section): string {
   const head = `## ${section.label}`;
   switch (section.kind) {
     case "skills":
-      return joinBlocks(head, renderSkills(section));
+    case "contributions":
+    case "credentials":
+      return joinBlocks(head, bulletList(section.bullets));
     case "projects":
-      return joinBlocks(head, ...section.entries.map(renderProjectEntry));
+      return joinBlocks(head, ...section.entries.map(renderProjectEntry), section.summary ?? "");
     case "experiences":
       return joinBlocks(head, ...section.entries.map(renderExperienceEntry));
     case "education":
@@ -42,12 +41,10 @@ function renderSection(section: Section): string {
   }
 }
 
-function renderSkills(section: SkillsSection): string {
-  return bulletList(section.bullets);
-}
-
 function renderProjectEntry(entry: ProjectsSection["entries"][number]): string {
-  return joinBlocks(entryHead(entry.title, entry.dateRange), bulletList(entry.bullets));
+  const title = entry.sourceUrl ? `[${entry.title}](${entry.sourceUrl})` : entry.title;
+  const link = entry.link ? `[${entry.link.label}](${entry.link.url})` : "";
+  return joinBlocks(entryHead(title, entry.dateRange), entry.metadata ?? "", link, bulletList(entry.bullets));
 }
 
 function renderExperienceEntry(entry: ExperiencesSection["entries"][number]): string {
@@ -63,7 +60,7 @@ function renderExperienceEntry(entry: ExperiencesSection["entries"][number]): st
 
 function renderEducationEntry(entry: EducationSection["entries"][number]): string {
   const head = entryHead(entry.title, entry.dateRange);
-  return entry.bullets && entry.bullets.length > 0 ? joinBlocks(head, bulletList(entry.bullets)) : head;
+  return joinBlocks(head, entry.summary ?? "", bulletList(entry.bullets ?? []));
 }
 
 function entryHead(title: string, dateRange?: string): string {

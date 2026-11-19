@@ -94,7 +94,7 @@ const provenance = {
 
 const bullet = z
   .string()
-  .describe("Supports `**bold**` runs; no other inline formatting");
+  .describe("Supports `**bold**` and Markdown links to HTTP(S) URLs");
 
 const contact = z.object({
   email: z.string(),
@@ -103,6 +103,7 @@ const contact = z.object({
       z.object({
         url: z.string(),
         label: z.string(),
+        display: z.string().optional(),
       }),
     )
     .optional(),
@@ -117,17 +118,21 @@ const header = z.object({
   contact,
 });
 
-const skillsSection = z.object({
-  kind: z.literal("skills").describe("A labeled flat list of bullets"),
+const bulletSection = z.object({
   label: z.string(),
   bullets: z.array(bullet),
   ...provenance,
 });
 
+const skillsSection = bulletSection.extend({ kind: z.literal("skills") });
+const contributionsSection = bulletSection.extend({ kind: z.literal("contributions") });
+const credentialsSection = bulletSection.extend({ kind: z.literal("credentials") });
+
 const projectEntry = z.object({
   title: z.string(),
   dateRange: z.string().optional(),
   metadata: z.string().optional().describe("Compact inline technology context"),
+  sourceUrl: z.url({ protocol: /^https?$/ }).optional(),
   link: z.object({
     url: z.string().url(),
     label: z.string(),
@@ -142,6 +147,7 @@ const projectsSection = z.object({
     .describe("Titled entries with optional date ranges"),
   label: z.string(),
   entries: z.array(projectEntry),
+  summary: bullet.optional(),
   ...provenance,
 });
 
@@ -187,6 +193,8 @@ const educationSection = z.object({
 
 export const sectionSchema = z.discriminatedUnion("kind", [
   skillsSection,
+  contributionsSection,
+  credentialsSection,
   projectsSection,
   experiencesSection,
   educationSection,

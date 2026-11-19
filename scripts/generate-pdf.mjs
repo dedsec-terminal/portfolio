@@ -9,7 +9,7 @@ const OUTPUT_PATH = 'public/resume.pdf';
 const nextCli = path.join(process.cwd(), 'node_modules', 'next', 'dist', 'bin', 'next');
 
 // Helper to wait for server
-const waitForServer = (url, timeout = 30000) => {
+const waitForServer = (url, timeout = 90000) => {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     const interval = setInterval(() => {
@@ -33,9 +33,10 @@ async function generatePdf() {
   console.log(`[1/5] Starting Next.js server on port ${PORT}...`);
   // Note: assumes `npm run build` was already run.
   const serverProcess = spawn(process.execPath, [nextCli, 'start', '-p', String(PORT)], {
-    stdio: 'ignore',
+    stdio: ['ignore', 'ignore', 'inherit'],
     windowsHide: true,
   });
+  let browser;
 
   try {
     console.log(`[2/5] Waiting for server to be ready at ${URL}...`);
@@ -43,7 +44,7 @@ async function generatePdf() {
     console.log(`      Server is ready.`);
 
     console.log(`[3/5] Launching headless browser...`);
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
@@ -52,8 +53,12 @@ async function generatePdf() {
     console.log(`[4/5] Navigating to ${URL} and waiting for fonts to load...`);
     await page.goto(URL, { waitUntil: 'networkidle2' });
     
-    // Wait for fonts to be ready
-    await page.evaluateHandle('document.fonts.ready');
+    await page.evaluate(async () => {
+      const resume = document.querySelector("[data-resume-theme='baseline']");
+      if (!resume) throw new Error('Resume page did not render');
+      resume.setAttribute('data-resume-export', 'dark');
+      await document.fonts.ready;
+    });
 
     console.log(`[5/5] Generating PDF to ${OUTPUT_PATH}...`);
     await page.pdf({
@@ -64,13 +69,13 @@ async function generatePdf() {
     });
 
     console.log(`✅ Success! PDF generated at ${OUTPUT_PATH}`);
-    await browser.close();
   } catch (err) {
     console.error('❌ Error generating PDF:', err);
     process.exitCode = 1;
   } finally {
     console.log('Cleaning up server process...');
     serverProcess.kill();
+    await browser?.close();
   }
 }
 

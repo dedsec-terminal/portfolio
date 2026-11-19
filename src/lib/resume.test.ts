@@ -33,12 +33,12 @@ describe('Resume Data Canonical Integrity', () => {
     if (!projSection) throw new Error('Projects section is missing');
     expect(projSection.entries.length).toBe(4);
 
-    expect(projSection.entries[0].title).toContain('Faultplane');
-    expect(projSection.entries[1].title).toContain('LedgerCast');
-    expect(projSection.entries[2].title).toContain('Greyfield');
-    expect(projSection.entries[3].title).toContain(
-      'Agentic IaC Vulnerability Detection & Remediation'
-    );
+    expect(projSection.entries.map((entry) => entry.title)).toEqual([
+      'Greyfield',
+      'KubeSentinel',
+      'TraceIR',
+      'Vendor Assurance Desk',
+    ]);
   });
 
   it('explicitly excludes rejected projects (NIDS, Ghostwire)', () => {

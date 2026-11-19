@@ -296,7 +296,12 @@ h6 {
 }
 
 @media print {
-  [data-resume-theme='baseline'] {
+  [data-resume-theme='baseline'][data-resume-export='dark'] {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  [data-resume-theme='baseline']:not([data-resume-export='dark']) {
     color-scheme: light;
     --t-baseline-backdrop: white;
     --t-baseline-paper: white;

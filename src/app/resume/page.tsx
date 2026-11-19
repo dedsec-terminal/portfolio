@@ -8,7 +8,7 @@ import { BaselineTemplate, shell } from "@/components/resume/BaselineTemplate";
 
 export const metadata: Metadata = {
   title: "Resume",
-  description: "Swaraj Singh's professional resume.",
+  description: "Swaraj Singh, security engineer and open-source contributor. Experience, selected projects, research, and a downloadable resume.",
   alternates: {
     canonical: "/resume",
     types: {
@@ -35,11 +35,11 @@ export default function ResumePage() {
   return (
     <div data-resume-theme="baseline" className={shell.mainClassName}>
       <ResumeScaler />
+      <AgentEndpoints />
       <article className={shell.articleClassName}>
         {process.env.NODE_ENV === "development" && <PageEdge />}
         <BaselineTemplate resume={{ header, sections }} />
       </article>
-      <AgentEndpoints />
     </div>
   );
 }
