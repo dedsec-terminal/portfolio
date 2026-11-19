@@ -46,12 +46,13 @@ export default async function ContentArticle({
   const project = item.type === 'projects' ? item : undefined;
   const isWriting = type === 'journal' || type === 'writeups';
   const articleLayout = isWriting
-    ? 'glass-surface--readable mx-auto w-[calc(100%_-_1.5rem)] max-w-5xl px-5 py-12 sm:w-[calc(100%_-_3rem)] sm:px-6 md:px-12 md:py-16 lg:px-16 lg:py-20'
+    ? 'mx-auto w-[calc(100%_-_1.5rem)] max-w-5xl px-5 py-12 sm:w-[calc(100%_-_3rem)] sm:px-6 md:px-12 md:py-16 lg:px-16 lg:py-20'
     : `mx-3 px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto ${project ? 'max-w-4xl' : 'max-w-3xl'}`;
   const proseClasses = [
     'article-prose',
     isWriting && 'article-prose--wide mt-8',
     type === 'writeups' && 'article-prose--dense',
+    project && 'article-prose--project',
   ]
     .filter(Boolean)
     .join(' ');
@@ -59,7 +60,7 @@ export default async function ContentArticle({
     item.type === 'writeups'
       ? [item.platform, item.challenge, item.category, item.difficulty]
           .filter(Boolean)
-          .join(' · ')
+          .join(' • ')
       : undefined;
 
   return (
@@ -71,7 +72,7 @@ export default async function ContentArticle({
           href={`/${type}`}
           className="font-mono text-xs tracking-wider text-subtle hover:text-accent"
         >
-          ← {type}
+          {type}
         </Link>
       )}
       <header className="mt-8 border-b border-border/30 pb-8">
@@ -84,26 +85,28 @@ export default async function ContentArticle({
           {item.title}
         </h1>
         <p
-          className={`mt-4 max-w-2xl text-base leading-relaxed ${isWriting ? 'text-zinc-200' : 'text-muted'}`}
+          className={`mt-4 max-w-2xl text-base leading-relaxed ${project ? 'text-zinc-200' : 'text-muted'}`}
         >
           {item.description}
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <time
-              dateTime={item.date}
-              className="font-mono text-[10px] tracking-wider text-subtle"
-            >
-              {(() => {
-                if (project) return projectDateFormat.format(new Date(item.date));
-                const parts = item.date.split('-');
-                if (parts.length === 3) {
-                  return `${parts[2]}-${parts[1]}-${parts[0].slice(2)}`;
-                }
-                return item.date;
-              })()}
-              {item.updatedAt ? ` · updated ${item.updatedAt}` : ''}
-            </time>
+            {type !== 'writeups' ? (
+              <time
+                dateTime={item.date}
+                className="font-mono text-[10px] tracking-wider text-subtle"
+              >
+                {(() => {
+                  if (project) return projectDateFormat.format(new Date(item.date));
+                  const parts = item.date.split('-');
+                  if (parts.length === 3) {
+                    return `${parts[2]}-${parts[1]}-${parts[0].slice(2)}`;
+                  }
+                  return item.date;
+                })()}
+                {item.updatedAt ? ` • updated ${item.updatedAt}` : ''}
+              </time>
+            ) : null}
           </div>
           <Tags tags={item.tags} />
         </div>

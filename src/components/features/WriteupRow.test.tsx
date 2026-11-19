@@ -30,14 +30,26 @@ describe('WriteupRow', () => {
     expect(section?.className).not.toContain('py-16 md:py-20');
   });
 
-  it('renders populated detail links and normal padding', () => {
+  it('renders populated detail links, descriptions, and normal padding without date timestamps', () => {
     vi.mocked(getContent).mockReturnValue([
-      { slug: 'test-writeup', title: 'Test Writeup', date: '2026-08-23', tags: ['Test'] } as ReturnType<typeof getContent<'writeups'>>[number]
+      {
+        slug: 'test-writeup',
+        title: 'Test Writeup',
+        date: '2026-08-23',
+        description: 'Test writeup description',
+        tags: ['crypto', 'web'],
+      } as ReturnType<typeof getContent<'writeups'>>[number]
     ]);
     const { container } = render(<WriteupRow />);
     
-    const detailLink = screen.getByRole('link', { name: 'Test Writeup' });
+    const detailLink = screen.getByRole('link', { name: /Test Writeup/ });
     expect(detailLink.getAttribute('href')).toBe('/writeups/test-writeup');
+    expect(screen.getByText('Test writeup description')).toBeDefined();
+    expect(screen.getByText('crypto')).toBeDefined();
+    expect(screen.getByText('• web')).toBeDefined();
+    
+    // Date timestamp should not be rendered for writeups
+    expect(screen.queryByText('2026-08-23')).toBeNull();
     
     const section = container.querySelector('section');
     expect(section?.className).toContain('py-16 md:py-20');

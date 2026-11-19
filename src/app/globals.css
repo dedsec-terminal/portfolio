@@ -88,11 +88,6 @@ body {
   backdrop-filter: blur(18px) saturate(115%);
 }
 
-.glass-surface--readable {
-  --muted: color-mix(in oklab, var(--color-zinc-300) 40%, var(--color-zinc-400));
-  --subtle: var(--color-zinc-400);
-  --accent: var(--color-blue-200);
-}
 
 @supports not (backdrop-filter: blur(1px)) {
   .glass-surface {

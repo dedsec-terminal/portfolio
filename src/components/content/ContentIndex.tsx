@@ -63,7 +63,7 @@ export default function ContentIndex({
 
   return (
     <section
-      className={`glass-surface mx-3 my-4 max-w-5xl rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto ${isWriteups ? 'glass-surface--readable' : ''}`}
+      className="glass-surface mx-3 my-4 max-w-5xl rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto"
     >
       <header className="mb-12 border-b border-border/30 pb-8">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
@@ -129,9 +129,7 @@ export default function ContentIndex({
                     >
                       {item.title}
                     </h2>
-                    <p
-                      className={`mt-2 max-w-2xl text-sm leading-relaxed ${isWriteups ? 'text-zinc-200' : 'text-muted'}`}
-                    >
+                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
                       {item.description}
                     </p>
                   </div>
@@ -142,7 +140,7 @@ export default function ContentIndex({
                       </span>
                       <ArrowRight aria-hidden="true" className="size-3.5" />
                     </span>
-                  ) : (
+                  ) : isWriteups ? null : (
                     <time
                       dateTime={item.date}
                       className="shrink-0 font-mono text-[10px] tracking-wider text-subtle"
@@ -155,7 +153,7 @@ export default function ContentIndex({
                   <p className="mt-3 font-mono text-[10px] tracking-wider text-subtle">
                     {[item.platform, item.category, item.difficulty]
                       .filter(Boolean)
-                      .join(' · ')}
+                      .join(' • ')}
                   </p>
                 ) : null}
                 <div className="mt-3">
