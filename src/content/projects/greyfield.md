@@ -29,3 +29,7 @@ The project demonstrates a governed path from cloud deception and SOC telemetry 
 
 ## Future direction
 Future improvements could extend the observation history, add further independently validated enrichment sources, and deepen analytical views while preserving the same evidence, privacy, and attribution limits.
+
+## Related work
+
+[Faultplane](/projects/faultplane) explores a complementary workflow: collecting published security advisories and enriching vulnerability context. Greyfield starts with observed honeypot activity; the two projects address different sources of security intelligence.

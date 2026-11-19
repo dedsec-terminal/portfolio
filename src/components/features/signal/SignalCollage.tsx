@@ -68,7 +68,7 @@ function SignalObject({
   index: number;
   onSelect?: (node: SignalNode) => void;
 }) {
-  const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
+  const title = node.title;
   const slotLabel = node.slot ? SIGNAL_SLOT_LABELS[node.slot] : node.category;
   const sharedClass = `group relative flex w-[var(--signal-mobile-width)] min-w-0 flex-col overflow-hidden p-0 transition-colors duration-200 md:h-full md:w-auto ${mobileAlignClass[placement.mobileAlign]} ${treatmentClass[placement.treatment]}`;
 
@@ -104,15 +104,15 @@ function SignalObject({
   }
 
   return (
-    <button
-      type="button"
-      className={sharedClass}
-      style={objectStyle(placement)}
-      onClick={() => onSelect?.(node)}
-      aria-label={`Open ${title}`}
-    >
+    <div className={sharedClass} style={objectStyle(placement)}>
       {body}
-    </button>
+      <button
+        type="button"
+        className="signal-card-trigger absolute inset-0 z-10 cursor-pointer bg-transparent"
+        onClick={() => onSelect(node)}
+        aria-label={`Open ${title}`}
+      />
+    </div>
   );
 }
 
@@ -125,10 +125,10 @@ export default function SignalCollage({
 
   return (
     <div
-      className={`flex min-w-0 flex-col gap-10 ${
+      className={`min-w-0 ${
         compact
           ? 'grid h-full min-h-0 grid-cols-12 grid-rows-12 gap-2 py-3 md:gap-3'
-          : 'min-h-[760px] py-10 md:grid md:h-full md:min-h-0 md:grid-cols-12 md:grid-rows-12 md:gap-3 md:py-3'
+          : 'flex flex-col gap-10 min-h-[760px] py-10 md:grid md:h-full md:min-h-0 md:grid-cols-12 md:grid-rows-12 md:gap-3 md:py-3'
       }`}
       data-composition={plan.name}
     >

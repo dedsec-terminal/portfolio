@@ -1,3 +1,4 @@
+import { pageMetadata } from '@/lib/page-metadata';
 import type { Metadata } from "next";
 import { resumeSchema } from "@/lib/schemas";
 import resumeData from "@/content/resume.json";
@@ -6,7 +7,7 @@ import { PageEdge } from "@/components/resume/PageEdge";
 import { ResumeScaler } from "@/components/resume/ResumeScaler";
 import { BaselineTemplate, shell } from "@/components/resume/BaselineTemplate";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Resume",
   description:
     "Professional resume of Swaraj Singh, cybersecurity practitioner. Review experience in SOC analysis, GRC audit compliance, security tools, and certifications.",
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
       "text/markdown": "/resume.md",
     },
   },
-};
+});
 
 export default function ResumePage() {
   const parsed = resumeSchema.safeParse(resumeData);
@@ -34,13 +35,14 @@ export default function ResumePage() {
   const { header, sections } = parsed.data;
 
   return (
-    <div data-resume-theme="baseline" className={shell.mainClassName}>
+    <main id="main-content" tabIndex={-1} data-resume-theme="baseline" className={shell.mainClassName}>
+      <a href="#resume-content" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:bg-background focus-visible:p-3 focus-visible:text-foreground print:hidden">Skip to resume</a>
       <ResumeScaler />
-      <article className={shell.articleClassName}>
+      <article id="resume-content" tabIndex={-1} className={shell.articleClassName}>
         {process.env.NODE_ENV === "development" && <PageEdge />}
         <BaselineTemplate resume={{ header, sections }} />
       </article>
       <AgentEndpoints />
-    </div>
+    </main>
   );
 }

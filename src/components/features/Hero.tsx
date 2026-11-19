@@ -86,7 +86,7 @@ export default function Hero() {
                 Swaraj Singh
               </h1>
               <p className="mt-3 text-base text-zinc-300 font-light tracking-widest">
-                cybersecurity enthusiast
+                Security operations, GRC &amp; security engineering
               </p>
             </div>
 

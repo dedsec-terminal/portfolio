@@ -93,12 +93,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${base}/blog`,
-      lastModified: toDate(latestByType.get('blog') ?? siteLatest),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
       url: `${base}/signal/archive`,
       lastModified: toDate(signalDate),
       changeFrequency: 'daily',

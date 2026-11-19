@@ -27,3 +27,7 @@ The case format distinguishes observations from derived findings and keeps missi
 ## What the demo shows
 
 The public case explorer presents four synthetic investigations, including a case with incomplete endpoint telemetry. Each case lets a reader inspect the timeline, see the evidence behind a finding, and review where visibility ends.
+
+## Further reading
+
+For a separate worked investigation with explicit evidence limits, read [From Alert to Timeline](/writeups/from-alert-to-timeline). Browse [security writeups](/writeups) for other analytical methods.

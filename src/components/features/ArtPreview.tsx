@@ -28,7 +28,7 @@ export default function ArtPreview() {
           {isEmpty ? (
             <p className="text-xs text-subtle">Coming soon.</p>
           ) : (
-            <div className="grid grid-cols-3 gap-px bg-border/20">
+            <div className="grid grid-cols-1 gap-px sm:grid-cols-3 bg-border/20">
               {art.map((entry) => (
                 <Link
                   key={entry.slug}
@@ -41,7 +41,7 @@ export default function ArtPreview() {
                     alt={entry.media[0].alt || `${entry.title} — visual artwork`}
                     title={entry.title}
                     fill
-                    sizes="33vw"
+                    sizes="(max-width: 639px) 100vw, 33vw"
                     quality={85}
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />

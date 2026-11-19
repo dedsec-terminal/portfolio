@@ -25,7 +25,7 @@ export default function DiscordPresence() {
   if (!discordId) {
     return (
       <div
-        className="flex items-center gap-1.5 text-[10px] font-mono text-subtle/70 uppercase tracking-widest"
+        className="flex items-center gap-1.5 text-[10px] font-mono text-subtle uppercase tracking-widest"
         aria-label="Discord status: unavailable"
       >
         <span
@@ -47,7 +47,7 @@ function PresenceSubscriber({ discordId }: { discordId: string }) {
   if (!presence) {
     return (
       <div
-        className="flex items-center gap-1.5 text-[10px] font-mono text-subtle/70 uppercase tracking-widest"
+        className="flex items-center gap-1.5 text-[10px] font-mono text-subtle uppercase tracking-widest"
         aria-label="Discord status: connecting"
       >
         <span
@@ -61,11 +61,11 @@ function PresenceSubscriber({ discordId }: { discordId: string }) {
 
   const { discord_status } = presence;
   const statusColor = STATUS_COLORS[discord_status] || STATUS_COLORS.offline;
-  const statusLabel = discord_status === 'offline' ? 'Offline' : 'Active';
+  const statusLabel = { online: 'Online', idle: 'Idle', dnd: 'Do not disturb', offline: 'Offline' }[discord_status] ?? 'Unavailable';
 
   return (
     <div
-      className="flex items-center gap-1.5 text-[10px] font-mono text-subtle/70 uppercase tracking-widest"
+      className="flex items-center gap-1.5 text-[10px] font-mono text-subtle uppercase tracking-widest"
       aria-label={`Discord status: ${statusLabel}`}
     >
       <span

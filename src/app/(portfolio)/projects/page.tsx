@@ -1,13 +1,14 @@
+import { pageMetadata } from '@/lib/page-metadata';
 import type { Metadata } from 'next';
 import ContentIndex from '@/components/content/ContentIndex';
 import { getContent } from '@/lib/content';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Projects',
   description:
     'Explore cybersecurity projects by Swaraj Singh, spanning threat intelligence platforms, Kubernetes runtime security, DevSecOps tooling, and GRC frameworks.',
   alternates: { canonical: '/projects' },
-};
+});
 
 // Lead with demonstrated security work. Future, unranked entries stay newest-first below it.
 const projectRanks = new Map(

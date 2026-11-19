@@ -1,3 +1,5 @@
+import { siteConfig } from '@/lib/site';
+import { pageMetadata } from '@/lib/page-metadata';
 import type { Metadata } from 'next';
 import fs from 'fs';
 import path from 'path';
@@ -5,7 +7,7 @@ import Link from 'next/link';
 import SignalArchiveExperience from '@/components/features/signal/SignalArchiveExperience';
 import { signalDaySchema, type SignalDayType } from '@/lib/signal/schemas';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Signal Archive',
   description:
     'Explore the historical archive of past daily Signal collections by Swaraj Singh, featuring curated collisions of art, web discoveries, cinema, and literature.',
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
     url: '/signal/archive',
     type: 'website',
   },
-};
+});
 
 export default function SignalArchivePage() {
   let days: SignalDayType[] = [];
@@ -29,8 +31,7 @@ export default function SignalArchivePage() {
       const files = fs
         .readdirSync(historyDir)
         .filter((file) => file.endsWith('.json'))
-        .sort((a, b) => b.localeCompare(a))
-        .slice(0, 24);
+        .sort((a, b) => b.localeCompare(a));
 
       days = files.flatMap((file) => {
         const raw = JSON.parse(fs.readFileSync(path.join(historyDir, file), 'utf8'));
@@ -38,8 +39,8 @@ export default function SignalArchivePage() {
         return parsed.success ? [parsed.data] : [];
       });
     }
-  } catch (err) {
-    error = err instanceof Error ? err.message : 'Unable to load the Signal archive.';
+  } catch {
+    error = 'The archive is temporarily unavailable. Please try again later.';
   }
 
   const archiveSchema = {
@@ -48,7 +49,7 @@ export default function SignalArchivePage() {
     name: 'Signal Archive | Swaraj Singh',
     description:
       'Historical archive of curated daily Signal editions by Swaraj Singh across visual art, open web links, frontier technology, cinema, books, and ideas.',
-    url: 'https://dedsec-terminal.in/signal/archive',
+    url: `${siteConfig.url}/signal/archive`,
     numberOfItems: days.length,
     itemListElement: days.slice(0, 10).map((day, idx) => ({
       '@type': 'ListItem',
@@ -59,7 +60,7 @@ export default function SignalArchivePage() {
   };
 
   return (
-    <main className="min-h-screen px-5 pb-20 pt-24 md:px-10 md:pt-28">
+    <section className="min-h-screen px-5 pb-20 pt-24 md:px-10 md:pt-28">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -74,6 +75,7 @@ export default function SignalArchivePage() {
           <h1 className="text-4xl font-semibold uppercase leading-none tracking-[-0.05em] md:text-7xl">
             Archive
           </h1>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">Past discoveries across art, technology, books, and the open web. Link to an edition by its date, or open a selection to visit its original source.</p>
         </div>
         <Link href="/signal" className="font-mono text-xs uppercase tracking-[0.16em] text-muted hover:text-foreground">
           Today ↗
@@ -88,6 +90,6 @@ export default function SignalArchivePage() {
 
         <SignalArchiveExperience days={days} />
       </div>
-    </main>
+    </section>
   );
 }

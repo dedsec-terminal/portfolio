@@ -1,15 +1,16 @@
+import { pageMetadata } from '@/lib/page-metadata';
 import type { Metadata } from 'next';
 import fs from 'fs';
 import path from 'path';
 import SignalExperience from '@/components/features/signal/SignalExperience';
 import { signalDaySchema } from '@/lib/signal/schemas';
 
-export const metadata: Metadata = {
-  title: 'Today | Swaraj Singh',
+export const metadata: Metadata = pageMetadata({
+  title: 'Today',
   description:
     "Today's curated daily signal by Swaraj Singh: six thought-provoking selections across visual art, open web links, frontier technology, cinema, books, and ideas.",
   alternates: { canonical: '/signal' },
-};
+});
 
 export default function SignalPage() {
   let signalData = null;
@@ -23,26 +24,26 @@ export default function SignalPage() {
     } else {
       error = 'No current signal generated yet.';
     }
-  } catch (err) {
-    error = err instanceof Error ? err.message : 'Unable to load Signal.';
+  } catch {
+    error = 'Today’s collection is temporarily unavailable. Please visit the archive or try again later.';
   }
 
   if (error || !signalData) {
     return (
-      <main className="min-h-[calc(100svh-4.5rem)] px-6 pt-32 lg:px-12">
+      <section className="min-h-[calc(100svh-4.5rem)] px-6 pt-32 lg:px-12">
         <h1 className="text-4xl font-semibold uppercase tracking-[-0.04em] text-foreground">
           Today
         </h1>
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.16em] text-muted">
           {error || 'Unable to load Signal.'}
         </p>
-      </main>
+      </section>
     );
   }
 
   return (
-    <main className="h-full w-full">
+    <section className="h-full w-full">
       <SignalExperience data={signalData} />
-    </main>
+    </section>
   );
 }

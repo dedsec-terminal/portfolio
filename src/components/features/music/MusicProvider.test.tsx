@@ -109,7 +109,7 @@ describe('MusicProvider', () => {
     expect(playSpy).toHaveBeenCalledTimes(0);
   });
 
-  it('ordinary interaction test with anchor proves links trigger autoplay', async () => {
+  it('ordinary navigation and typing never start playback', async () => {
     render(
       <MusicProvider>
         <TestComponent />
@@ -126,8 +126,12 @@ describe('MusicProvider', () => {
       document.body.removeChild(a);
     });
 
-    expect(playSpy).toHaveBeenCalledTimes(1);
-    expect(mockAudioInstance.paused).toBe(false);
+    await act(async () => {
+      document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+      document.body.click();
+    });
+    expect(playSpy).toHaveBeenCalledTimes(0);
+    expect(mockAudioInstance.paused).toBe(true);
   });
 
   it('first direct Play activation calls play exactly once and remains playing', async () => {
@@ -161,10 +165,7 @@ describe('MusicProvider', () => {
     );
 
     await act(async () => {
-      const link = document.createElement('a');
-      document.body.appendChild(link);
-      link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      document.body.removeChild(link);
+      screen.getByTestId('play').click();
     });
 
     await act(async () => {
@@ -213,10 +214,7 @@ describe('MusicProvider', () => {
     );
 
     await act(async () => {
-      const link = document.createElement('a');
-      document.body.appendChild(link);
-      link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      document.body.removeChild(link);
+      screen.getByTestId('play').click();
       screen.getByTestId('play').click();
     });
 
@@ -239,7 +237,7 @@ describe('MusicProvider', () => {
     expect(mockAudioInstance.paused).toBe(true);
   });
 
-  it('unmount removes global listeners so later interactions do not call play', async () => {
+  it('unmount does not allow later interactions to start playback', async () => {
     const { unmount } = render(
       <MusicProvider>
         <TestComponent />

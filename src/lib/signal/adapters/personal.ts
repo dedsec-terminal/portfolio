@@ -33,7 +33,9 @@ export class PersonalCatalogueAdapter implements SignalSourceAdapter {
           const items = JSON.parse(content);
           if (Array.isArray(items)) {
             candidates = candidates.concat(
-              items.map((item) => ({ ...item, slot: CATALOGUE_SLOTS[file] }))
+              items
+                .filter((item) => typeof item.title === 'string' && !/^\[SAMPLE\]/i.test(item.title))
+                .map((item) => ({ ...item, slot: CATALOGUE_SLOTS[file] }))
             );
           }
         }

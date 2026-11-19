@@ -77,12 +77,8 @@ export default async function ContentArticle({
           .join(' • ')
       : undefined;
 
-  const schemaType =
-    item.type === 'art'
-      ? 'VisualArtwork'
-      : item.type === 'projects'
-        ? 'SoftwareApplication'
-        : 'TechArticle';
+  // Describe the authored page, not authorship of the historical artwork.
+  const schemaType = item.type === 'art' || item.type === 'journal' ? 'Article' : 'TechArticle';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -215,16 +211,17 @@ export default async function ContentArticle({
       {related.length > 0 ? (
         <aside className="mt-14 border-t border-border/30 pt-8">
           <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-subtle">
-            Related {type}
+            Explore related work
           </h2>
           <ul className="mt-5 list-none divide-y divide-border/20 p-0">
             {related.map((entry) => (
-              <li key={entry.slug}>
+              <li key={`${entry.type}/${entry.slug}`}>
                 <Link
                   href={`/${entry.type}/${entry.slug}`}
                   className={`block py-4 text-sm text-muted ${project ? 'project-link hover:text-foreground' : 'hover:text-accent'}`}
                 >
-                  {entry.title}
+                  <span className="text-foreground">{entry.title}</span>
+                  <span className="mt-1 block text-sm leading-relaxed text-muted">{entry.description}</span>
                 </Link>
               </li>
             ))}

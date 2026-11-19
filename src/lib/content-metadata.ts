@@ -6,11 +6,11 @@ import { siteConfig } from '@/lib/site';
 const itemSeoDescriptions: Record<string, string> = {
   // Writeups
   'writeups/breaking-python-jail-mro':
-    'Bypassing restrictive Python evaluation filters by traversing the Method Resolution Order and class hierarchy to reconstruct arbitrary execution primitives.',
+    'A conceptual study of Python object traversal, restricted eval, and the evidence needed to establish a sandbox bypass against a specific input filter.',
   'writeups/caesars-drift':
     'An offline cryptography CTF challenge by Swaraj Singh where a known flag prefix reveals a fixed alphabet shift, demonstrating classical ciphertext analysis.',
   'writeups/fools-mate-revenge':
-    'A spoiler-conscious analysis of how unsafe object merging turns a harmless settings API into a critical prototype-pollution trust-boundary security failure.',
+    'A conceptual walkthrough of unsafe object merging in a settings API, showing how prototype pollution can cross a security trust boundary.',
   'writeups/from-alert-to-timeline':
     'A tabletop investigation that reconstructs a sign-in timeline across time zones, tests a competing session match, and records what the evidence supports.',
   'writeups/n8n-cve-2026-119408':
@@ -44,9 +44,9 @@ const itemSeoDescriptions: Record<string, string> = {
   'projects/agentic-iac-vulnerability-detection':
     'Automated DevSecOps workflow by Swaraj Singh for detecting and remediating Infrastructure as Code security misconfigurations using AI agents and policy rules.',
   'projects/apex-capital-grc':
-    'A cybersecurity design case study by Swaraj Singh connecting enterprise business risk to technical NIST/ISO controls, tabletop IR drills, and audit evidence.',
+    'An illustrative GRC design case study mapping business risks to NIST and ISO controls, with proposed incident tabletop exercises and evidence requirements.',
   'projects/faultplane':
-    'Faultplane is an automated threat intelligence platform engineered by Swaraj Singh to collect, normalize, and correlate malicious cyber indicators in real time.',
+    'Faultplane aggregates security advisories, enriches them with NVD and CISA KEV context, and publishes scheduled vulnerability summaries using GitHub Actions.',
   'projects/ghostwire':
     'Ghostwire is a local-first security CLI and browser utility by Swaraj Singh for rapid cryptographic hashing, base encoding, and classical cipher cryptanalysis.',
   'projects/greyfield':

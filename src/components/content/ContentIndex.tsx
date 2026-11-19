@@ -5,29 +5,34 @@ import type { ContentItem, ContentType } from '@/lib/content';
 
 const labels: Record<
   ContentType,
-  { title: string; eyebrow: string; empty: string }
+  { title: string; eyebrow: string; empty: string; description: string }
 > = {
   writeups: {
+    description: 'Security walkthroughs, cryptography notes, and incident investigations. Each entry explains the reasoning, evidence, and limits of the technique.',
     title: 'Writeups',
     eyebrow: 'Security archive',
     empty: 'No published writeups yet.',
   },
   blog: {
+    description: 'Technical notes on security tools, systems, and the decisions behind them.',
     title: 'Blog',
     eyebrow: 'Technical notes',
     empty: 'No published blog posts yet.',
   },
   journal: {
+    description: 'Essays on mythology, literature, and human nature: a space for questions beyond the terminal.',
     title: 'Journal',
     eyebrow: 'Personal writing',
     empty: 'No published journal entries yet.',
   },
   art: {
+    description: 'A personal collection of paintings and visual commentary, with notes on the stories, atmosphere, and ideas behind each work.',
     title: 'Art',
     eyebrow: 'Visual archive',
     empty: 'No published art entries yet.',
   },
   projects: {
+    description: 'Security tools, investigation labs, and governance case studies. Explore the problem, implementation, evidence, and source material behind each project.',
     title: 'Projects',
     eyebrow: 'Selected work',
     empty: 'No published projects yet.',
@@ -72,6 +77,15 @@ export default function ContentIndex({
         <h1 className="mt-3 text-4xl font-medium tracking-tight text-foreground md:text-5xl">
           {label.title}
         </h1>
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted">{label.description}</p>
+        <nav aria-label="Explore the site" className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted">
+          {([
+            ["projects", "Projects"], ["writeups", "Writeups"],
+            ["journal", "Journal"], ["art", "Art"],
+          ] as const).filter(([section]) => section !== type).map(([section, title]) => (
+            <Link key={section} href={`/${section}`} className="underline underline-offset-4 hover:text-foreground">{title}</Link>
+          ))}
+        </nav>
       </header>
 
       {items.length === 0 ? (

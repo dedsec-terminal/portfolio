@@ -60,6 +60,14 @@ export default function TopNav() {
                   </Link>
                 </li>
               ))}
+              {[
+                { href: '/writeups', label: 'Writeups' },
+                { href: '/journal', label: 'Journal' },
+              ].map(({ href, label }) => (
+                <li key={href} className="hidden md:block">
+                  <Link href={href} className="text-sm text-muted transition-colors hover:text-foreground">{label}</Link>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>

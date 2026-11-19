@@ -228,60 +228,6 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     };
   }, [loadAndPlayTrack, setPlaybackIntent]);
 
-  useEffect(() => {
-    if (playbackIntentRef.current !== 'idle') return;
-
-    const handleInteraction = (e: Event) => {
-      if (
-        playbackIntentRef.current !== 'idle' ||
-        isPlayingRef.current ||
-        (audioRef.current && !audioRef.current.paused)
-      ) {
-        cleanupListeners();
-        return;
-      }
-
-      const target = e.target as HTMLElement;
-      if (e.type === 'click') {
-        if (target.closest('button, [role="button"]')) {
-          return;
-        }
-      } else if (e.type === 'keydown') {
-        if (target.closest('button, [role="button"], a, input, select, textarea, [tabindex]:not([tabindex="-1"])') || target.isContentEditable) {
-          return;
-        }
-      }
-
-      if (!audioRef.current || catalogueData.tracks.length === 0) {
-        return;
-      }
-
-      setPlaybackIntent('playing');
-      cleanupListeners();
-
-      if (!audioRef.current.src && track?.audioSource) {
-        audioRef.current.src = track.audioSource;
-      }
-
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          setIsPlaying(false);
-        });
-      }
-    };
-
-    const cleanupListeners = () => {
-      document.removeEventListener('click', handleInteraction);
-      document.removeEventListener('keydown', handleInteraction);
-    };
-
-    document.addEventListener('click', handleInteraction);
-    document.addEventListener('keydown', handleInteraction);
-
-    return cleanupListeners;
-  }, [setPlaybackIntent, track]);
-
   const togglePlay = useCallback(() => {
     if (!audioRef.current || catalogueData.tracks.length === 0) return;
     if (audioRef.current.paused) {

@@ -1,3 +1,4 @@
+import PlaybackControl from '@/components/features/music/PlaybackControl';
 import TopNav from '@/components/layout/TopNav';
 import MobileNav from '@/components/layout/MobileNav';
 import SiteFooter from '@/components/layout/SiteFooter';
@@ -16,11 +17,12 @@ export default function PortfolioLayout({
         <div className="relative z-10 flex min-h-screen flex-1 flex-col">
           <TopNav />
           {/* main has no horizontal constraint — pages control their own layout */}
-          <main id="main-content" className="flex-1">
+          <main id="main-content" tabIndex={-1} className="flex-1">
             {children}
           </main>
           <SiteFooter />
           <MobileNav />
+          <PlaybackControl />
         </div>
       </div>
     </MusicProvider>

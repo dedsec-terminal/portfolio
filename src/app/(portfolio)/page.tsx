@@ -1,3 +1,4 @@
+import FeaturedProjects from '@/components/features/FeaturedProjects';
 import type { Metadata } from 'next';
 import Hero from '@/components/features/Hero';
 import WriteupRow from '@/components/features/WriteupRow';
@@ -15,9 +16,10 @@ export const metadata: Metadata = {
   Page composition order (intentional):
 
   1. Hero         — identity, full viewport, the opening statement
-  2. Writeups     — security work
-  3. Journal      — personal writing and observations
-  4. Art & Media  — visual work
+  2. Projects     — engineering case studies
+  3. Writeups     — security work
+  4. Journal      — personal writing and observations
+  5. Art & Media  — visual work
 */
 
 export default function HomePage() {
@@ -25,6 +27,8 @@ export default function HomePage() {
     <>
       <div className="relative z-10">
         <Hero />
+
+        <FeaturedProjects />
 
         <WriteupRow />
 

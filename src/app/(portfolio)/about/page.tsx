@@ -1,14 +1,15 @@
+import { pageMetadata } from '@/lib/page-metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowUpRight, FileText, Mail } from 'lucide-react';
 import { siteConfig } from '@/lib/site';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'About',
   description:
     'Learn about Swaraj Singh (Dedsec Terminal), a cybersecurity practitioner specializing in SOC threat triage, ISO/NIST governance, and custom security tooling.',
   alternates: { canonical: '/about' },
-};
+});
 
 const focusAreas = [
   {

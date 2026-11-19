@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import type { SignalDayType } from '@/lib/signal/schemas';
 import { ExternalLink, X } from 'lucide-react';
 import SignalPreviewSurface from './SignalPreviewSurface';
@@ -11,13 +15,32 @@ interface SignalDetailPanelProps {
 }
 
 export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    if (!node) return;
+    const trigger = document.activeElement;
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+    return () => {
+      dialog?.close();
+      if (trigger instanceof HTMLElement && trigger.isConnected) trigger.focus();
+    };
+  }, [node]);
+
   if (!node) return null;
 
-  const title = node.title.replace(/^\[SAMPLE\]\s*/i, '');
+  const title = node.title;
   const slotLabel = node.slot ? SIGNAL_SLOT_LABELS[node.slot] : node.category;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end bg-background/92 p-4 backdrop-blur-sm md:items-center md:justify-center md:p-10">
+  return createPortal(
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="signal-detail-title"
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+      onCancel={(event) => { event.preventDefault(); onClose(); }}
+      className="fixed inset-0 m-0 h-[100svh] max-h-none w-screen max-w-none items-end justify-center border-0 bg-transparent p-4 text-foreground backdrop:bg-background/90 backdrop:backdrop-blur-sm open:flex md:items-center md:p-10"
+    >
       <article className="relative max-h-[88svh] w-full max-w-5xl overflow-y-auto border-2 border-foreground/80 bg-background">
         <button
           type="button"
@@ -34,9 +57,9 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
           <div className="flex min-h-80 flex-col justify-between p-6 pr-20 md:p-10 md:pr-20">
             <div>
               <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">
-                {slotLabel} / found today
+                {slotLabel} / selection
               </p>
-              <h2 className="text-3xl font-semibold leading-[0.95] tracking-[-0.045em] text-foreground md:text-5xl">
+              <h2 id="signal-detail-title" className="text-3xl font-semibold leading-[0.95] tracking-[-0.045em] text-foreground md:text-5xl">
                 {title}
               </h2>
               {node.curiosity ? (
@@ -68,6 +91,7 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
           </div>
         </div>
       </article>
-    </div>
+    </dialog>,
+    document.body,
   );
 }
