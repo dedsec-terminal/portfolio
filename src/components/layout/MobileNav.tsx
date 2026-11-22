@@ -82,6 +82,7 @@ export default function MobileNav() {
             <li key={href} className="min-w-0">
               <Link
                 href={href}
+                prefetch={false}
                 onClick={() => setIsHidden(true)}
                 aria-current={isCurrentPage ? 'page' : isActive ? 'location' : undefined}
                 className={`flex min-h-11 items-center justify-center rounded-lg px-1 font-mono text-[11px] leading-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent motion-reduce:transition-none ${

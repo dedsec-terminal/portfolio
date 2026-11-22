@@ -23,6 +23,7 @@ export default function FeaturedProjects() {
             <li key={project.slug}>
               <Link
                 href={`/projects/${project.slug}`}
+                prefetch={false}
                 className="group flex h-full flex-col rounded-xl border border-foreground/[0.06] bg-foreground/[0.025] px-5 py-5 transition-[background-color,border-color,box-shadow,transform,translate] duration-300 ease-out hover:border-foreground/20 hover:bg-foreground/[0.065] hover:shadow-[0_10px_28px_rgb(0_0_0_/_0.18),inset_0_1px_0_rgb(255_255_255_/_0.08)] motion-safe:hover:-translate-y-1 focus-visible:border-foreground/30 focus-visible:bg-foreground/[0.065] md:px-6 md:py-6"
               >
                 <div className="flex items-baseline justify-between gap-4">

@@ -54,6 +54,7 @@ export default function TopNav() {
                 <li key={href}>
                   <Link
                     href={href}
+                    prefetch={false}
                     className="text-[11px] tracking-wide text-muted transition-colors duration-200 hover:text-foreground sm:text-xs md:text-sm"
                   >
                     {label}
