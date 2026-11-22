@@ -108,7 +108,7 @@ const desktopProfile: RenderProfile = {
 function getRenderProfile(): RenderProfile {
   if (window.innerHeight > window.innerWidth) {
     return {
-      maxPixelCount: 1_048_576,
+      maxPixelCount: 524_288,
       offsetX: -0.055,
       offsetY: 0,
       scale: 1.04,
