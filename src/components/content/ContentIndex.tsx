@@ -136,6 +136,7 @@ export default function ContentIndex({
             <li key={item.slug}>
               <Link
                 href={`/${type}/${item.slug}`}
+                prefetch={isWriteups ? false : undefined}
                 aria-label={isProjects ? `View project ${item.title}` : undefined}
                 className={isProjects ? 'project-link group block py-5' : 'group block py-6 first:pt-0'}
               >
