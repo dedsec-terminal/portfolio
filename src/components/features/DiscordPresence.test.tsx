@@ -83,7 +83,7 @@ describe('DiscordPresence', () => {
       discord_status: 'online',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
-    expect(screen.getByText('Active')).toBeDefined();
+    expect(screen.getByText('Online')).toBeDefined();
   });
 
   it('renders idle state correctly', () => {
@@ -92,7 +92,7 @@ describe('DiscordPresence', () => {
       discord_status: 'idle',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
-    expect(screen.getByText('Active')).toBeDefined();
+    expect(screen.getByText('Idle')).toBeDefined();
   });
 
   it('renders dnd state correctly', () => {
@@ -101,6 +101,6 @@ describe('DiscordPresence', () => {
       discord_status: 'dnd',
     } as unknown as ReturnType<typeof useLanyardModule.useLanyard>);
     render(<DiscordPresence />);
-    expect(screen.getByText('Active')).toBeDefined();
+    expect(screen.getByText('Do not disturb')).toBeDefined();
   });
 });

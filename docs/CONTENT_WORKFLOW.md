@@ -172,6 +172,8 @@ Open the relevant collection and detail route, for example `/blog` and `/blog/ke
 
 In development, drafts may be shown to make local authoring easier. In a production build, `published: false` is not generated, listed, or publicly routable.
 
+Before publishing, run `npm run build` and `npm run verify:seo`. Published entries are added to `/sitemap.xml` automatically, including local image URLs for Art. The SEO check verifies built pages, canonical URLs, and unique descriptions. After deployment, check that the new routes appear in the live sitemap and that linked posts and Art images open.
+
 ## 5. Commit and push
 
 When the preview is correct:

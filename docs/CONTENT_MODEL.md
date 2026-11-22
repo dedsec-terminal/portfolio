@@ -10,7 +10,7 @@ This document outlines the complete content architecture, schema specifications,
   - [x] Sample MDX fixture created (`__sample-project.mdx`)
   - [x] Homepage component integration (`ProjectsGrid.tsx`)
   - [x] Validation tests passing in Vitest (`src/lib/mdx.test.ts`)
-- [x] **Writeups Schema (`src/content/professional/writeups/`)**
+- [x] **Writeups Schema (`src/content/writeups/`)**
   - [x] Schema defined via Zod (`writeupSchema` in `src/lib/schemas.ts`)
   - [x] CTF and security challenge fixtures created (`__sample-writeup.mdx`, `__sample-htb-web.mdx`, `__sample-ctf-crypto.mdx`)
   - [x] Homepage list component integration (`WriteupRow.tsx`)
@@ -28,7 +28,7 @@ This document outlines the complete content architecture, schema specifications,
   - [x] Schema defined via Zod (`journalSchema` in `src/lib/schemas.ts`)
   - [x] Directory structure initialized
   - [x] Mood and date frontmatter attributes specified
-- [x] **Art Schema (`src/content/personal/art/`)**
+- [x] **Art Schema (`src/content/art/`)**
   - [x] Schema defined via Zod (`artSchema` in `src/lib/schemas.ts`)
   - [x] Visual preview component integrated (`ArtPreview.tsx`)
   - [x] Artwork title, description, and image path fields defined
@@ -62,14 +62,11 @@ This document outlines the complete content architecture, schema specifications,
   - `github` (string, optional): Source code URL
 
 ### Writeups
-- **Location**: `src/content/professional/writeups/`
-- **Format**: MDX
-- **Fields**:
-  - `title` (string, required): Challenge/machine name
-  - `date` (string, YYYY-MM-DD, required): Date published
-  - `description` (string, required): Vulnerability or walkthrough summary
-  - `tags` (array of strings, required): Categories (pwn, web, crypto, etc.)
-  - `event` (string, optional): CTF name or platform
+- **Location**: `src/content/writeups/`
+- **Format**: Markdown or MDX
+- **Required fields**: `title`, publication `date` (YYYY-MM-DD), and `description`.
+- **Optional fields**: `slug`, `tags`, `platform`, `challenge`, `category`, `difficulty`, and `updatedAt`.
+- Set `published: true` for entries that are ready to generate.
 
 ### Blog
 - **Location**: `src/content/professional/blog/`
@@ -89,13 +86,12 @@ This document outlines the complete content architecture, schema specifications,
   - `mood` (string, optional): Emotional context
 
 ### Art
-- **Location**: `src/content/personal/art/`
-- **Format**: MDX
-- **Fields**:
-  - `title` (string, required): Piece title
-  - `date` (string, YYYY-MM-DD, required): Creation date
-  - `description` (string, required): Medium/concept summary
-  - `image` (string, required): Asset path
+- **Location**: `src/content/art/`
+- **Format**: Markdown or MDX
+- **Required fields**: `title`, publication `date` (YYYY-MM-DD), and at least one `media` entry with a local `src` and descriptive `alt`.
+- **Optional fields**: `slug`, `tags`, `description`, `source`, and `updatedAt`.
+- Use a media `caption` for the artwork date, collection record, and image credit. Keep media inside `public/content/art/<slug>/`.
+- Set `published: true` for entries that are ready to generate.
 
 ### The Signal (JSON)
 - **Location**: `src/content/signal/history/YYYY-MM-DD.json`
