@@ -12,7 +12,7 @@ export default function SignalArchiveExperience({
 }: {
   days: SignalDayType[];
 }) {
-  const [selectedNode, setSelectedNode] = useState<SignalNode | null>(null);
+  const [selection, setSelection] = useState<{ node: SignalNode; trigger: HTMLButtonElement } | null>(null);
 
   return (
     <>
@@ -21,35 +21,28 @@ export default function SignalArchiveExperience({
           <section
             key={day.date}
             id={`edition-${day.date}`}
-            className="grid gap-6 py-10 md:grid-cols-[150px_minmax(0,1fr)] md:py-14"
+            className="grid scroll-mt-20 grid-cols-[minmax(0,1fr)] gap-3 py-7 md:grid-cols-[150px_minmax(0,1fr)] md:gap-6 md:py-14"
           >
-            <div className="font-mono text-xs uppercase tracking-[0.18em] text-muted">
-              <a href={`#edition-${day.date}`} className="underline underline-offset-4">{day.date}</a>
-              <p className="mt-2 text-[10px] text-subtle">
-                {day.nodes.length} things
-              </p>
-            </div>
-            <ul className="m-0 list-none divide-y divide-border p-0 md:hidden">
-              {day.nodes.map((node) => (
-                <li key={node.id} className="py-4">
-                  <button type="button" onClick={() => setSelectedNode(node)} className="block min-h-11 w-full text-left text-foreground underline underline-offset-4">
-                    {node.title}
-                  </button>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{node.description}</p>
-                  {node.url ? <a href={node.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block min-h-11 text-sm text-muted underline underline-offset-4">Source: {node.source}</a> : null}
-                </li>
-              ))}
-            </ul>
-            <div className="hidden h-[420px] overflow-hidden border border-border bg-background/35 px-5 backdrop-blur-sm md:block">
-              <SignalCollage data={day} compact onSelect={setSelectedNode} />
+            <h2 className="font-mono text-sm font-medium tracking-wider text-foreground md:text-xs">
+              <a href={`#edition-${day.date}`} className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-accent md:min-h-0">
+                <time dateTime={day.date}>{day.date}</time>
+              </a>
+            </h2>
+            <div className="min-w-0 md:h-[420px] md:overflow-hidden md:border md:border-border md:bg-background/35 md:px-5 md:backdrop-blur-sm">
+              <SignalCollage
+                data={day}
+                compact
+                onSelect={(node, trigger) => setSelection({ node, trigger })}
+              />
             </div>
           </section>
         ))}
       </div>
 
       <SignalDetailPanel
-        node={selectedNode}
-        onClose={() => setSelectedNode(null)}
+        node={selection?.node ?? null}
+        returnFocusTo={selection?.trigger}
+        onClose={() => setSelection(null)}
       />
     </>
   );

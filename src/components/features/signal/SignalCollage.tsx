@@ -50,10 +50,10 @@ const mobileAlignClass: Record<SignalVisualPlacement['mobileAlign'], string> = {
 
 function objectStyle(placement: SignalVisualPlacement, compact: boolean): CSSProperties {
   return {
-    gridColumn: `${placement.col} / span ${placement.colSpan}`,
-    gridRow: `${placement.row} / span ${placement.rowSpan}`,
+    '--signal-grid-column': `${placement.col} / span ${placement.colSpan}`,
+    '--signal-grid-row': `${placement.row} / span ${placement.rowSpan}`,
     '--signal-mobile-width': `${compact ? placement.mobileWidth : Math.max(76, placement.mobileWidth)}%`,
-    transform: `rotate(${placement.rotation}deg)`,
+    '--signal-transform': `rotate(${placement.rotation}deg)`,
   } as CSSProperties;
 }
 
@@ -72,32 +72,37 @@ function SignalObject({
 }) {
   const title = node.title;
   const slotLabel = node.slot ? SIGNAL_SLOT_LABELS[node.slot] : node.category;
-  const sharedClass = `group relative flex w-[var(--signal-mobile-width)] min-w-0 flex-col overflow-hidden p-0 transition-colors duration-200 md:h-full md:w-auto ${mobileAlignClass[placement.mobileAlign]} ${treatmentClass[placement.treatment]}`;
+  const sizeClass = compact
+    ? 'min-h-32 w-full md:min-h-0'
+    : `w-[var(--signal-mobile-width)] [transform:var(--signal-transform)] ${mobileAlignClass[placement.mobileAlign]}`;
+  const sharedClass = `group relative flex min-w-0 flex-col overflow-hidden p-0 transition-colors duration-200 md:h-full md:w-auto md:[grid-column:var(--signal-grid-column)] md:[grid-row:var(--signal-grid-row)] md:[transform:var(--signal-transform)] ${sizeClass} ${treatmentClass[placement.treatment]}`;
 
   const body = (
     <>
       {placement.treatment === 'poster' ? (
         <SignalPreviewSurface
-          className="min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none"
+          className={compact
+            ? 'absolute inset-0 md:relative md:inset-auto md:h-[48%] md:flex-none'
+            : 'min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none'}
           node={node}
           featured={!compact && node.slot === 'artwork'}
-          decorative={!compact}
+          decorative
         />
       ) : (
         <SignalPreviewSurface
           className="pointer-events-none absolute inset-0 transition-opacity duration-200 group-hover:opacity-90"
           node={node}
-          decorative={!compact}
+          decorative
         />
       )}
 
       {compact ? (
-        <div className="relative flex min-h-0 flex-1 flex-col justify-end bg-gradient-to-t from-background via-background/52 to-background/5 p-3 md:p-2">
-          <span className="absolute left-3 top-3 font-mono text-[9px] uppercase leading-none tracking-[0.2em] opacity-60 md:left-2 md:top-2">
-            {String(index + 1).padStart(2, '0')} / {slotLabel}
+        <div className="relative flex min-h-0 flex-1 flex-col justify-end gap-1 bg-gradient-to-t from-background via-background/90 to-background/15 p-2.5 md:gap-0 md:via-background/52 md:to-background/5 md:p-2">
+          <span className="font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-muted md:absolute md:left-2 md:top-2 md:text-[9px] md:tracking-[0.2em]">
+            <span className="hidden md:inline">{String(index + 1).padStart(2, '0')} / </span>{slotLabel}
           </span>
-          <h2 className={`line-clamp-2 ${titleClass[placement.treatment]}`}>{title}</h2>
-          <span aria-hidden="true" className="absolute bottom-3 right-4 font-mono text-sm opacity-35 transition group-hover:opacity-100">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug [overflow-wrap:anywhere] md:text-base">{title}</h3>
+          <span aria-hidden="true" className="absolute right-2 top-2 font-mono text-xs text-muted md:bottom-3 md:right-4 md:top-auto md:text-sm">
             ↗
           </span>
         </div>
@@ -131,7 +136,7 @@ function SignalObject({
         type="button"
         className="signal-card-trigger absolute inset-0 z-10 cursor-pointer bg-transparent"
         onClick={(event) => onSelect(node, event.currentTarget)}
-        aria-label={compact ? `Open ${title}` : `Open ${slotLabel}: ${title}`}
+        aria-label={`Open ${slotLabel}: ${title}`}
       />
     </div>
   );
@@ -148,7 +153,7 @@ export default function SignalCollage({
     <div
       className={`min-w-0 ${
         compact
-          ? 'grid h-full min-h-0 grid-cols-12 grid-rows-12 gap-2 py-3 md:gap-3'
+          ? 'grid grid-cols-2 gap-2 md:h-full md:min-h-0 md:grid-cols-12 md:grid-rows-12 md:gap-3 md:py-3'
           : 'flex flex-col gap-10 min-h-[760px] py-10 md:grid md:h-full md:min-h-0 md:grid-cols-12 md:grid-rows-12 md:gap-3 md:py-3'
       }`}
       data-composition={plan.name}

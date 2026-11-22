@@ -67,17 +67,14 @@ export default function SignalArchivePage() {
           __html: JSON.stringify(archiveSchema).replace(/</g, '\\u003c'),
         }}
       />
-      <header className="mx-auto flex max-w-7xl items-end justify-between gap-8 border-b-2 border-foreground/80 pb-6">
+      <header className="mx-auto flex max-w-7xl flex-col items-start gap-3 border-b-2 border-foreground/80 pb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-8 sm:pb-6">
         <div>
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.28em] text-subtle">
-            Past daily collisions
-          </p>
           <h1 className="text-4xl font-semibold uppercase leading-none tracking-[-0.05em] md:text-7xl">
             Archive
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">Past discoveries across art, technology, books, and the open web. Link to an edition by its date, or open a selection to visit its original source.</p>
         </div>
-        <Link href="/signal" className="font-mono text-xs uppercase tracking-[0.16em] text-muted hover:text-foreground">
+        <Link href="/signal" className="inline-flex min-h-11 shrink-0 items-center font-mono text-xs uppercase tracking-[0.16em] text-foreground underline underline-offset-4 hover:text-accent sm:min-h-0">
           Today ↗
         </Link>
       </header>
