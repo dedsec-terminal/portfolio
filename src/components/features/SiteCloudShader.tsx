@@ -8,7 +8,7 @@ import {
   type PaperShaderElement,
 } from '@paper-design/shaders';
 
-const CLOUD_IMAGE = '/images/background/clouds.webp';
+const CLOUD_IMAGE = '/images/background/clouds-shader.webp';
 const PULSE_DURATION_MS = 1400;
 const INTERACTIVE_SELECTOR =
   'a, button, input, select, textarea, [role="button"], [data-shader-ignore]';
