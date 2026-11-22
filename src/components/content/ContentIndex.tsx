@@ -99,6 +99,7 @@ export default function ContentIndex({
               <li key={item.slug}>
                 <Link
                   href={`/${type}/${item.slug}`}
+                  prefetch={false}
                   className="group block overflow-hidden border border-border/30 bg-surface/30"
                 >
                   {media ? (
@@ -108,8 +109,8 @@ export default function ContentIndex({
                         alt={media.alt || `${item.title} — visual preview`}
                         title={item.title}
                         fill
-                        sizes="(min-width: 640px) 50vw, 100vw"
-                        quality={85}
+                        sizes="(min-width: 1024px) 452px, (min-width: 768px) calc(50vw - 84px), (min-width: 640px) calc(50vw - 59px), calc(100vw - 74px)"
+                        quality={75}
                         className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       />
                     </div>

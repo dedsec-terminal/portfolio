@@ -80,6 +80,10 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setCurrentIndex = useCallback((index: number) => {
+    if (currentIndexRef.current !== index) {
+      setProgress(0);
+      setDuration(0);
+    }
     currentIndexRef.current = index;
     setCurrentIndexState(index);
   }, []);
@@ -93,6 +97,62 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const loadAndPlayTrackRef = useRef<(index: number, attempt?: number) => void>(
     () => {}
   );
+
+  const retryPlaybackRef = useRef<(() => void) | null>(null);
+  const disposeAudioRef = useRef<(() => void) | null>(null);
+
+  const ensureAudio = useCallback(() => {
+    if (audioRef.current) return audioRef.current;
+    const audio = new Audio();
+    audio.preload = 'none';
+    audioRef.current = audio;
+
+    const handleTimeUpdate = () => setProgress(audio.currentTime * 1000);
+    const handleDurationChange = () => setDuration(audio.duration * 1000 || 0);
+    const handleEnded = () => {
+      // A paused player must never advance or resume itself.
+      if (playbackIntentRef.current === 'playing' && catalogueData.tracks.length > 0) {
+        const nextIdx =
+          (currentIndexRef.current + 1) % catalogueData.tracks.length;
+        loadAndPlayTrackRef.current(nextIdx);
+      }
+    };
+    const handlePlay = () => {
+      setPlaybackIntent('playing');
+      setIsPlaying(true);
+    };
+    const handlePause = () => setIsPlaying(false);
+    const handleError = () => {
+      if (audio.error) retryPlaybackRef.current?.();
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('durationchange', handleDurationChange);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('error', handleError);
+
+    disposeAudioRef.current = () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('durationchange', handleDurationChange);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('error', handleError);
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+      retryPlaybackRef.current = null;
+      audioRef.current = null;
+    };
+    return audio;
+  }, [setPlaybackIntent]);
+
+  useEffect(() => () => {
+    disposeAudioRef.current?.();
+    disposeAudioRef.current = null;
+  }, []);
 
   // Initialize the first track if catalogue is not empty
   useEffect(() => {
@@ -111,11 +171,30 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     }
   }, [setCurrentIndex]);
 
+  const startPlayback = useCallback(
+    (audio: HTMLAudioElement, index: number, attempt: number) => {
+      setPlaybackIntent('playing');
+      const retry = () => {
+        if (
+          retryPlaybackRef.current !== retry ||
+          playbackIntentRef.current !== 'playing'
+        ) return;
+        retryPlaybackRef.current = null;
+        loadAndPlayTrackRef.current(index + 1, attempt + 1);
+      };
+      retryPlaybackRef.current = retry;
+      audio.play().catch(retry);
+    },
+    [setPlaybackIntent]
+  );
+
   const loadAndPlayTrack = useCallback(
     (index: number, attempt = 0) => {
       if (catalogueData.tracks.length === 0) return;
       if (attempt >= catalogueData.tracks.length) {
         console.warn('All tracks unavailable. Stopping playback.');
+        setPlaybackIntent('paused');
+        audioRef.current?.pause();
         setIsPlaying(false);
         return;
       }
@@ -134,22 +213,13 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       });
       setIsReady(true);
 
-      if (audioRef.current && item.audioSource) {
-        setPlaybackIntent('playing');
-        audioRef.current.src = item.audioSource;
-
-        // We only attempt to play if it was already playing, OR if it's explicitly starting
-        // But actually loadAndPlayTrack is used when we explicitly want to play.
-        audioRef.current.play().catch((err) => {
-          console.error('Playback failed for', item.title, err);
-          // Skip to next track on failure
-          if (playbackIntentRef.current === 'playing') {
-            loadAndPlayTrackRef.current(safeIndex + 1, attempt + 1);
-          }
-        });
+      const audio = audioRef.current;
+      if (audio && item.audioSource) {
+        audio.src = item.audioSource;
+        startPlayback(audio, safeIndex, attempt);
       }
     },
-    [setCurrentIndex, setPlaybackIntent]
+    [setCurrentIndex, setPlaybackIntent, startPlayback]
   );
 
   useEffect(() => {
@@ -178,79 +248,18 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     [setCurrentIndex]
   );
 
-  useEffect(() => {
-    const audio = new Audio();
-    audio.preload = 'metadata';
-    audioRef.current = audio;
-
-    const handleTimeUpdate = () => setProgress(audio.currentTime * 1000);
-    const handleDurationChange = () => setDuration(audio.duration * 1000 || 0);
-    const handleEnded = () => {
-      // A paused player must never advance or resume itself.
-      if (playbackIntentRef.current === 'playing' && catalogueData.tracks.length > 0) {
-        const nextIdx =
-          (currentIndexRef.current + 1) % catalogueData.tracks.length;
-        loadAndPlayTrack(nextIdx);
-      }
-    };
-    const handlePlay = () => {
-      setPlaybackIntent('playing');
-      setIsPlaying(true);
-    };
-    const handlePause = () => setIsPlaying(false);
-    const handleError = () => {
-      console.error('Audio playback error encountered.');
-      // Skip to next track on failure if it was currently trying to play
-      if (playbackIntentRef.current === 'playing') {
-        const nextIdx =
-          (currentIndexRef.current + 1) % catalogueData.tracks.length;
-        loadAndPlayTrack(nextIdx, 1);
-      } else {
-        setIsPlaying(false);
-      }
-    };
-
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('durationchange', handleDurationChange);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('error', handleError);
-
-    return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('durationchange', handleDurationChange);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('error', handleError);
-      audio.pause();
-    };
-  }, [loadAndPlayTrack, setPlaybackIntent]);
-
   const togglePlay = useCallback(() => {
-    if (!audioRef.current || catalogueData.tracks.length === 0) return;
-    if (audioRef.current.paused) {
-      setPlaybackIntent('playing');
-      // Ensure source is set if it was never loaded
-      if (!audioRef.current.src && track?.audioSource) {
-        audioRef.current.src = track.audioSource;
-      }
-      audioRef.current.play().catch((err) => {
-        console.error('Playback failed on toggle:', err);
-        // If the current track fails on toggle, skip to the next valid one
-        if (playbackIntentRef.current === 'playing') {
-          loadAndPlayTrack(
-            (currentIndexRef.current + 1) % catalogueData.tracks.length,
-            1
-          );
-        }
-      });
+    if (catalogueData.tracks.length === 0 || !track?.audioSource) return;
+    const audio = ensureAudio();
+    if (audio.paused) {
+      if (!audio.src) audio.src = track.audioSource;
+      startPlayback(audio, currentIndexRef.current, 0);
     } else {
+      retryPlaybackRef.current = null;
       setPlaybackIntent('paused');
-      audioRef.current.pause();
+      audio.pause();
     }
-  }, [track, loadAndPlayTrack, setPlaybackIntent]);
+  }, [track, ensureAudio, startPlayback, setPlaybackIntent]);
 
   const next = useCallback(() => {
     if (catalogueData.tracks.length === 0) return;
@@ -283,11 +292,11 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
 
   const playTrack = useCallback(
     (index: number) => {
-      // Used by manual queue selection
-      setPlaybackIntent('playing');
+      if (!catalogueData.tracks[index]?.audioSource) return;
+      ensureAudio();
       loadAndPlayTrack(index);
     },
-    [loadAndPlayTrack, setPlaybackIntent]
+    [ensureAudio, loadAndPlayTrack]
   );
 
   const contextValue: MusicContextType = {

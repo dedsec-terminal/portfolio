@@ -21,7 +21,7 @@ class MockAudio {
   currentTime: number = 0;
   duration: number = 100;
   paused: boolean = true;
-  autoplay: boolean = false;
+  error: MediaError | null = null;
 
   listeners: Record<string, Array<(...args: unknown[]) => void>> = {};
 
@@ -48,6 +48,14 @@ class MockAudio {
     return Promise.resolve();
   }
 
+  removeAttribute(name: string) {
+    if (name === 'src') this.src = '';
+  }
+
+  load() {
+    this.error = null;
+  }
+
   pause() {
     this.paused = true;
     this.dispatchEvent('pause');
@@ -61,9 +69,9 @@ describe('MusicProvider', () => {
   beforeEach(() => {
     mockAudioInstance = new MockAudio();
     playSpy = vi.spyOn(mockAudioInstance, 'play');
-    vi.stubGlobal('Audio', function () {
+    vi.stubGlobal('Audio', vi.fn(function () {
       return mockAudioInstance;
-    });
+    }));
   });
 
   afterEach(() => {
@@ -106,6 +114,7 @@ describe('MusicProvider', () => {
     expect(screen.getByTestId('is-playing').textContent).toBe('false');
     expect(screen.getByTestId('current-index').textContent).toBe('0');
     expect(mockAudioInstance.paused).toBe(true);
+    expect(Audio).not.toHaveBeenCalled();
     expect(playSpy).toHaveBeenCalledTimes(0);
   });
 
@@ -116,6 +125,7 @@ describe('MusicProvider', () => {
       </MusicProvider>
     );
 
+    expect(Audio).not.toHaveBeenCalled();
     expect(playSpy).toHaveBeenCalledTimes(0);
 
     await act(async () => {
@@ -130,6 +140,7 @@ describe('MusicProvider', () => {
       document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
       document.body.click();
     });
+    expect(Audio).not.toHaveBeenCalled();
     expect(playSpy).toHaveBeenCalledTimes(0);
     expect(mockAudioInstance.paused).toBe(true);
   });
@@ -145,6 +156,7 @@ describe('MusicProvider', () => {
       screen.getByTestId('play').click();
     });
 
+    expect(Audio).toHaveBeenCalledTimes(1);
     expect(playSpy).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('is-playing').textContent).toBe('true');
     expect(mockAudioInstance.paused).toBe(false);
@@ -253,6 +265,7 @@ describe('MusicProvider', () => {
       document.body.removeChild(div);
     });
 
+    expect(Audio).not.toHaveBeenCalled();
     expect(playSpy).toHaveBeenCalledTimes(0);
   });
 
@@ -401,11 +414,57 @@ describe('MusicProvider', () => {
 
     // Mock an error during playback
     await act(async () => {
+      mockAudioInstance.error = { code: 4 } as MediaError;
       mockAudioInstance.dispatchEvent('error');
     });
 
     // It should skip to B and try to play
     expect(screen.getByTestId('title').textContent).toBe('Track B');
     // We mocked a sync play resolution, so isPlaying is likely true immediately
+  });
+
+  it('ignores an older play rejection after explicit queue selection', async () => {
+    let rejectFirstPlay = () => {};
+    playSpy.mockImplementationOnce(
+      () => new Promise<void>((_, reject) => {
+        rejectFirstPlay = () => reject(new Error('Superseded'));
+      })
+    );
+    render(<MusicProvider><TestComponent /></MusicProvider>);
+
+    await act(async () => {
+      screen.getByTestId('play').click();
+      screen.getByTestId('select').click();
+      rejectFirstPlay();
+    });
+
+    expect(screen.getByTestId('title').textContent).toBe('Track B');
+    expect(playSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('stops after every track reports a media error', async () => {
+    render(<MusicProvider><TestComponent /></MusicProvider>);
+
+    await act(async () => {
+      screen.getByTestId('play').click();
+      for (let index = 0; index < 4; index += 1) {
+        mockAudioInstance.error = { code: 4 } as MediaError;
+        mockAudioInstance.dispatchEvent('error');
+      }
+    });
+
+    expect(playSpy).toHaveBeenCalledTimes(3);
+    expect(screen.getByTestId('is-playing').textContent).toBe('false');
+  });
+
+  it('releases the audio source and listeners after playback is unmounted', async () => {
+    const { unmount } = render(<MusicProvider><TestComponent /></MusicProvider>);
+    await act(async () => screen.getByTestId('play').click());
+
+    unmount();
+
+    expect(mockAudioInstance.paused).toBe(true);
+    expect(mockAudioInstance.src).toBe('');
+    expect(Object.values(mockAudioInstance.listeners).flat()).toHaveLength(0);
   });
 });

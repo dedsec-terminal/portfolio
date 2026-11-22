@@ -33,6 +33,7 @@ export default function ArtPreview() {
                 <Link
                   key={entry.slug}
                   href={`/art/${entry.slug}`}
+                  prefetch={false}
                   className="group relative aspect-square overflow-hidden bg-surface"
                   aria-label={`View artwork: ${entry.title}`}
                 >
@@ -41,8 +42,8 @@ export default function ArtPreview() {
                     alt={entry.media[0].alt || `${entry.title} — visual artwork`}
                     title={entry.title}
                     fill
-                    sizes="(max-width: 639px) 100vw, 33vw"
-                    quality={85}
+                    sizes="(min-width: 1328px) 394px, (min-width: 768px) calc((100vw - 146px) / 3), (min-width: 640px) calc((100vw - 74px) / 3), calc(100vw - 72px)"
+                    quality={75}
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </Link>
