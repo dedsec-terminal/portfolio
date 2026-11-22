@@ -6,11 +6,11 @@ export default function SiteFooter() {
 
   return (
     <footer
-      className="glass-surface mt-4 rounded-t-2xl border-x-0 border-b-0 py-5"
+      className="glass-surface mt-2 rounded-t-xl border-x-0 border-b-0 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:mt-4 md:rounded-t-2xl md:py-5"
     >
-      <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Left */}
-        <p className="text-xs text-subtle font-mono tracking-wider">
+        <p className="font-mono text-[11px] leading-4 text-subtle md:text-xs md:tracking-wider">
           Dedsec Terminal · © {year} Swaraj Singh
         </p>
 
