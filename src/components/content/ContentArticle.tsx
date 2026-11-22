@@ -80,19 +80,55 @@ export default async function ContentArticle({
   // Describe the authored page, not authorship of the historical artwork.
   const schemaType = item.type === 'art' || item.type === 'journal' ? 'Article' : 'TechArticle';
 
+  const typeName =
+    item.type === 'art'
+      ? 'Art'
+      : item.type === 'projects'
+        ? 'Projects'
+        : item.type === 'writeups'
+          ? 'Writeups'
+          : item.type === 'blog' ? 'Blog' : 'Journal';
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': schemaType,
-    headline: item.title,
-    description: item.description,
-    author: {
-      '@type': 'Person',
-      name: 'Swaraj Singh',
-      url: siteConfig.url,
-    },
-    datePublished: `${item.date}T00:00:00.000Z`,
-    dateModified: item.updatedAt ? `${item.updatedAt}T00:00:00.000Z` : `${item.date}T00:00:00.000Z`,
-    mainEntityOfPage: `${siteConfig.url}/${item.type}/${item.slug}`,
+    '@graph': [
+      {
+        '@type': schemaType,
+        headline: item.title,
+        description: item.description,
+        author: {
+          '@type': 'Person',
+          name: 'Swaraj Singh',
+          url: siteConfig.url,
+        },
+        datePublished: `${item.date}T00:00:00.000Z`,
+        dateModified: item.updatedAt ? `${item.updatedAt}T00:00:00.000Z` : `${item.date}T00:00:00.000Z`,
+        mainEntityOfPage: `${siteConfig.url}/${item.type}/${item.slug}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: siteConfig.url,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: typeName,
+            item: `${siteConfig.url}/${item.type}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: item.title,
+            item: `${siteConfig.url}/${item.type}/${item.slug}`,
+          },
+        ],
+      },
+    ],
   };
 
   return (

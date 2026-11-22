@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { ContentItem, ContentType } from '@/lib/content';
+import { siteConfig } from '@/lib/site';
 
 const labels: Record<
   ContentType,
@@ -67,10 +68,33 @@ export default function ContentIndex({
   const isWriteups = type === 'writeups';
   const isWriting = isWriteups || type === 'journal';
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: label.title,
+    description: `${label.eyebrow} by Swaraj Singh`,
+    url: `${siteConfig.url}/${type}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.title,
+        url: `${siteConfig.url}/${type}/${item.slug}`,
+      })),
+    },
+  };
+
   return (
     <section
       className="glass-surface mx-3 my-4 max-w-5xl rounded-2xl px-6 py-16 sm:mx-6 md:px-12 md:py-24 lg:mx-auto"
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
       <header className="mb-12 border-b border-border/30 pb-8">
         {!isWriting ? (
           <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-subtle">{label.eyebrow}</p>
