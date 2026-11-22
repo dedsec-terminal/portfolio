@@ -6,7 +6,7 @@ export default function SiteFooter() {
 
   return (
     <footer
-      className="glass-surface mt-4 rounded-t-2xl border-x-0 border-b-0 pt-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] md:py-5"
+      className="glass-surface mt-4 rounded-t-2xl border-x-0 border-b-0 py-5"
     >
       <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Left */}

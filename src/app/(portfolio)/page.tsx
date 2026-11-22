@@ -36,8 +36,6 @@ export default function HomePage() {
 
         <ArtPreview />
 
-        {/* Bottom padding for mobile nav */}
-        <div className="h-16 md:hidden" aria-hidden="true" />
       </div>
     </>
   );
