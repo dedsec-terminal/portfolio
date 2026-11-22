@@ -11,7 +11,7 @@ export class WikimediaAdapter implements SignalSourceAdapter {
       const [yyyy, mm, dd] = getSignalDate().split('-');
       const response = await fetch(
         `https://en.wikipedia.org/api/rest_v1/feed/featured/${yyyy}/${mm}/${dd}`,
-        { headers: { 'Accept': 'application/json' } }
+        { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8_000) }
       );
 
       if (!response.ok) {

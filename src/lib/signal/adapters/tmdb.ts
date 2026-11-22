@@ -29,7 +29,8 @@ export class TmdbAdapter implements SignalSourceAdapter {
       const responses = await Promise.all(
         mediaTypes.map(async (mediaType) => {
           const response = await fetch(
-            `https://api.themoviedb.org/3/trending/${mediaType}/day?api_key=${apiKey}`
+            `https://api.themoviedb.org/3/trending/${mediaType}/day?api_key=${apiKey}`,
+            { signal: AbortSignal.timeout(8_000) }
           );
           if (!response.ok) {
             throw new Error(`TMDB ${mediaType} API failed: ${response.statusText}`);

@@ -9,8 +9,10 @@ import {
   TmdbAdapter,
   WildcardAdapter,
   MetMuseumAdapter,
+  ClevelandMuseumAdapter,
   WordsAdapter,
 } from '../src/lib/signal/adapters';
+import { collectSignalCandidates } from '../src/lib/signal/collect';
 import { SignalGenerator, GeneratorConfig } from '../src/lib/signal/generator';
 import { curateSignalCandidates } from '../src/lib/signal/enrich';
 import { resolveSignalPreviews } from '../src/lib/signal/previews';
@@ -108,6 +110,7 @@ async function main() {
   const adapters = [
     new PersonalCatalogueAdapter(),
     new MetMuseumAdapter(),
+    new ClevelandMuseumAdapter(dateStr),
     new AnilistAdapter(),
     new WikimediaAdapter(),
     new HackerNewsAdapter(),
@@ -117,24 +120,9 @@ async function main() {
     new WordsAdapter(),
   ];
 
-  let candidates: SignalItem[] = [];
-
-  for (const adapter of adapters) {
-    try {
-      console.log(`[Signal Engine] Fetching from ${adapter.id}...`);
-      const items = await adapter.fetchCandidates();
-      candidates = candidates.concat(items);
-      console.log(
-        `[Signal Engine] ${adapter.id} returned ${items.length} candidates.`
-      );
-    } catch (error) {
-      console.error(
-        `[Signal Engine] Adapter ${adapter.id} completely failed:`,
-        error
-      );
-      // We continue with other adapters
-    }
-  }
+  const collectionStartedAt = performance.now();
+  const candidates = await collectSignalCandidates(adapters);
+  console.log(`[Signal Engine] Source collection took ${Math.round(performance.now() - collectionStartedAt)} ms.`);
 
   console.log(`[Signal Engine] Total candidates pool: ${candidates.length}`);
 

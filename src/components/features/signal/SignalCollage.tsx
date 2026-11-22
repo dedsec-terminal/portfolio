@@ -15,7 +15,7 @@ type SignalNode = SignalDayType['nodes'][number];
 interface SignalCollageProps {
   data: SignalDayType;
   compact?: boolean;
-  onSelect?: (node: SignalNode) => void;
+  onSelect?: (node: SignalNode, trigger: HTMLButtonElement) => void;
 }
 
 const treatmentClass: Record<SignalTreatment, string> = {
@@ -66,7 +66,7 @@ function SignalObject({
   node: SignalNode;
   placement: SignalVisualPlacement;
   index: number;
-  onSelect?: (node: SignalNode) => void;
+  onSelect?: (node: SignalNode, trigger: HTMLButtonElement) => void;
 }) {
   const title = node.title;
   const slotLabel = node.slot ? SIGNAL_SLOT_LABELS[node.slot] : node.category;
@@ -109,7 +109,7 @@ function SignalObject({
       <button
         type="button"
         className="signal-card-trigger absolute inset-0 z-10 cursor-pointer bg-transparent"
-        onClick={() => onSelect(node)}
+        onClick={(event) => onSelect(node, event.currentTarget)}
         aria-label={`Open ${title}`}
       />
     </div>

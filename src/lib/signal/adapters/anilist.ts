@@ -38,6 +38,7 @@ export class AnilistAdapter implements SignalSourceAdapter {
     try {
       const response = await fetch('https://graphql.anilist.co', {
         method: 'POST',
+        signal: AbortSignal.timeout(8_000),
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',

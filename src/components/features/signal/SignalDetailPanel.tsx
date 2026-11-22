@@ -12,21 +12,22 @@ type SignalNode = SignalDayType['nodes'][0];
 interface SignalDetailPanelProps {
   node: SignalNode | null;
   onClose: () => void;
+  returnFocusTo?: HTMLElement;
 }
 
-export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelProps) {
+export default function SignalDetailPanel({ node, onClose, returnFocusTo }: SignalDetailPanelProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (!node) return;
-    const trigger = document.activeElement;
+    const trigger = returnFocusTo ?? document.activeElement;
     const dialog = dialogRef.current;
     dialog?.showModal();
     return () => {
       dialog?.close();
       if (trigger instanceof HTMLElement && trigger.isConnected) trigger.focus();
     };
-  }, [node]);
+  }, [node, returnFocusTo]);
 
   if (!node) return null;
 
@@ -52,7 +53,7 @@ export default function SignalDetailPanel({ node, onClose }: SignalDetailPanelPr
         </button>
 
         <div className="grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <SignalPreviewSurface className="min-h-72 border-b-2 border-foreground/80 md:min-h-[560px] md:border-b-0 md:border-r-2" node={node} />
+          <SignalPreviewSurface key={node.image || node.id} className="min-h-72 border-b-2 border-foreground/80 md:min-h-[560px] md:border-b-0 md:border-r-2" node={node} />
 
           <div className="flex min-h-80 flex-col justify-between p-6 pr-20 md:p-10 md:pr-20">
             <div>

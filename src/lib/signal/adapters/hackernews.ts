@@ -48,13 +48,17 @@ export class HackerNewsAdapter implements SignalSourceAdapter {
 
   async fetchCandidates(): Promise<SignalItem[]> {
     try {
-      const topResponse = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
+      const topResponse = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json', {
+        signal: AbortSignal.timeout(8_000),
+      });
       if (!topResponse.ok) throw new Error(`HN API failed: ${topResponse.statusText}`);
 
       const storyIds = (await topResponse.json()) as number[];
       const topStories = await Promise.all(
         storyIds.slice(0, 20).map(async (id) => {
-          const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
+          const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
+            signal: AbortSignal.timeout(8_000),
+          });
           return response.ok ? response.json() : null;
         })
       );
@@ -68,7 +72,7 @@ export class HackerNewsAdapter implements SignalSourceAdapter {
           url.searchParams.set('tags', 'story');
           url.searchParams.set('hitsPerPage', '5');
           url.searchParams.set('numericFilters', `created_at_i>${since}`);
-          const response = await fetch(url);
+          const response = await fetch(url, { signal: AbortSignal.timeout(8_000) });
           if (!response.ok) return [];
           const payload = (await response.json()) as {
             hits?: Array<{

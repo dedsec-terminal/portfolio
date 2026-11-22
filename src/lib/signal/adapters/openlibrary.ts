@@ -17,7 +17,9 @@ export class OpenLibraryAdapter implements SignalSourceAdapter {
   async fetchCandidates(): Promise<SignalItem[]> {
     try {
       // Fetch some trending books
-      const response = await fetch('https://openlibrary.org/trending/daily.json?limit=10');
+      const response = await fetch('https://openlibrary.org/trending/daily.json?limit=10', {
+        signal: AbortSignal.timeout(8_000),
+      });
       if (!response.ok) throw new Error(`OpenLibrary API failed: ${response.statusText}`);
       
       const data = (await response.json()) as OpenLibraryResponse;

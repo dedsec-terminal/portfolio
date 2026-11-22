@@ -1,19 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import type { SignalDayType } from '@/lib/signal/schemas';
 import SignalCollage from './SignalCollage';
-import SignalDetailPanel from './SignalDetailPanel';
+
+const SignalDetailPanel = dynamic(() => import('./SignalDetailPanel'), { ssr: false });
 
 interface SignalExperienceProps {
   data: SignalDayType;
 }
 
 export default function SignalExperience({ data }: SignalExperienceProps) {
-  const [selectedNode, setSelectedNode] = useState<
-    SignalDayType['nodes'][number] | null
-  >(null);
+  const [selection, setSelection] = useState<{
+    node: SignalDayType['nodes'][number];
+    trigger: HTMLButtonElement;
+  } | null>(null);
 
   return (
     <section className="relative min-h-[calc(100svh-3rem)] w-full bg-background/65 backdrop-blur-sm md:flex md:h-[calc(100svh-3rem)] md:min-h-0 md:flex-col md:overflow-hidden">
@@ -28,14 +31,14 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
         </div>
         <div className="shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.18em] text-muted md:text-xs">
           <p>{data.date}</p>
-          <Link href="/signal/archive" className="mt-2 inline-block hover:text-foreground">
+          <Link href="/signal/archive" prefetch={false} className="mt-2 inline-block hover:text-foreground">
             Archive ↗
           </Link>
         </div>
       </header>
 
       <div className="px-5 md:min-h-0 md:flex-1 md:px-10">
-        <SignalCollage data={data} onSelect={setSelectedNode} />
+        <SignalCollage data={data} onSelect={(node, trigger) => setSelection({ node, trigger })} />
       </div>
 
       <footer className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-t-2 border-foreground/80 bg-background/20 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.18em] text-subtle md:px-10">
@@ -43,7 +46,13 @@ export default function SignalExperience({ data }: SignalExperienceProps) {
         <span>Changes tomorrow</span>
       </footer>
 
-      <SignalDetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />
+      {selection ? (
+        <SignalDetailPanel
+          node={selection.node}
+          returnFocusTo={selection.trigger}
+          onClose={() => setSelection(null)}
+        />
+      ) : null}
     </section>
   );
 }
