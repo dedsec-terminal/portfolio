@@ -8,3 +8,4 @@ export * from './wildcard';
 export * from './met-museum';
 export * from './words';
 export * from './cleveland-museum';
+export * from './watch';

@@ -26,9 +26,13 @@ function hash(value: string) {
 export default function SignalPreviewSurface({
   node,
   className = '',
+  featured = false,
+  decorative = false,
 }: {
   node: SignalNode;
   className?: string;
+  featured?: boolean;
+  decorative?: boolean;
 }) {
   const [imageFailed, setImageFailed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -48,7 +52,7 @@ export default function SignalPreviewSurface({
   }, [node.image]);
 
   return (
-    <div className={`${positioning} isolate overflow-hidden bg-background ${className}`}>
+    <div aria-hidden={decorative || undefined} className={`${positioning} isolate overflow-hidden bg-background ${className}`}>
       <div
         data-testid="signal-preview-fallback"
         className="absolute inset-0 bg-background"
@@ -72,13 +76,15 @@ export default function SignalPreviewSurface({
         <img
           ref={imageRef}
           data-testid="signal-preview-image"
-          className={`absolute inset-0 h-full w-full object-cover grayscale transition duration-500 group-hover:grayscale-0 ${
+          className={`absolute inset-0 h-full w-full object-cover transition duration-500 ${featured ? '' : 'grayscale group-hover:grayscale-0'} ${
             imageLoaded ? 'opacity-100' : 'opacity-0'
           }`}
           src={node.image}
-          alt={node.title ? `${node.title} — visual preview` : 'Curated daily signal preview'}
-          title={node.title || undefined}
-          loading="lazy"
+          alt={decorative ? '' : node.title ? `${node.title} — visual preview` : 'Curated daily signal preview'}
+          title={decorative ? undefined : node.title || undefined}
+          decoding="async"
+          loading={featured ? 'eager' : 'lazy'}
+          fetchPriority={featured ? 'high' : undefined}
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageFailed(true)}
         />

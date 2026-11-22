@@ -48,11 +48,11 @@ const mobileAlignClass: Record<SignalVisualPlacement['mobileAlign'], string> = {
   end: 'self-end',
 };
 
-function objectStyle(placement: SignalVisualPlacement): CSSProperties {
+function objectStyle(placement: SignalVisualPlacement, compact: boolean): CSSProperties {
   return {
     gridColumn: `${placement.col} / span ${placement.colSpan}`,
     gridRow: `${placement.row} / span ${placement.rowSpan}`,
-    '--signal-mobile-width': `${placement.mobileWidth}%`,
+    '--signal-mobile-width': `${compact ? placement.mobileWidth : Math.max(76, placement.mobileWidth)}%`,
     transform: `rotate(${placement.rotation}deg)`,
   } as CSSProperties;
 }
@@ -61,11 +61,13 @@ function SignalObject({
   node,
   placement,
   index,
+  compact,
   onSelect,
 }: {
   node: SignalNode;
   placement: SignalVisualPlacement;
   index: number;
+  compact: boolean;
   onSelect?: (node: SignalNode, trigger: HTMLButtonElement) => void;
 }) {
   const title = node.title;
@@ -75,42 +77,61 @@ function SignalObject({
   const body = (
     <>
       {placement.treatment === 'poster' ? (
-        <SignalPreviewSurface className="min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none" node={node} />
+        <SignalPreviewSurface
+          className="min-h-44 flex-1 md:h-[48%] md:min-h-0 md:flex-none"
+          node={node}
+          featured={!compact && node.slot === 'artwork'}
+          decorative={!compact}
+        />
       ) : (
         <SignalPreviewSurface
           className="pointer-events-none absolute inset-0 transition-opacity duration-200 group-hover:opacity-90"
           node={node}
+          decorative={!compact}
         />
       )}
 
-      <div className="relative flex min-h-0 flex-1 flex-col justify-end bg-gradient-to-t from-background via-background/52 to-background/5 p-3 md:p-2">
-        <span className="absolute left-3 top-3 font-mono text-[9px] uppercase leading-none tracking-[0.2em] opacity-60 md:left-2 md:top-2">
-          {String(index + 1).padStart(2, '0')} / {slotLabel}
-        </span>
-        <h2 className={`line-clamp-2 ${titleClass[placement.treatment]}`}>{title}</h2>
-        <span className="absolute bottom-3 right-4 font-mono text-sm opacity-35 transition group-hover:opacity-100">
-          ↗
-        </span>
-      </div>
+      {compact ? (
+        <div className="relative flex min-h-0 flex-1 flex-col justify-end bg-gradient-to-t from-background via-background/52 to-background/5 p-3 md:p-2">
+          <span className="absolute left-3 top-3 font-mono text-[9px] uppercase leading-none tracking-[0.2em] opacity-60 md:left-2 md:top-2">
+            {String(index + 1).padStart(2, '0')} / {slotLabel}
+          </span>
+          <h2 className={`line-clamp-2 ${titleClass[placement.treatment]}`}>{title}</h2>
+          <span aria-hidden="true" className="absolute bottom-3 right-4 font-mono text-sm opacity-35 transition group-hover:opacity-100">
+            ↗
+          </span>
+        </div>
+      ) : (
+        <div className="relative flex min-h-0 flex-1 flex-col justify-end gap-1.5 bg-gradient-to-t from-background via-background/95 to-background/75 p-3 md:gap-1 md:p-2">
+          <p className="flex shrink-0 items-baseline justify-between gap-2 font-mono text-[10px] uppercase leading-tight tracking-[0.12em] text-muted">
+            {slotLabel}
+            {onSelect ? <span aria-hidden="true">↗</span> : null}
+          </p>
+          <h2 className={`line-clamp-2 break-words ${titleClass[placement.treatment]}`}>{title}</h2>
+          {node.curiosity ? (
+            <p className="line-clamp-2 text-xs leading-snug text-muted md:hidden">{node.curiosity}</p>
+          ) : null}
+        </div>
+      )}
     </>
   );
 
   if (!onSelect) {
     return (
-      <div className={sharedClass} style={objectStyle(placement)}>
+      <div className={sharedClass} style={objectStyle(placement, compact)}>
         {body}
       </div>
     );
   }
 
   return (
-    <div className={sharedClass} style={objectStyle(placement)}>
+    <div className={sharedClass} style={objectStyle(placement, compact)}>
       {body}
       <button
         type="button"
         className="signal-card-trigger absolute inset-0 z-10 cursor-pointer bg-transparent"
         onClick={(event) => onSelect(node, event.currentTarget)}
-        aria-label={`Open ${title}`}
+        aria-label={compact ? `Open ${title}` : `Open ${slotLabel}: ${title}`}
       />
     </div>
   );
@@ -138,6 +159,7 @@ export default function SignalCollage({
           node={node}
           placement={plan.placements.find((placement) => placement.slot === node.slot) ?? plan.placements[index]}
           index={index}
+          compact={compact}
           onSelect={onSelect}
         />
       ))}

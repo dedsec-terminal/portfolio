@@ -20,6 +20,15 @@ export const SIGNAL_SLOT_LABELS: Record<SignalSlot, string> = {
   words: 'Words',
 };
 
+export const SIGNAL_SLOT_BRIEFS: Record<SignalSlot, string> = {
+  artwork: 'Choose an identifiable work with a visual detail or creator context supported by the catalogue.',
+  website: 'Choose a useful or distinctive destination and explain what a visitor can do or discover there.',
+  frontier: 'Choose timely, substantive cybersecurity reporting or AI research, favoring primary sources.',
+  screen: 'Choose a specific film, series, documentary, short, talk, or video for its premise or craft. Prefer distinctive work over popularity.',
+  reading: 'Choose a work with a clear subject, argument, or question worth reading about.',
+  words: 'Choose an attributable line or idea that rewards reflection and retain its source.',
+};
+
 export interface SignalItem {
   id: string; // Globally unique among its tier/source to prevent duplicates
   title: string;

@@ -11,6 +11,7 @@ import {
   MetMuseumAdapter,
   ClevelandMuseumAdapter,
   WordsAdapter,
+  WatchCatalogueAdapter,
 } from '../src/lib/signal/adapters';
 import { collectSignalCandidates } from '../src/lib/signal/collect';
 import { SignalGenerator, GeneratorConfig } from '../src/lib/signal/generator';
@@ -80,21 +81,39 @@ async function main() {
 
   // 2. Load historical IDs for cooldown (e.g. past 30 days)
   const historicalIds: string[] = [];
+  const historicalTopicKeys: string[] = [];
+  const historicalWatchTitles: string[] = [];
+  let lastWatchFormat: string | undefined;
   const historicalCandidates: SignalItem[] = [];
   try {
     const files = fs.readdirSync(HISTORY_DIR);
     // Sort descending and take last 30
     const recentFiles = files
-      .filter((f) => f.endsWith('.json'))
-      .filter((f) => path.join(HISTORY_DIR, f) !== historyFile)
+      .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f) && f < `${dateStr}.json`)
       .sort((a, b) => b.localeCompare(a))
       .slice(0, 30);
 
     for (const f of recentFiles) {
-      const content = fs.readFileSync(path.join(HISTORY_DIR, f), 'utf-8');
-      const day = signalDaySchema.safeParse(JSON.parse(content));
+      let day;
+      try {
+        const content = fs.readFileSync(path.join(HISTORY_DIR, f), 'utf-8');
+        day = signalDaySchema.safeParse(JSON.parse(content));
+      } catch (error) {
+        console.warn(`[Signal Engine] Could not parse history file ${f}:`, error);
+        continue;
+      }
       if (day.success) {
         historicalIds.push(...day.data.nodes.map((node) => node.id));
+        historicalTopicKeys.push(
+          ...day.data.nodes.flatMap((node) =>
+            node.slot === 'frontier' && node.topicKey ? [node.topicKey] : []
+          )
+        );
+        const watch = day.data.nodes.find((node) => node.slot === 'screen');
+        if (watch) {
+          historicalWatchTitles.push(watch.title);
+          lastWatchFormat ??= watch.category;
+        }
         historicalCandidates.push(
           ...day.data.nodes
             .filter((node) => node.slot === 'artwork')
@@ -118,6 +137,7 @@ async function main() {
     new TmdbAdapter(),
     new WildcardAdapter(),
     new WordsAdapter(),
+    new WatchCatalogueAdapter(),
   ];
 
   const collectionStartedAt = performance.now();
@@ -137,6 +157,9 @@ async function main() {
     date: dateStr,
     generatorVersion,
     historicalIds,
+    historicalTopicKeys,
+    historicalWatchTitles,
+    lastWatchFormat,
   };
 
   const recovered = recoverArtworkCandidates(candidates, historicalCandidates);
