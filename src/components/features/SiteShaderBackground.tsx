@@ -47,7 +47,7 @@ export default function SiteShaderBackground() {
     >
       <Image
         data-testid="site-cloud-fallback"
-        src="/images/background/clouds.webp"
+        src="/images/background/clouds-fallback.webp"
         alt=""
         fill
         sizes="100vw"

@@ -19,6 +19,7 @@ Dedsec Terminal is the canonical cybersecurity portfolio of Swaraj Singh. The si
 - [Projects](https://dedsec-terminal.in/projects): Selected cybersecurity and GRC projects
 - [Security writeups](https://dedsec-terminal.in/writeups): Technical security analysis
 - [Resume](https://dedsec-terminal.in/resume): Professional resume
+- [Resume Markdown](https://dedsec-terminal.in/resume.md): Machine-readable version of the public resume
 - [Journal](https://dedsec-terminal.in/journal): Personal essays and reflections
 - [Art](https://dedsec-terminal.in/art): Artwork commentary and attribution
 - [Today](https://dedsec-terminal.in/signal): Daily discoveries

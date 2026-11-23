@@ -119,7 +119,7 @@ describe('SiteShaderBackground', () => {
     expect(background.getAttribute('aria-hidden')).toBe('true');
     expect(background.className).toContain('fixed');
     expect(fallback.getAttribute('alt')).toBe('');
-    expect(fallback.getAttribute('src')).toBe('/images/background/clouds.webp');
+    expect(fallback.getAttribute('src')).toBe('/images/background/clouds-fallback.webp');
   });
 
   it('mounts the WebGL shader when motion and WebGL2 are available', async () => {
