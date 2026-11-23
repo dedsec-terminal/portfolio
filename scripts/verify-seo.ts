@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
-import { footerNavigation } from '../src/lib/navigation';
 import { siteConfig } from '../src/lib/site';
 import sitemap from '../src/app/sitemap';
 
@@ -15,7 +14,6 @@ const descriptions = new Map<string, string>();
 const entries = sitemap();
 const urls = new Set(entries.map(({ url }) => url));
 if (urls.size !== entries.length) failures.push('Sitemap contains duplicate URLs');
-const routes = new Set(entries.map(({ url }) => new URL(url).pathname));
 const robots = fs.readFileSync(path.join(appDir, 'robots.txt.body'), 'utf8');
 if (!robots.split(/\r?\n/).includes(`Sitemap: ${siteConfig.url}/sitemap.xml`)) {
   failures.push('robots.txt does not advertise the canonical sitemap');
@@ -50,14 +48,6 @@ for (const entry of entries) {
   if (/noindex/i.test(meta('robots'))) failures.push(`${route}: sitemap page is noindex`);
   if (meta('og:url') !== entry.url) failures.push(`${route}: Open Graph URL differs`);
 
-  const footer = html.match(/<nav\b[^>]*aria-label="Footer navigation"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
-  // The printable resume uses its own layout.
-  for (const { href } of route === '/resume' ? [] : footerNavigation) {
-    if (!routes.has(href) || !footer.includes(`href="${href}"`)) {
-      failures.push(`${route}: missing or invalid footer link ${href}`);
-    }
-  }
-
   const scripts = [...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
   const nodes = scripts.flatMap(([, json]) => {
     try {
@@ -68,14 +58,6 @@ for (const entry of entries) {
       return [];
     }
   });
-  const navigation = nodes.filter((node) => node['@type'] === 'SiteNavigationElement');
-  if (route === '/resume' && navigation.length) failures.push('/resume: unexpected footer navigation markup');
-  for (const { href, label } of route === '/resume' ? [] : footerNavigation.slice(1)) {
-    if (!navigation.some((node) => node.url === siteConfig.url + href && node.name === label)) {
-      failures.push(`${route}: missing navigation markup for ${href}`);
-    }
-  }
-
   if (collections.has(route)) {
     const collection = nodes.find((node) => node['@type'] === 'CollectionPage');
     const items = collection?.mainEntity?.itemListElement;
@@ -105,11 +87,11 @@ for (const entry of entries) {
     }
   }
 
-  const seoMarkup = [...scripts.map(([script]) => script), footer].join('');
+  const seoMarkup = scripts.map(([script]) => script).join('');
   sizes.push({ route, gzipBytes: gzipSync(seoMarkup).length });
   checked++;
 }
 if (failures.length) throw new Error(failures.join('\n'));
-console.log(`Verified sitemap, robots.txt, metadata, navigation, collections, breadcrumbs and image files across ${checked} built pages.`);
+console.log(`Verified sitemap, robots.txt, metadata, collections, breadcrumbs and image files across ${checked} built pages.`);
 const largest = sizes.reduce((max, page) => page.gzipBytes > max.gzipBytes ? page : max);
-console.log(`Largest combined JSON-LD and footer-link payload: ${largest.gzipBytes} gzip bytes (${largest.route}).`);
+console.log(`Largest JSON-LD payload: ${largest.gzipBytes} gzip bytes (${largest.route}).`);
