@@ -181,7 +181,12 @@ describe('SiteShaderBackground', () => {
 
   it('keeps the static fallback when reduced motion is requested', async () => {
     mockReducedMotion(true);
+    const scheduleIdle = vi.fn();
+    vi.stubGlobal('requestIdleCallback', scheduleIdle);
     render(<SiteShaderBackground />);
+    window.dispatchEvent(new Event('load'));
+
+    expect(scheduleIdle).not.toHaveBeenCalled();
 
     expect(screen.queryByTestId('site-cloud-shader')).toBeNull();
     expect(screen.getByTestId('site-cloud-fallback')).toBeDefined();

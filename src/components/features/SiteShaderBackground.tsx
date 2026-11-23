@@ -15,6 +15,7 @@ export default function SiteShaderBackground() {
   useEffect(() => {
     if (pathname !== '/' || shaderReady) return;
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let cancelStart: (() => void) | undefined;
     const scheduleStart = () => {
       if (typeof window.requestIdleCallback === 'function') {
@@ -26,15 +27,29 @@ export default function SiteShaderBackground() {
       }
     };
 
-    if (document.readyState === 'complete') {
-      scheduleStart();
-    } else {
-      window.addEventListener('load', scheduleStart, { once: true });
-    }
-
-    return () => {
+    const cancelScheduledStart = () => {
       window.removeEventListener('load', scheduleStart);
       cancelStart?.();
+      cancelStart = undefined;
+    };
+
+    const syncMotionPreference = () => {
+      cancelScheduledStart();
+      if (reducedMotion.matches) return;
+
+      if (document.readyState === 'complete') {
+        scheduleStart();
+      } else {
+        window.addEventListener('load', scheduleStart, { once: true });
+      }
+    };
+
+    syncMotionPreference();
+    reducedMotion.addEventListener('change', syncMotionPreference);
+
+    return () => {
+      reducedMotion.removeEventListener('change', syncMotionPreference);
+      cancelScheduledStart();
     };
   }, [pathname, shaderReady]);
 
