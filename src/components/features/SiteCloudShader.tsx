@@ -105,17 +105,15 @@ const desktopProfile: RenderProfile = {
   scale: 1.08,
 };
 
-function getRenderProfile(): RenderProfile {
-  if (window.innerHeight > window.innerWidth) {
-    return {
-      maxPixelCount: 524_288,
-      offsetX: -0.055,
-      offsetY: 0,
-      scale: 1.04,
-    };
-  }
+const portraitProfile: RenderProfile = {
+  maxPixelCount: 524_288,
+  offsetX: -0.055,
+  offsetY: 0,
+  scale: 1.04,
+};
 
-  return desktopProfile;
+function getRenderProfile(): RenderProfile {
+  return window.innerHeight > window.innerWidth ? portraitProfile : desktopProfile;
 }
 
 function supportsWebGL2() {
