@@ -27,14 +27,17 @@ describe('JournalTeaser', () => {
     expect(section?.className).toContain('py-10 md:py-12');
   });
 
-  it('renders populated detail links and normal padding', () => {
+  it('renders populated detail links and normal padding without date timestamps', () => {
     vi.mocked(getContent).mockReturnValue([
-      { slug: 'test-journal', title: 'Test Journal', date: '2026-08-23', tags: ['Test'], description: 'desc' } as ReturnType<typeof getContent<'journal'>>[number]
+      { slug: 'test-journal', title: 'Test Journal', date: '2026-08-23', tags: ['test', 'notes'], description: 'desc' } as ReturnType<typeof getContent<'journal'>>[number]
     ]);
     const { container } = render(<JournalTeaser />);
     
     const detailLink = screen.getByRole('link', { name: /Test Journal/ });
     expect(detailLink.getAttribute('href')).toBe('/journal/test-journal');
+    expect(screen.queryByText('2026-08-23')).toBeNull();
+    expect(screen.getByText('test')).toBeDefined();
+    expect(screen.getByText('• notes')).toBeDefined();
     
     const section = container.querySelector('section');
     expect(section?.className).toContain('py-16 md:py-20');

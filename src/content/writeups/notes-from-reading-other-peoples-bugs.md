@@ -3,12 +3,13 @@ title: "Reading Other People's Bugs (And Why Rabbit Holes Are Half the Work)"
 slug: "reading-other-peoples-bugs"
 date: "2026-11-27"
 description: "Notes on why polished writeups hide the messy part of debugging, why dead ends deserve a line in the notebook, and how I keep track of walls I've already walked into."
+category: "misc"
+difficulty: "easy"
 tags:
   - security-research
   - notes
   - debugging
   - learning
-mood: "candid"
 published: true
 ---
 

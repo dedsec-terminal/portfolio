@@ -3,12 +3,13 @@ title: "What 1,700 Bot Sessions Actually Look Like at 2 AM"
 slug: "what-seventeen-hundred-bot-sessions-look-like"
 date: "2026-11-27"
 description: "Running a cloud honeypot sounds dramatic until you read the logs and realize 95% of the internet is scripts pasting busybox one-liners into thin air."
+category: "forensics"
+difficulty: "easy"
 tags:
   - honeypot
   - greyfield
   - soc
   - threat-intel
-mood: "observant"
 published: true
 ---
 

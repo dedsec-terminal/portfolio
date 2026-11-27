@@ -43,19 +43,13 @@ export default function JournalTeaser() {
                     <p className="text-xs leading-relaxed text-muted">
                       {entry.description}
                     </p>
-                    <div className="mt-1 flex items-center gap-3">
-                      <time
-                        dateTime={entry.date}
-                        className="font-mono text-[10px] tracking-wider text-subtle"
-                      >
-                        {entry.date}
-                      </time>
-                      {entry.tags.slice(0, 2).map((tag) => (
+                    <div className="mt-1 flex flex-wrap items-center gap-3">
+                      {entry.tags.slice(0, 2).map((tag, idx) => (
                         <span
                           key={tag}
                           className="font-mono text-[10px] tracking-wider text-subtle"
                         >
-                          · {tag}
+                          {idx > 0 ? '• ' : ''}{tag}
                         </span>
                       ))}
                     </div>
