@@ -1,5 +1,5 @@
 ---
-title: "The OG Non-Linear Story"
+title: "The world's first non-linear form of storytelling was the Mahabharata"
 slug: "the-og-non-linear-story"
 date: "2026-11-27"
 description: "We all know the Kurukshetra war, the Pandavas, and the Kauravas—but the Mahabharata begins after they're already gone, tangled in snake sacrifices, curse physics, and the bargains of Ganga and Satyavati."
@@ -13,11 +13,11 @@ mood: "curious"
 published: true
 ---
 
-Today I caught up on all three episodes of Meghna Srivastava's ongoing Mahabharata series ([Episode 1](https://www.youtube.com/watch?v=-aduU0EVMYk), [Episode 2](https://www.youtube.com/watch?v=E9u1vS2DVmg), and [Episode 3](https://www.youtube.com/watch?v=Ekbp6SUEedg)), and wanted to jot down the parts that actually stuck with me. Most of us know the Sunday-rerun gist—Pandavas, Kauravas, Kurukshetra, sorted—without realizing the text is one lakh *shlokas* long, larger than the *Iliad*, *Odyssey*, *Harry Potter*, and *Lord of the Rings* combined.
+I've been following Meghna Srivastava's ongoing Mahabharata series ([Episode 1](https://www.youtube.com/watch?v=-aduU0EVMYk), [Episode 2](https://www.youtube.com/watch?v=E9u1vS2DVmg), and [Episode 3](https://www.youtube.com/watch?v=Ekbp6SUEedg)), and honestly, it's mind-boggling how much of the actual epic I had no clue about. Even after watching every single episode of the OG B. R. Chopra *Mahabharat* (1988) when Doordarshan re-aired it during the COVID lockdown, I genuinely thought I knew most of the story—Pandavas, Kauravas, Kurukshetra, sorted. Seeing all the hidden backstories unfold here was completely eye-opening, especially once you realize the text runs one lakh *shlokas* long (larger than the *Iliad*, *Odyssey*, *Harry Potter*, and *Lord of the Rings* combined). Whether you think you already know the Mahabharata or want a reason to finally dive in and read it, this series is a must-watch.
 
-The hook that sold me right away was how the series frames the whole epic:
+The hook that sold me right away was how the series sums it up:
 
-> "The world's first non-linear form of storytelling was the Mahabharata. There's a story within a story within a story, and only then does the Mahabharata really begin."
+> "There's a story within a story within a story, and only then does the Mahabharata really begin."
 
 ## The war is already over before page one
 
