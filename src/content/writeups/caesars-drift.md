@@ -1,7 +1,7 @@
 ---
 title: "Caesar's Drift"
 slug: "caesars-drift"
-date: "2026-11-19"
+date: "2026-11-10"
 description: "An offline CTF puzzle where a familiar flag prefix gives away a fixed alphabet shift."
 category: "crypto"
 difficulty: "easy"
@@ -34,7 +34,14 @@ A             0   H             7          7
 G             6   N            13          7
 ```
 
-The first pair suggests a shift of seven. The other three pairs independently give the same value. That agreement makes sense under the puzzle's fixed-shift rule. It would be much weaker evidence for an unknown cipher where each letter could move by a different amount.
+The first pair (`F -> M`) derives a shift of seven; reserving `L`, `A`, and `G` as independent predictions confirms that all three match `+7` too. That agreement makes sense under the puzzle's fixed-shift rule.
+
+```mermaid
+%% Known-plaintext shift test
+flowchart LR
+  A["F -> M (+7)<br/>derives candidate shift"]:::info --> B["Confirm L, A, G -> S, H, N<br/>remaining prefix validates +7"]:::warn
+  B --> C["Decode + Round-Trip<br/>unwrap lowercase words safely"]:::neutral
+```
 
 The direction is easy to get backward. Seven is the distance the beacon moved the letters when it encoded them. Applying seven more places to `MSHN` gives `TZOU`. A shift of thirteen in the other direction gives `ZFUA`. Both produce letters, and both fail the one check we have before reading the body of the message.
 

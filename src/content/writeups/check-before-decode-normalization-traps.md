@@ -1,92 +1,60 @@
 ---
-title: "Validate First, Decode Later (And Other Ways Filters Quietly Fail)"
+title: "Validate First, Decode Later (And Other Normalization Traps)"
+description: "Why checking raw strings before URL decoding fails via %252e%252e%252f, lexical vs filesystem symlink containment, and Content-Type header validation."
+date: "2026-11-18"
 slug: "check-before-decode-normalization-traps"
-date: "2026-11-27"
-description: "How validation ordering, double URL-decoding, and user-controlled Content-Type headers turn strict-looking web filters into bypasses."
+tags:
+  - "web"
+  - "normalization"
+  - "path-traversal"
+  - "headers"
 category: "web"
 difficulty: "medium"
-tags:
-  - appsec
-  - normalization
-  - waf
-  - input-validation
+featured: false
 published: true
 ---
 
-A lot of input filters fail for a remarkably boring reason: the check itself works fine, it just runs at the wrong point in the pipeline.
+Whenever a security check runs on raw HTTP bytes before decoding or canonicalizing, you don't actually have validation—you just built a representation mismatch waiting for someone to encode past it.
 
-You put a WAF rule or a middleware check at the edge to reject `..`, `<script`, or suspicious file paths. Everything looks tidy in unit tests. Then in production, a reverse proxy decodes once, the app framework decodes a second time, or a static-file helper lets a query string pick the response `Content-Type`—and suddenly the "blocked" payload glides straight past.
+Instead of speaking abstractly about "defense in depth," let's trace two exact places where validating pre-normalized strings breaks, and what a concrete fix + regression assertion actually proves.
 
-## The setup
+```mermaid
+%% Double-decode bypass
+flowchart LR
+  A["Raw Path<br/>%252e%252e%252fetc"]:::info --> B["Filter Check<br/>raw.includes('..') -> false"]:::warn
+  B --> C["Backend Decode x2<br/>%2e%2e%2f -> ../etc/passwd"]:::danger
+```
 
-Take a classic three-line path check that looks completely reasonable when you're skimming a codebase quickly:
+## 1. Double-decode path traversal (`%252e%252e%252f`)
+
+Suppose an edge filter checks the incoming request path for directory traversal *before* a backend framework decodes URL escapes a second time:
 
 ```js
-function checkPath(raw) {
-  if (raw.includes("..")) {
-    throw new Error("Path traversal blocked");
-  }
-  return decodeURIComponent(raw);
-}
+const raw = "%252e%252e%252fetc%252fpasswd";
+raw.includes("..");                 // false (edge filter approves)
+const once = decodeURIComponent(raw);   // "%2e%2e%2fetc%2fpasswd"
+const twice = decodeURIComponent(once); // "../etc/passwd"
 ```
 
-And right alongside it, a surprisingly common "helpful" pattern in custom asset servers:
+That is not a race condition or a timing bug; it is a **representation mismatch**. The first filter scanned raw `%252e`, passed it onward, and left `%2e` intact for the backend's second `decodeURIComponent` pass.
 
-```ts
-// Set Content-Type from ?contentType=... if supplied, otherwise send the file
-if (typeof req.query.contentType === "string") {
-  res.setHeader("Content-Type", req.query.contentType);
-}
-```
+![Classic Drake meme rejecting validate-before-decode and picking decode-then-validate](/content/writeups/check-before-decode-normalization-traps/meme-double-decode.webp)
 
-At first glance, the path check literally throws on `..`, and the `Content-Type` helper only serves files from an allowed directory or API response. What's the harm?
+Even once you canonicalize paths cleanly down to one UTF-8 string, **lexical checks (`path.relative`) are only half the barrier**. On disk, an ordinary-looking path inside `/var/app/uploads/avatar.png` can still be a symlink pointing outside the root. Safe filesystem access requires two distinct layers:
 
-## Initial thoughts (and dead ends)
+1. **Reject ambiguity:** Decode at most once cleanly, resolve `path.resolve(root, userRel)`, and reject if `path.relative(root, target)` starts with `..` or is absolute.
+2. **Realpath / OS containment:** Resolve symlinks with `fs.realpathSync` (or OS `openat`/`O_NOFOLLOW`) against the resolved `root` before opening any file descriptor.
 
-If you send `../../secrets`, `raw.includes("..")` throws immediately. If you send `%2e%2e%2fsecrets`, wait—`raw.includes("..")` is `false`! Already broken on single encoding if the check ran before `decodeURIComponent`.
+## 2. Stored JSON vs MIME sniffing in `<script>` contexts
 
-Suppose someone catches that and fixes it to decode *once* before checking `..`. Done, right? Not quite, if there is another decoder downstream (a framework router, a proxy, or a second `decodeURIComponent` inside a helper):
+A common confusion when reviewing APIs is mixing up **stored text**, **serialized JSON**, and **executable JavaScript**. Let's separate the actual bytes sent on the wire:
 
-```js
-const raw = "%252e%252e%252fsecrets";
-const once = decodeURIComponent(raw);   // "%2e%2e%2fsecrets" -> no ".."
-const twice = decodeURIComponent(once); // "../secrets"       -> has ".."
-```
+- Suppose an endpoint reflects valid JSON `{"body":"alert(1)"}`. Even if embedded directly inside `<script src="/api/profile">`, modern browsers still fail to execute it as JS because a top-level `{ ... ":" ... }` parses as a block statement with an invalid label:
+  ```js
+  new vm.Script('{"body":"alert(1)"}') // SyntaxError: Unexpected token ':'
+  ```
+- Execution requires either **arbitrary non-JSON bytes** (e.g., an endpoint reflecting unescaped raw input or an old JSONP callback) or a JSON array whose syntax happens to match JS script statements when sniffed, *combined with* permissive headers (missing `X-Content-Type-Options: nosniff` and weak `Content-Type` allowing browser MIME sniffing into `text/html` or `text/javascript`).
 
-Look how clean that miss is:
+A missing `nosniff` header by itself does not prove XSS—you need both attacker-controlled syntax valid in the target browser context *and* the browser interpreting that response under the permissive MIME type.
 
-- At the edge / WAF: `raw` (`%252e...`) has no `..`. Passed.
-- After one decode: `once` (`%2e%2e%2fsecrets`) still has no `..`. Passed.
-- When the downstream handler decodes `%2e%2e%2f` a second time: `../secrets`. Now it traverses.
-
-## The second trap: letting inputs choose how the browser reads them
-
-The `Content-Type` trick is even sneakier because *no HTML injection on the page is even required* to make it hurt.
-
-Imagine an app that runs strict sanitization (like DOMPurify) on its HTML views—so `<img src=x onerror=alert()>` is dead on `/posts/1`—and locks down scripts with a strict Content Security Policy (`script-src 'self'`). Dead end on the view route.
-
-Now suppose there is also a JSON API endpoint `/api/posts/1/body` that returns raw user text in JSON, *and* a global middleware somewhere that honors `?contentType=text/javascript` (or forgets `X-Content-Type-Options: nosniff`). If a user stores valid JavaScript inside a plain text post and loads:
-
-```html
-<script src="/api/posts/1/body?contentType=text/javascript"></script>
-```
-
-Suddenly `'self'` in the CSP allows the `<script>` tag because the request is same-origin, and the browser executes the response as JavaScript because the server happily labeled it `text/javascript`. The sanitizer on the HTML route never even got called—we just asked a different route to serve raw bytes with an executable label.
-
-## Why this matters in SOC and AppSec work
-
-When you're tuning WAF rules or reviewing logs (something I run into constantly when pairing AppSec checks with operational telemetry), double-encoded paths like `%252e%252e` or weird query parameters like `?contentType=` are easy to dismiss if you only inspect the decoded URI in one layer.
-
-A good rule of thumb when auditing any filter:
-
-1. **Canonicalize before validating**: Resolve the full path (`path.resolve`) and verify it stays strictly inside the base directory with `path.relative(base, resolved)`—never rely on substring checks for `..` before decoding.
-2. **Reject double encoding explicitly** if your edge doesn't expect literal `%` characters in paths, rather than decoding in a loop until nothing changes.
-3. **Pin response `Content-Type`s server-side** and always send `X-Content-Type-Options: nosniff`. Never let a query parameter override how a browser interprets an API or asset response.
-
-If your security check runs on string A and your application acts on string B, you don't have a filter—you have a timing gap between two representations.
-
-## References
-
-- [OWASP — Path Traversal](https://owasp.org/www-community/attacks/Path_Traversal)
-- [MDN — X-Content-Type-Options](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options)
-- [CWE-180: Incorrect Behavior Order: Validate Before Canonicalize](https://cwe.mitre.org/data/definitions/180.html)
+Your regression suite should assert the response header contract explicitly: user input in `format` or query parameters cannot override `Content-Type: application/json; charset=utf-8`, and every API response locks down sniffing with `X-Content-Type-Options: nosniff`.

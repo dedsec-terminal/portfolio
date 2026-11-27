@@ -1,9 +1,10 @@
 ---
 title: "Python Object Graphs and the Limits of Restricted eval"
 slug: "breaking-python-jail-mro"
-date: "2026-11-19"
-description: "A conceptual study of Python object traversal, restricted eval, and why generating attribute names does not establish a sandbox bypass."
+date: "2026-11-12"
+description: "Why clearing __builtins__ fails against Python MRO traversal, what character filters do and do not block, and how to test AST/sandbox boundaries."
 category: "misc"
+difficulty: "medium"
 tags:
   - python-sandbox
   - jailbreak
@@ -30,6 +31,23 @@ eval(expression, restricted_env)
 
 This is a substring filter, not an AST validator. It rejects every expression containing a literal underscore before evaluation begins.
 
+![Classic Rollsafe meme: Cannot import os if you delete builtins](/content/writeups/breaking-python-jail-mro/meme-sandbox.webp)
+
+Wait: what if a sandbox drops `_` from its blocklist and only bans keywords like `["import", "os", "sys", "eval", "exec", "open", "system"]` alongside `"__builtins__": None`? Because literal tuples and `object.__subclasses__()` stay reachable without builtins, string concatenation bypasses the word check cleanly (verified locally on Python 3.14):
+
+```python
+[c for c in ().__class__.__base__.__subclasses__() if c.__name__ == "BuiltinImporter"][0]().load_module("o" + "s").name
+# Returns: 'nt' (or 'posix') with __builtins__ = None
+```
+
+```mermaid
+%% Python MRO recovery chain
+flowchart TD
+  A["() Tuple Literal<br/>no builtins required"]:::info --> B["__class__.__base__<br/>climbs directly to object"]:::warn
+  B --> C["__subclasses__()<br/>locates BuiltinImporter class"]:::warn
+  C --> D["load_module('o' + 's')<br/>evades literal keyword filters"]:::danger
+```
+
 ## Object traversal has prerequisites
 
 In an unrestricted interpreter, `().__class__.__base__` reaches `object`; `object.__subclasses__()` lists its currently loaded direct subclasses. The set and order depend on the process and its imports, so a hard-coded subclass index is not portable evidence.
@@ -44,7 +62,7 @@ A reproducible solution would need the exact evaluator, Python version and impor
 
 ## Defensive design
 
-Avoid evaluating untrusted expressions as general-purpose Python. If a product needs arithmetic or a small expression language, define a narrow grammar and interpret only those operations. Executing broader untrusted code needs a separately designed isolation boundary, restricted privileges and resource limits; changing one namespace dictionary is not a complete security design.
+Avoid evaluating untrusted expressions as general-purpose Python. If a product needs arithmetic, parse an explicit allowlisted AST grammar with resource bounds and test three observable cases before shipping: an allowed expression returns the computed result (`2 + 2 -> 4`), disallowed attribute access (`(1).__class__`) raises immediately before eval, and an over-budget input (`9 ** 9 ** 9`) aborts inside CPU/recursion limits. Changing one namespace dictionary is not a sandbox.
 
 For a related cryptographic boundary discussion, see [the padding-oracle walkthrough](/writeups/padding-boundary-oracle). For defensive investigation examples, explore [TraceIR](/projects/traceir).
 

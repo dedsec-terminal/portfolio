@@ -1,7 +1,7 @@
 ---
 title: "The Unpadded Wire"
 slug: "the-unpadded-wire"
-date: "2026-11-19"
+date: "2026-11-11"
 description: "An offline CTF puzzle about finding character boundaries in a string of bits with no separators."
 category: "misc"
 difficulty: "easy"
@@ -32,6 +32,13 @@ Join the lines before counting them. The export contains 196 bits, so there is a
 Fourteen divides 196 evenly, but the first fourteen bits give `9036`. Four divides evenly too, but the first four bits give `8`, the ASCII backspace control character. The division check narrows the search. It takes a known character to decide whether a width makes sense for this flag.
 
 ## Read the header as a control
+
+```mermaid
+%% 7-bit stream framing check
+flowchart LR
+  A["196-Bit Dump<br/>50-column wrap"]:::info --> B["Reject 8-bit Split<br/>leaves 4 bits; 0x8D non-ASCII"]:::warn
+  B --> C["7-bit Chunking<br/>28 chars -> starts with FLAG{"]:::neutral
+```
 
 ASCII defines 128 values using seven bits. When an ASCII value is stored in an eight-bit byte, the high bit is zero. The puzzle packs the seven bits directly. At this width, 196 bits leave exactly 28 characters. These are the first five groups.
 

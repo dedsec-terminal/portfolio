@@ -29,6 +29,23 @@ The important bug is not merely that an unexpected key reaches the application. 
 
 That produces a compact attack chain:
 
+```mermaid
+%% Prototype pollution chain
+flowchart LR
+  A["Settings JSON<br/>__proto__.isAdmin: true"]:::info --> B["Unsafe Recursive Merge<br/>mutates Object.prototype"]:::warn
+  B --> C["Fresh Session Read<br/>session.isAdmin resolves true"]:::danger
+```
+
+In Node.js, the difference between trusting inherited properties and checking own properties fits in five lines:
+
+```js
+const freshSession = {};
+// Unsafe recursive merge on JSON.parse('{"__proto__":{"isAdmin":true}}')
+// pollutes Object.prototype:
+console.log(freshSession.isAdmin, Object.hasOwn(freshSession, "isAdmin"));
+// true, false
+```
+
 1. Map the client and API to find the settings or merge surface.
 2. Identify a property used by the reward logic but not safely initialized as an own property.
 3. Test whether nested special keys survive parsing and merging.
@@ -44,7 +61,7 @@ Prototype pollution can appear deceptively local while changing behaviour across
 
 The best remediation is to avoid generic recursive merging for security-sensitive input. Parse requests into a strict allow-list schema, reject unknown fields, and construct a new object containing only expected primitive values. Special keys should be rejected at every depth, not filtered only at the top level.
 
-Defence in depth includes using objects without prototypes where dictionary semantics are required, checking critical values with `Object.hasOwn()`, freezing trusted defaults, keeping preferences separate from authorization state, and updating merge libraries with known pollution flaws. Tests should submit nested malicious keys and verify both the target object and unrelated fresh objects remain unchanged.
+Defence in depth includes using objects without prototypes where dictionary semantics are required (`Object.create(null)`), checking critical values with `Object.hasOwn()`, freezing trusted defaults, keeping preferences separate from authorization state, and updating merge libraries with known pollution flaws. In tests, submit a disallowed `__proto__` / `constructor` key alongside a valid preference field and assert that rejection leaves both stored user preferences and a second unrelated user's authorization state unchanged.
 
 The broader lesson is simple: client-side controls improve usability, not authority. A patched interface is not a patched trust boundary.
 

@@ -1,7 +1,7 @@
 ---
 title: "Padding at the Boundary: An Interactive Oracle Decryption"
 slug: "padding-boundary-oracle"
-date: "2026-11-19"
+date: "2026-11-15"
 description: "A cryptographic walkthrough of exploiting a CBC-mode padding oracle vulnerability to decrypt ciphertext byte by byte without the key."
 platform: "Illustrative cryptography lab"
 category: "crypto"
@@ -28,6 +28,8 @@ Assume that requests with tampered cookies produce two distinctly different beha
 
 That difference is a classic padding oracle. The server decrypts the ciphertext using its private AES key, validates the PKCS#7 padding, and only then passes the decrypted bytes to the session deserializer. By distinguishing padding errors from signature errors, the server leaks a single bit of information: *did the modified ciphertext decrypt to valid PKCS#7 padding?*
 
+![Classic Pigeon meme: HTTP 500 vs HTTP 403 — Is this a decryption oracle?](/content/writeups/padding-boundary-oracle/meme-oracle.webp)
+
 ## Mechanics of Cipher Block Chaining (CBC)
 
 In CBC mode, plaintext block `P_i` is encrypted by first XORing it with the previous ciphertext block `C_{i-1}` (or the IV for the first block `C_0`), and then passing the result through the block cipher primitive `E_K`:
@@ -35,6 +37,13 @@ In CBC mode, plaintext block `P_i` is encrypted by first XORing it with the prev
 `C_i = E_K(P_i  XOR  C_{i-1})`
 
 During decryption, the reverse operation occurs:
+
+```mermaid
+%% CBC padding oracle loop
+flowchart LR
+  A["Crafted C'_{i-1} || C_i<br/>sweep 256 byte guesses"]:::info --> B["Server Response<br/>500 bad pad vs 403 bad sig"]:::warn
+  B --> C["Recover Byte<br/>I_i = guess XOR pad; P_i = I_i XOR C_{i-1}"]:::danger
+```
 
 `I_i = D_K(C_i)`
 `P_i = I_i  XOR  C_{i-1}`
@@ -118,7 +127,7 @@ Padding oracle attacks succeed because the system performs unauthenticated decry
 
 1. **Use Authenticated Encryption (AEAD)**: Replace unauthenticated CBC mode with AES-GCM or ChaCha20-Poly1305. In AEAD modes, ciphertext tampering causes the cryptographic authentication tag verification to fail immediately, preventing any decryption or padding inspection from executing.
 2. **Encrypt-then-MAC**: If legacy CBC mode cannot be avoided, compute an HMAC-SHA256 over the ciphertext and IV using an independent MAC key. Verify the HMAC in constant time before decrypting.
-3. **Uniform Error Handling**: Never expose distinguishing HTTP status codes, error messages, or timing variations between padding failures and application verification errors.
+3. **Uniform Error Handling**: Never expose distinguishing HTTP status codes, error messages, or timing variations between padding failures and application verification errors. In your post-remediation test suite, tamper separately with the ciphertext, nonce/IV, and authentication tag—and verify that all three invalid-record classes yield zero plaintext deliveries to application handlers and one identical outward contract (HTTP status, body bytes, and socket close behavior).
 
 ## References
 

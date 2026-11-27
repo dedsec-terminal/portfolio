@@ -20,6 +20,13 @@ The rule under test is an impossible-travel alert. It compares pairs of successf
 
 The test set contains one positive case, one negative case, and one missing-field case.
 
+```mermaid
+%% Parser-to-rule regression matrix
+flowchart LR
+  A["Raw Vendor JSON<br/>parser normalization"]:::info --> B["Rule Contract<br/>within 30m AND distance > 500km"]:::warn
+  B --> C["Assertions<br/>alert / no-alert / incomplete"]:::neutral
+```
+
 - **Positive:** `demo-user-17` signs in from `Hudson, NY` at 09:12 UTC and from `London, UK` at 09:24 UTC. The twelve-minute gap and long distance should produce one alert.
 - **Negative:** the same account signs in from `Hudson, NY` at 10:03 UTC and again at 10:07 UTC. Same location and a short gap should produce no alert.
 - **Missing field:** a second sign-in record arrives with a valid account and timestamp but no latitude or longitude. The rule should record the event as incomplete, skip the distance calculation, and create no alert.
@@ -92,7 +99,7 @@ def test_missing_field_case():
     assert evaluate((first, second)) == "incomplete"
 ```
 
-This harness expects Python 3.11 or later and pairs of successful sign-ins already sorted by time. Test the parser separately by passing a serialized fixture through it before calling `evaluate`. Keep incomplete events visible in a data-quality count so a parser regression cannot quietly reduce coverage.
+This harness expects Python 3.11 or later and pairs of successful sign-ins already sorted by time. Feed at least one raw vendor JSON pair through the production parser before calling `evaluate`—pre-typed dataclass fixtures can all pass while the parser silently swaps `latitude` and `longitude`. Pin the exact boundaries explicitly too: a 30-minute delta (`<= 30 * 60`) still qualifies, exactly `500.0` km does not trigger (`distance_km > 500`), and reversed event order (`end < start`) must return `"incomplete"`. Keep incomplete events visible in a data-quality metric so a parser regression cannot quietly erode alert coverage.
 
 ## What these tests establish
 

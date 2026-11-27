@@ -1,10 +1,34 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { isValidElement, type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import MermaidDiagram from '@/components/content/MermaidDiagram';
 import type { ContentItem, ContentType } from '@/lib/content';
 import { getPublicImageDimensions } from '@/lib/image-dimensions';
 import { siteConfig } from '@/lib/site';
+
+function extractText(node: ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join('');
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return extractText(node.props.children);
+  }
+  return '';
+}
+
+const mdxComponents = {
+  pre: ({ children, ...props }: ComponentPropsWithoutRef<'pre'>) => {
+    if (isValidElement<{ className?: string; children?: ReactNode }>(children)) {
+      const className = children.props.className ?? '';
+      if (className.includes('language-mermaid')) {
+        const raw = extractText(children.props.children).trim();
+        return <MermaidDiagram chart={raw} fallback={<pre {...props}>{children}</pre>} />;
+      }
+    }
+    return <pre {...props}>{children}</pre>;
+  },
+};
 
 const projectLinkClass =
   'project-link inline-flex min-h-11 items-center gap-2 font-mono text-xs tracking-wider text-zinc-400 underline decoration-foreground/35 underline-offset-4 transition-colors hover:text-foreground';
@@ -240,7 +264,7 @@ export default async function ContentArticle({
 
       {item.content.trim() ? (
         <div className={proseClasses}>
-          <MDXRemote source={item.content} />
+          <MDXRemote source={item.content} components={mdxComponents} />
         </div>
       ) : null}
 

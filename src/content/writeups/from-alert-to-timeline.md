@@ -1,7 +1,7 @@
 ---
 title: "From Alert to Timeline"
 slug: "from-alert-to-timeline"
-date: "2026-11-19"
+date: "2026-11-13"
 description: "A tabletop investigation that reconstructs a sign-in timeline across time zones, tests a competing session match, and records what the evidence supports."
 category: "forensics"
 tags:
@@ -29,6 +29,13 @@ case-007    2026-11-12T00:07:00+05:30  analyst attached source exports
 In the case record I would keep the original export, the source name, and the record ID alongside each extracted row. This lets a reviewer go back to the source when a field changes meaning or an analyst corrects the working timeline.
 
 ## Put both systems on the same date
+
+```mermaid
+%% UTC correlation join
+flowchart LR
+  A["idp-1042 (+05:30)<br/>18:31:42Z · auth-042"]:::info --> B["UTC Normalize<br/>eliminates midnight date shift"]:::warn
+  B --> C["vpn-0871 (18:31:47Z)<br/>matched via auth-042; vpn-0869 excluded"]:::neutral
+```
 
 The identity export's `+05:30` marks local time five hours and thirty minutes ahead of UTC. Subtracting that offset takes the 00:01 sign-in back to **November 11 at 18:31:42 UTC**. The analyst's case note also rolls back a day to **18:37:00 UTC**. Keep both the original value and the derived UTC value. If the original has no offset, record the time as unresolved until you can verify the source's time-zone settings. [RFC 3339, section 4.2](https://www.rfc-editor.org/rfc/rfc3339.html#section-4.2).
 
@@ -68,10 +75,9 @@ The 143 seconds between the sign-in and alert creation also needs a precise labe
 
 ## Leave a question the next shift can answer
 
-The next shift needs the join it can verify and the unresolved question that affects the decision.
+Structure the handoff around four fields so the oncoming responder sees what is proven, what isn't, and what record settles the tie:
 
-> `alert-016` points to sign-in `idp-1042`. The shared `auth-042` reference ties that record to `vpn-0871`. The closer session `vpn-0869` used a different reference. The source records establish the session match. Device ownership and whether the sign-in was expected are still open. Check the device identifier against inventory and verify the network change with the account owner through the established channel.
-
-Record any follow-up as a new finding with its own timestamp and source so another analyst can see what changed. Preserve the original event records and keep the case note as the account of what was known at that point in the investigation. [NIST SP 800-61 Rev. 3, investigation records](https://csrc.nist.gov/pubs/sp/800/61/r3/final).
-
-If the device turns out to be unfamiliar or the account owner disputes the sign-in, that is new evidence for triage. The alert gives the team a reason to investigate. The timeline makes the basis for each later decision inspectable.
+- **Established join:** `alert-016` -> `idp-1042` (`18:31:42Z`) -> `vpn-0871` (`auth-042`); competing session `vpn-0869` carried `auth-041` and is excluded.
+- **Unresolved fallback:** If a real export drops the correlation ID and both sessions fit the window, keep **both candidates** open in the timeline and name the next distinguishing artifact (source client IP, TLS fingerprint, or endpoint process event).
+- **Open owner action:** Check the device identifier against inventory and verify the sign-in with `demo-014`'s owner over an out-of-band channel.
+- **Audit rule:** Record follow-ups as new timestamped entries rather than overwriting earlier working notes. [NIST SP 800-61 Rev. 3, investigation records](https://csrc.nist.gov/pubs/sp/800/61/r3/final).
