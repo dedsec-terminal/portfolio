@@ -16,7 +16,12 @@ Synthetic regression tests make a detection rule's expected behavior explicit be
 
 The rule under test is an impossible-travel alert. It compares pairs of successful sign-ins for one account. If two sign-ins occur within thirty minutes and their locations are more than five hundred kilometers apart, it creates an alert. A recent change replaced the event parser, so the team needs to confirm that the alert still fires for the intended case, stays quiet for ordinary movement, and handles incomplete records without crashing.
 
+The first sign that the parser changed anything might be a quieter alert queue. That looks like good news until someone asks how many sign-ins actually made it to the distance calculation. A clean rule test can sit beside a broken feed for weeks because its fixtures enter the pipeline at exactly the point where the parser has already done its work.
+
 ## Three cases
+
+![Johannes Blaeu, Nova et Accuratissima Totius Terrarum Orbis Tabula, 1664 twin-hemisphere world map](/content/writeups/alert-rule-regression-tests/plate-blaeu.webp)
+*Joan Blaeu, Nova et Accuratissima Totius Terrarum Orbis Tabula (1664). Public domain, via Wikimedia Commons.*
 
 The test set contains one positive case, one negative case, and one missing-field case.
 
@@ -99,7 +104,80 @@ def test_missing_field_case():
     assert evaluate((first, second)) == "incomplete"
 ```
 
-This harness expects Python 3.11 or later and pairs of successful sign-ins already sorted by time. Feed at least one raw vendor JSON pair through the production parser before calling `evaluate`—pre-typed dataclass fixtures can all pass while the parser silently swaps `latitude` and `longitude`. Pin the exact boundaries explicitly too: a 30-minute delta (`<= 30 * 60`) still qualifies, exactly `500.0` km does not trigger (`distance_km > 500`), and reversed event order (`end < start`) must return `"incomplete"`. Keep incomplete events visible in a data-quality metric so a parser regression cannot quietly erode alert coverage.
+The harness expects Python 3.11 or later and receives pairs of successful sign-ins. The caller owns ordering. An event delivered late can arrive behind an event with a later source timestamp. If that pair reaches the function in arrival order, the rule returns `"incomplete"`. A caller with a reordering buffer can test that behavior separately by releasing a pair in timestamp order once both events are available.
+
+## The fixture that starts one step earlier
+
+A parser refactor can swap the two coordinates without changing their types. Hudson's longitude even fits inside the valid latitude range. The same is true of both London values. Run the adapter against JSON strings in which the keys appear in different orders, then assert the field assignments before checking the verdict. This is a small stand-in for a vendor contract. In a service, call the actual adapter at this boundary.
+
+```python
+import json
+from dataclasses import replace
+from unittest.mock import patch
+
+
+def parse_vendor_event(raw: str) -> SignIn:
+    event = json.loads(raw)
+    location = event.get("location") or {}
+    return SignIn(
+        account=event["user"],
+        timestamp=event["occurred_at"],
+        latitude=location.get("latitude"),
+        longitude=location.get("longitude"),
+    )
+
+
+def test_adapter():
+    first = parse_vendor_event(
+        '{"user":"demo-user-17","occurred_at":"2026-11-22T09:12:00Z",'
+        '"location":{"longitude":-73.79,"latitude":42.25}}'
+    )
+    second = parse_vendor_event(
+        '{"user":"demo-user-17","occurred_at":"2026-11-22T09:24:00Z",'
+        '"location":{"latitude":51.51,"longitude":-0.13}}'
+    )
+    assert (first.latitude, first.longitude) == (42.25, -73.79)
+    assert (second.latitude, second.longitude) == (51.51, -0.13)
+    assert evaluate((first, second)) == "alert"
+    swapped = tuple(
+        replace(event, latitude=event.longitude, longitude=event.latitude)
+        for event in (first, second)
+    )
+    assert evaluate(swapped) == "alert"
+
+    partial = parse_vendor_event(
+        '{"user":"demo-user-17","occurred_at":"2026-11-22T09:24:00Z",'
+        '"location":{"latitude":51.51}}'
+    )
+    assert partial.longitude is None
+    assert evaluate((first, partial)) == "incomplete"
+
+
+def test_boundaries():
+    first = SignIn("demo-user-17", "2026-11-22T09:12:00Z", 42.25, -73.79)
+    at_limit = SignIn("demo-user-17", "2026-11-22T09:42:00Z", 51.51, -0.13)
+    late = replace(at_limit, timestamp="2026-11-22T09:42:01Z")
+    assert evaluate((first, at_limit)) == "alert"
+    assert evaluate((first, late)) == "no-alert"
+    assert evaluate((at_limit, first)) == "incomplete"
+
+    with patch.dict(evaluate.__globals__, asin=lambda _: 500.0 / 12742):
+        assert evaluate((first, at_limit)) == "no-alert"
+    with patch.dict(evaluate.__globals__, asin=lambda _: 500.01 / 12742):
+        assert evaluate((first, at_limit)) == "alert"
+```
+
+Those last assertions in the adapter test tell two different stories. Both the real pair and the swapped pair produce an alert because both distances still exceed the cutoff. A positive test over raw JSON that asserts only the alert would miss the regression too. Asserting both coordinates makes the contract observable before the rule collapses the evidence into three possible verdicts.
+
+The time boundary gets a matched pair of controls. The second sign-in moves by one second, with account and location unchanged. Exactly thirty minutes qualifies under `<= 30 * 60`. One second later the pair is outside the rule's window. Reversing the exact-boundary pair exercises a different decision, since a negative interval is incomplete and cannot be treated as eligible under the upper bound alone.
+
+The distance test replaces the angle calculation with a controlled value so the existing evaluator receives a computed distance of exactly `500.0` km. It then moves just above the cutoff and requires an alert. A guessed coordinate pair near the cutoff would couple the threshold test to floating-point rounding and the chosen Earth radius. Here the geographic fixtures still exercise the actual distance calculation, and the controlled values exercise the comparison.
+
+## Count what never reached the rule
+
+A missing longitude can survive adaptation as `None` and produce an incomplete pair. A parser exception can remove the whole event before the correlator ever sees it. Both failures can leave the alert count unchanged. Only the first produces an incomplete verdict, so a dashboard that counts verdicts alone can show a healthy rule while input coverage falls.
+
+Track accepted and rejected records at the adapter, missing-coordinate events by source, and incomplete pairs at evaluation. Give each counter a defined denominator. Two raw records produce at most one pair in this fixture, while a live correlator might reuse one event across several comparisons. Check that the partial fixture increments the missing-coordinate counter and reaches evaluation, alongside a malformed JSON fixture that increments the parser rejection counter. Use source and a bounded reason label for metrics, with event identifiers kept in controlled logs when investigation requires them.
 
 ## What these tests establish
 
